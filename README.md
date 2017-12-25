@@ -1,15 +1,14 @@
-# Hugo Goa Demo
+# Personal Website
 
 ## About
 
-This site demonstrates the use of the [Hugo Goa Theme](https://github.com/shenoybr/hugo-goa) by [@shenoybr](https://github.com/shenoybr).
+This repo contain the source file to build a hugo website with the [GOA Theme](https://github.com/shenoybr/hugo-goa) by [@shenoybr](https://github.com/shenoybr).
 
-## Usage
+## Check list
 
-* Install [Hugo](gohugo.io)
-* git clone https://github.com/shenoybr/hugo-goa-demo
-* Run `hugo server -w -v` from the root directory
-* Site will be visible at `localhost:1313`
+- blog (ready to write)
+- about (deploying)
+- study plan (deploying)
 
 ## License
 
