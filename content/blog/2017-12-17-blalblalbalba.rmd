@@ -1,0 +1,43 @@
+---
+title: blalblalbalba
+author: Cristóbal Alcázar
+date: '2017-12-17'
+slug: blalblalbalba
+categories: ["R", "test"]
+tags: []
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comments = "#>", message = FALSE,
+                      warning = FALSE, fig.align = "center")
+```
+
+## Grafico 1
+
+:smile:
+
+```{r, fig.align="center"}
+library(ggplot2)
+library(dplyr)
+# see a few observations...
+head(mtcars)
+ggplot(mtcars, aes(x = mpg, y = disp)) +
+  geom_point()
+```
+
+$$x_2$$
+
+## Funcion
+
+The following is a recursive function
+```{python, engine = 'python3'}
+def recur(x):
+    if x == 1 or x == 0:
+      return 1
+    else:
+      return x * recur(x - 1)
+recur(2)    
+2 + 2
+```
