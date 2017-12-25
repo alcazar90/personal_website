@@ -23,8 +23,10 @@ library(ggplot2)
 library(dplyr)
 # see a few observations...
 head(mtcars)
+bg_col <- "#fcfcfc"
 ggplot(mtcars, aes(x = mpg, y = disp)) +
-  geom_point()
+  geom_point() +
+  theme(plot.background = element_rect(fill = bg_col))
 ```
 
 $$x_2$$
