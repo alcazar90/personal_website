@@ -27,7 +27,7 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_caches$"]
 author = "Cristóbal Alcázar"
 intro = "Analytics (+) Artificial Intelligence"
 #description = "Now @Pied Piper. Previously @Hacker Hostel, @Bachmanity and @Aviato. <br/> \"What is F times 5? It's Fleventy-five.\""
-description = "Analytics (+) Artificial Intelligence"
+description = "Use **R** and **python**"
 authorimage = "headshot2.jpg"
 dateformat = "Jan 2, 2006"
 
