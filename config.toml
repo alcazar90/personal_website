@@ -2,8 +2,8 @@
 
 baseurl = "http://www.alkzar.cl/" 
 builddrafts = false
-canonifyurls = true
-relativeURLs = true
+canonifyurls = false
+relativeURLs = false
 languageCode = "en-US"
 
 contentdir = "content"
@@ -18,7 +18,7 @@ theme = "hugo-goa"
 ## Hugo Built-in Features
 enableEmoji = true
 disqusShortname = "alkzar-cl" # Comment out to disable Disqus.
-googleAnalytics = "XYZ"
+googleAnalytics = "UA-111580586-1"
 enableRobotsTXT = true
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_caches$"]
 
@@ -29,7 +29,7 @@ author = "Cristóbal Alcázar"
 intro = "Analytics (+) Artificial Intelligence"
 #description = "Now @Pied Piper. Previously @Hacker Hostel, @Bachmanity and @Aviato. <br/> \"What is F times 5? It's Fleventy-five.\""
 description = "Use **R** and **python**"
-authorimage = "headshot2.jpg"
+authorimage = "avatar.jpg"
 dateformat = "Jan 2, 2006"
 
 ## Site Meta Settings
