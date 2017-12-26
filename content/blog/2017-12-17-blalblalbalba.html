@@ -11,12 +11,6 @@ showpagemeta: yes
 ---
 
 
-<div id="TOC">
-<ul>
-<li><a href="#grafico-1">Grafico 1</a></li>
-<li><a href="#funcion">Funcion</a></li>
-</ul>
-</div>
 
 <div id="grafico-1" class="section level2">
 <h2>Grafico 1</h2>
@@ -35,7 +29,7 @@ head(mtcars)
 bg_col &lt;- &quot;#f2f2f2&quot;
 ggplot(mtcars, aes(x = mpg, y = disp)) +
   geom_point() +
-  theme(plot.background = element_rect(fill = bg_col))</code></pre>
+  theme_minimal()</code></pre>
 <p><img src="/blog/2017-12-17-blalblalbalba_files/figure-html/unnamed-chunk-1-1.png" width="70%" style="display: block; margin: auto;" /></p>
 <p><span class="math display">\[x_2\]</span></p>
 </div>
