@@ -6,7 +6,7 @@ draft = false
 slug = ""
 tags = ["about"]
 title = "About"
-
+showcomments = false
 showpagemeta = false
 +++
 

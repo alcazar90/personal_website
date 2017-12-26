@@ -3,6 +3,7 @@
 baseurl = "http://alkzar.cl/" 
 builddrafts = false
 canonifyurls = true
+relativeURLs = true
 languageCode = "en-US"
 
 contentdir = "content"

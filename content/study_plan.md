@@ -6,7 +6,7 @@ draft = false
 slug = ""
 tags = ["learning", "MOOC", "education"]
 title = "Study Plan"
-
+showcomments = false
 showpagemeta = true
 +++
 
