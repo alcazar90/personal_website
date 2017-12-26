@@ -6,3 +6,7 @@ if (file.exists("~/.Rprofile")) {
 # ~/.Rprofile
 options(blogdown.author = 'Cristóbal Alcázar', blogdown.subdir = "blog",
         blogdown.ext = ".rmd", servr.daemon = TRUE)
+
+
+knitr::opts_chunk$set(collapse = TRUE, comments = "#>", message = FALSE,
+                      warning = FALSE, fig.align = 'center', out.width = "70%")

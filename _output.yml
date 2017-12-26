@@ -2,6 +2,3 @@ blogdown::html_page:
   toc: true
   fig_width: 6
   fig_asp: 0.618
-  out_width: "70%"
-  fig_align: "center"
-  

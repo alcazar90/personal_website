@@ -4,15 +4,11 @@ author: Cristóbal Alcázar
 date: '2017-12-17'
 slug: blalblalbalba
 categories: ["R", "test"]
-tags: []
+tags: ["TAG"]
 comments: no
 showcomments: yes
 showpagemeta: yes
 ---
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comments = "#>", message = FALSE,
-                      warning = FALSE, fig.align = "center")
-```
 
 ## Grafico 1
 
