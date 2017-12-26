@@ -1,0 +1,256 @@
+---
+title: What about tree models?...Part I
+author: Cristóbal Alcázar
+date: '2017-12-26'
+slug: what-about-tree-models
+categories:
+  - R
+  - ML
+tags:
+  - ML
+  - AI
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+$\newcommand{\R}{\mathbb{R}}$
+
+```{r, echo = FALSE}
+library(ggplot2)
+library(RColorBrewer)
+library(ISLR)
+```
+
+
+*This is the first post of a trilogy about tree based models. The goal is to unlock these kind of models and apply in a practical study case.*
+
+1. *The first post is focus on  understanding the fundamentals behind a single tree*
+2. *The second post about how to deal with some inherent disadvantage about these models*
+3. *Last but no least, a practical study case*
+
+*The idea is not to reinvent the wheel so you find many references to* ["An Introduction to Statistical Learning"](http://www-bcf.usc.edu/~gareth/ISL/index.html) *(ISLR 2015) book, specifically the chapter 8.*
+
+## Overview
+
+### Partition and Prediction constants
+
+A simple tree can be built using two things, at least if we ignore the details, **partition** and **prediction constants**. Yes, that is all we need.
+
+We want to *learn a function from data* that maps a d-euclidean predictor space ($X \in \R^d$) to a response variable $Y$.
+
+$$f: \R^d \rightarrow Y$$
+For a simple tree this function $f$ could take the following form:
+
+$$f(x) = \sum_{m = 1}^{m}c_mI(x \in R_m)$$
+
+- The **partition** gives $M$ different regions,
+
+- For each region we have a **prediction constant** $c_m$ associated to it. This is computed based on the training observations that belong to the region $R_m$,
+
+- So to predict just we need to follow the rules imposed by the partitions. Then we predict for a new observation the value of the constant $c_m$ that belong to the region defined by the rules.
+
+- If we talking about a **regression tree**, $c_m$ will be the mean of the training observations of the region $R_m$,
+
+- If we talking about a **classification tree**, $c_m$ will be the class of the  majority in the training observations of the region $R_m$.
+
+Now we modify a little bit the baseball example of chapter 8 page 304 (ISLR 2015) to put these pieces in order. We focus on the salary of baseball players ($Y$) but instead of treat this variable as a continuos variable like in the book we discretize in quintiles. We can look how the salary quintiles of baseball player behave with respect years of experience ($X_1$) and the number of hit that made the player the last year ($X_2$).
+
+```{r, echo = FALSE}
+library(ISLR)
+# exclude the missing values of the Salary variable
+df <- ISLR::Hitters[!is.na(Hitters$Salary), ]
+
+# discretize the Salary variable in quintiles and store as Salary2
+df$Salary2 <- cut(df$Salary, 
+                  breaks = c(quantile(df$Salary, probs = seq(0, 1, by = 0.2))), 
+                  labels = c("0-20", "20-40", "40-60", "60-80", "80-100"), 
+                  include.lowest = TRUE)
+
+ggplot(df, aes(x = Years, y = Hits)) +
+  geom_point(aes(colour = Salary2)) +
+  scale_colour_brewer("Quintile Salary", palette = 5) +
+  xlab("Year of Experience") +
+  ylab("N°of Hits Last Year") +
+  theme_minimal()
+```
+
+We can notice that players which belong to higher quintiles of salary predominant above the 5 years of experience (approximately)
+
+```{r, echo = FALSE}
+ggplot(df, aes(x = Years, y = Hits)) +
+  geom_point(aes(colour = Salary2)) +
+  scale_colour_brewer("Quintil Salario", palette = 5, guide = FALSE) +
+  geom_vline(xintercept = 5) +
+  xlab("Year of Experience") +
+  ylab("N°of Hits Last Year") +
+  theme_minimal()
+```
+
+In the new created region to the right of the vertical line, whether we focus on the *"N° of Hits Last Year"* variable, we could said that roughly above the 100 hits predominant player with higher quintiles of salary. 
+
+Therefore 3 regions were derived from this "manually" data partition process. First in function of *Years of Experience* and then in *N° of Hits Last Year* variables.
+
+```{r, echo = FALSE}
+ggplot(df, aes(x = Years, y = Hits)) +
+  geom_point(aes(colour = Salary2)) +
+  scale_colour_brewer("Quintil Salario", palette = 5, guide = FALSE) +
+  geom_vline(xintercept = 5) +
+  geom_segment(aes(x = 5, xend = Inf, y = 100, yend = 100)) +
+  annotate("text", x = 2.5, y = 125, label = "R1") +
+  annotate("text", x = 15, y = 50, label = "R2") +
+  annotate("text", x = 15, y = 190, label = "R3") +
+  xlab("Year of Experience") +
+  ylab("N°of Hits Last Year") +
+  theme_minimal()
+```
+
+### Tree terminology
+
+Using the two magic ingredients previously mentioned (*partitions and prediction constants*) we built this simple tree.
+
+```{r, echo = FALSE}
+library(tree)
+fit1 <- tree(Salary2 ~ Years + Hits, data = df)
+fit1 <- prune.tree(fit1, best = 3)
+plot(fit1)
+text(fit1, pretty = 0, cex = 0.6)
+title("A simple tree model of Salary quintiles")
+```
+
+The split points in the above plot are more accurate of those previously mentioned (*5 and 100*). But before continuing in how to connect partitions and split points (*or cut points*) is useful define some terms:
+
+- The split points in the plot, which are the points that divide the predictor space in two regions, are called **internal nodes**. In the plot these are: 
+
+    - $Years < 4.5$, 
+    - $Hits < 103.5$
+
+- **Leaves** or **terminal nodes** are called to the regions at the end of each branch of the tree. In the plot these are:  
+
+    - $R_1 : \{X| Years <4.5\} = 0-20$, 
+    - $R_2 : \{X|Years\geq4.5, Hits <103.5\} = 40-60$, 
+    - $R_3 : \{X|Years\geq4.5,Hits \geq103.5\} = 80-100$
+
+
+## The partition process
+
+The algorithm used to partition the data space is known as **recursive binary splitting**. This algorithm work as follow:
+
+1. Find the split point $s$ that minimize the aggregated residual sum of the squares of the two regions that create $s$ for each predictor variable $X_i$: $$R_1 : \{X_i < s\} \wedge R_2:\{X_i \geq s \}$$ $$ARSS_i = RSS_{R_1} + RSS_{R_2}$$ 
+
+```{r}
+df <- ISLR::Hitters[, c("Salary", "Years", "Hits")]
+row.names(df) <- NULL
+df$Salary <- log(df$Salary)
+
+# remove the observation with missing values in the response variable
+df <- df[!is.na(df$Salary), ]
+x <- df$Years
+y <- df$Salary
+
+
+cut_points <- function(x) {
+  # Input: a vector with the values of a predictor variable
+  # Return the cut points to search the space for the optimal
+  #   cut point, the one that minimize the RSS of the two regions
+  to_s <- sort(x)
+  to_s <- unique(to_s)
+  s <- vector("double", length(to_s) - 1)
+  i <- 1
+  while (i < length(to_s)) {
+    s[i] <- (to_s[i + 1] + to_s[i]) / 2
+    i <- i + 1
+  }
+  s
+}
+
+
+find_split <- function(y, x, s) {
+  #
+  #
+  #
+  output <- vector("double", length(s))
+  for (i in 1:length(s)) {
+    half_plane <- x > s[i]
+    yhat1 <- mean(y[half_plane])
+    yhat2 <- mean(y[!half_plane])
+    e1 <- y[half_plane] - yhat1
+    e2 <- y[!half_plane] - yhat2
+    RSS1 <- sum(e1 ^ 2)
+    RSS2 <- sum(e2 ^ 2)
+    RSST <- RSS1 + RSS2
+    output[i] <- RSST
+    names(output)[i] <- s[i]
+  }
+  output
+}
+
+# usage
+output <- find_split(y, x, cut_points(x))
+
+p <- data.frame(x = as.double(names(output)), y = output,
+                stringsAsFactors = FALSE)
+
+minimum <- output[which.min(output)]
+min_point <- data.frame(x = as.double(names(minimum)), y = minimum,
+                      stringsAsFactors = FALSE)
+
+ggplot(data = p, aes(x = x, y = y)) + 
+  geom_point(data = min_point, aes(x, y), colour = "dark red", size = 3) +
+  geom_line(colour = "dark red") +
+  annotate("text", x = min_point$x + 2, y = min_point$y + 2, label = "4.5 años") +
+  xlab("Years") +
+  ylab("loss function") +
+  ggtitle("Puntos de corte para la variable año") +
+  theme_minimal()
+```
+
+[Link pregunta busqueda de s](https://stats.stackexchange.com/questions/300089/optimization-in-regression-trees-splitting/300093?noredirect=1#comment570253_300093)
+
+
+## Arboles de clasificación
+
+Para cada observación que caiga en la región $R_j$ realizamos la predicción de que dicha observación pertenece a la **clase más comun en**  $\mathbf{R_j}$
+
+Sin embargo, no se puede utilizar la suma de los residuos al cuadrado (SRC) como criterio de separación binaria.
+
+Criterios preferibles para la separación binaria:
+
+- Gini index:
+
+$$G = \sum_{k = 1}^{K}\widehat{p}_{mk}\;(1 - \widehat{p}_{mk})$$
+
+- Cross entropy: 
+
+$$D = -\sum_{k = 1}^{K}\widehat{p}_{mk}\;\log\widehat{p}_{mk}$$
+Los dos criterios anteriores serán cercanos a 0 sí $\widehat{p}_{mk}$ toma valores cercanos a 0 o 1. Por lo qué los dos criterios tomaran valores pequeños sí el nodo $m$ es puro (predominio de una clase).
+
+Concepto que queda más claro si graficamos la función de entropía.
+
+```{r}
+# función de entropia (Claude Shannon / Teoría de la información) 
+entropy <- function(p) {
+  -p * log2(p) - (1- p) * log2((1 - p))
+}
+
+# crear un vector con una secuencia de proporciones, i.e., 0, 0.01, etc
+p <- seq(0, 1, by = .01)
+
+# crear data frame con input - output
+df <- data.frame(proporcion = p, entropia = entropy(p))
+head(df)
+
+ggplot(df, aes(x = proporcion, y = entropia)) + 
+  geom_line() +
+  xlab("P(X)") +
+  ylab("H(X)") +
+  theme_minimal()
+```
+
+
+ 
+- 3 approaches might be used when *prunning* the tree: CER, GI and H
+
+- Gini index or the cross-entropy are typically used to evaluate the quality of a particular split (more sensitive to node purity that is the classification error rate)
+
+- classification error rate is preferable if prediction accuracy of the final pruned tree is the goal

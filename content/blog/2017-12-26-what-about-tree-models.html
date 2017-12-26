@@ -1,0 +1,187 @@
+---
+title: What about tree models?...Part I
+author: Cristóbal Alcázar
+date: '2017-12-26'
+slug: what-about-tree-models
+categories:
+  - R
+  - ML
+tags:
+  - ML
+  - AI
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+
+
+<p><span class="math inline">\(\newcommand{\R}{\mathbb{R}}\)</span></p>
+<p><em>This is the first post of a trilogy about tree based models. The goal is to unlock these kind of models and apply in a practical study case.</em></p>
+<ol style="list-style-type: decimal">
+<li><em>The first post is focus on understanding the fundamentals behind a single tree</em></li>
+<li><em>The second post about how to deal with some inherent disadvantage about these models</em></li>
+<li><em>Last but no least, a practical study case</em></li>
+</ol>
+<p><em>The idea is not to reinvent the wheel so you find many references to</em> <a href="http://www-bcf.usc.edu/~gareth/ISL/index.html">“An Introduction to Statistical Learning”</a> <em>(ISLR 2015) book, specifically the chapter 8.</em></p>
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<div id="partition-and-prediction-constants" class="section level3">
+<h3>Partition and Prediction constants</h3>
+<p>A simple tree can be built using two things, at least if we ignore the details, <strong>partition</strong> and <strong>prediction constants</strong>. Yes, that is all we need.</p>
+<p>We want to <em>learn a function from data</em> that maps a d-euclidean predictor space (<span class="math inline">\(X \in \R^d\)</span>) to a response variable <span class="math inline">\(Y\)</span>.</p>
+<p><span class="math display">\[f: \R^d \rightarrow Y\]</span> For a simple tree this function <span class="math inline">\(f\)</span> could take the following form:</p>
+<p><span class="math display">\[f(x) = \sum_{m = 1}^{m}c_mI(x \in R_m)\]</span></p>
+<ul>
+<li><p>The <strong>partition</strong> gives <span class="math inline">\(M\)</span> different regions,</p></li>
+<li><p>For each region we have a <strong>prediction constant</strong> <span class="math inline">\(c_m\)</span> associated to it. This is computed based on the training observations that belong to the region <span class="math inline">\(R_m\)</span>,</p></li>
+<li><p>So to predict just we need to follow the rules imposed by the partitions. Then we predict for a new observation the value of the constant <span class="math inline">\(c_m\)</span> that belong to the region defined by the rules.</p></li>
+<li><p>If we talking about a <strong>regression tree</strong>, <span class="math inline">\(c_m\)</span> will be the mean of the training observations of the region <span class="math inline">\(R_m\)</span>,</p></li>
+<li><p>If we talking about a <strong>classification tree</strong>, <span class="math inline">\(c_m\)</span> will be the class of the majority in the training observations of the region <span class="math inline">\(R_m\)</span>.</p></li>
+</ul>
+<p>Now we modify a little bit the baseball example of chapter 8 page 304 (ISLR 2015) to put these pieces in order. We focus on the salary of baseball players (<span class="math inline">\(Y\)</span>) but instead of treat this variable as a continuos variable like in the book we discretize in quintiles. We can look how the salary quintiles of baseball player behave with respect years of experience (<span class="math inline">\(X_1\)</span>) and the number of hit that made the player the last year (<span class="math inline">\(X_2\)</span>).</p>
+<p><img src="/blog/2017-12-26-what-about-tree-models_files/figure-html/unnamed-chunk-2-1.png" width="70%" style="display: block; margin: auto;" /></p>
+<p>We can notice that players which belong to higher quintiles of salary predominant above the 5 years of experience (approximately)</p>
+<p><img src="/blog/2017-12-26-what-about-tree-models_files/figure-html/unnamed-chunk-3-1.png" width="70%" style="display: block; margin: auto;" /></p>
+<p>In the new created region to the right of the vertical line, whether we focus on the <em>“N° of Hits Last Year”</em> variable, we could said that roughly above the 100 hits predominant player with higher quintiles of salary.</p>
+<p>Therefore 3 regions were derived from this “manually” data partition process. First in function of <em>Years of Experience</em> and then in <em>N° of Hits Last Year</em> variables.</p>
+<p><img src="/blog/2017-12-26-what-about-tree-models_files/figure-html/unnamed-chunk-4-1.png" width="70%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="tree-terminology" class="section level3">
+<h3>Tree terminology</h3>
+<p>Using the two magic ingredients previously mentioned (<em>partitions and prediction constants</em>) we built this simple tree.</p>
+<p><img src="/blog/2017-12-26-what-about-tree-models_files/figure-html/unnamed-chunk-5-1.png" width="70%" style="display: block; margin: auto;" /></p>
+<p>The split points in the above plot are more accurate of those previously mentioned (<em>5 and 100</em>). But before continuing in how to connect partitions and split points (<em>or cut points</em>) is useful define some terms:</p>
+<ul>
+<li><p>The split points in the plot, which are the points that divide the predictor space in two regions, are called <strong>internal nodes</strong>. In the plot these are:</p>
+<ul>
+<li><span class="math inline">\(Years &lt; 4.5\)</span>,</li>
+<li><span class="math inline">\(Hits &lt; 103.5\)</span></li>
+</ul></li>
+<li><p><strong>Leaves</strong> or <strong>terminal nodes</strong> are called to the regions at the end of each branch of the tree. In the plot these are:</p>
+<ul>
+<li><span class="math inline">\(R_1 : \{X| Years &lt;4.5\} = 0-20\)</span>,</li>
+<li><span class="math inline">\(R_2 : \{X|Years\geq4.5, Hits &lt;103.5\} = 40-60\)</span>,</li>
+<li><span class="math inline">\(R_3 : \{X|Years\geq4.5,Hits \geq103.5\} = 80-100\)</span></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="the-partition-process" class="section level2">
+<h2>The partition process</h2>
+<p>The algorithm used to partition the data space is known as <strong>recursive binary splitting</strong>. This algorithm work as follow:</p>
+<ol style="list-style-type: decimal">
+<li>Find the split point <span class="math inline">\(s\)</span> that minimize the aggregated residual sum of the squares of the two regions that create <span class="math inline">\(s\)</span> for each predictor variable <span class="math inline">\(X_i\)</span>: <span class="math display">\[R_1 : \{X_i &lt; s\} \wedge R_2:\{X_i \geq s \}\]</span> <span class="math display">\[ARSS_i = RSS_{R_1} + RSS_{R_2}\]</span></li>
+</ol>
+<pre class="r"><code>df &lt;- ISLR::Hitters[, c(&quot;Salary&quot;, &quot;Years&quot;, &quot;Hits&quot;)]
+row.names(df) &lt;- NULL
+df$Salary &lt;- log(df$Salary)
+
+# remove the observation with missing values in the response variable
+df &lt;- df[!is.na(df$Salary), ]
+x &lt;- df$Years
+y &lt;- df$Salary
+
+
+cut_points &lt;- function(x) {
+  # Input: a vector with the values of a predictor variable
+  # Return the cut points to search the space for the optimal
+  #   cut point, the one that minimize the RSS of the two regions
+  to_s &lt;- sort(x)
+  to_s &lt;- unique(to_s)
+  s &lt;- vector(&quot;double&quot;, length(to_s) - 1)
+  i &lt;- 1
+  while (i &lt; length(to_s)) {
+    s[i] &lt;- (to_s[i + 1] + to_s[i]) / 2
+    i &lt;- i + 1
+  }
+  s
+}
+
+
+find_split &lt;- function(y, x, s) {
+  #
+  #
+  #
+  output &lt;- vector(&quot;double&quot;, length(s))
+  for (i in 1:length(s)) {
+    half_plane &lt;- x &gt; s[i]
+    yhat1 &lt;- mean(y[half_plane])
+    yhat2 &lt;- mean(y[!half_plane])
+    e1 &lt;- y[half_plane] - yhat1
+    e2 &lt;- y[!half_plane] - yhat2
+    RSS1 &lt;- sum(e1 ^ 2)
+    RSS2 &lt;- sum(e2 ^ 2)
+    RSST &lt;- RSS1 + RSS2
+    output[i] &lt;- RSST
+    names(output)[i] &lt;- s[i]
+  }
+  output
+}
+
+# usage
+output &lt;- find_split(y, x, cut_points(x))
+
+p &lt;- data.frame(x = as.double(names(output)), y = output,
+                stringsAsFactors = FALSE)
+
+minimum &lt;- output[which.min(output)]
+min_point &lt;- data.frame(x = as.double(names(minimum)), y = minimum,
+                      stringsAsFactors = FALSE)
+
+ggplot(data = p, aes(x = x, y = y)) + 
+  geom_point(data = min_point, aes(x, y), colour = &quot;dark red&quot;, size = 3) +
+  geom_line(colour = &quot;dark red&quot;) +
+  annotate(&quot;text&quot;, x = min_point$x + 2, y = min_point$y + 2, label = &quot;4.5 años&quot;) +
+  xlab(&quot;Years&quot;) +
+  ylab(&quot;loss function&quot;) +
+  ggtitle(&quot;Puntos de corte para la variable año&quot;) +
+  theme_minimal()</code></pre>
+<p><img src="/blog/2017-12-26-what-about-tree-models_files/figure-html/unnamed-chunk-6-1.png" width="70%" style="display: block; margin: auto;" /></p>
+<p><a href="https://stats.stackexchange.com/questions/300089/optimization-in-regression-trees-splitting/300093?noredirect=1#comment570253_300093">Link pregunta busqueda de s</a></p>
+</div>
+<div id="arboles-de-clasificacion" class="section level2">
+<h2>Arboles de clasificación</h2>
+<p>Para cada observación que caiga en la región <span class="math inline">\(R_j\)</span> realizamos la predicción de que dicha observación pertenece a la <strong>clase más comun en</strong> <span class="math inline">\(\mathbf{R_j}\)</span></p>
+<p>Sin embargo, no se puede utilizar la suma de los residuos al cuadrado (SRC) como criterio de separación binaria.</p>
+<p>Criterios preferibles para la separación binaria:</p>
+<ul>
+<li>Gini index:</li>
+</ul>
+<p><span class="math display">\[G = \sum_{k = 1}^{K}\widehat{p}_{mk}\;(1 - \widehat{p}_{mk})\]</span></p>
+<ul>
+<li>Cross entropy:</li>
+</ul>
+<p><span class="math display">\[D = -\sum_{k = 1}^{K}\widehat{p}_{mk}\;\log\widehat{p}_{mk}\]</span> Los dos criterios anteriores serán cercanos a 0 sí <span class="math inline">\(\widehat{p}_{mk}\)</span> toma valores cercanos a 0 o 1. Por lo qué los dos criterios tomaran valores pequeños sí el nodo <span class="math inline">\(m\)</span> es puro (predominio de una clase).</p>
+<p>Concepto que queda más claro si graficamos la función de entropía.</p>
+<pre class="r"><code># función de entropia (Claude Shannon / Teoría de la información) 
+entropy &lt;- function(p) {
+  -p * log2(p) - (1- p) * log2((1 - p))
+}
+
+# crear un vector con una secuencia de proporciones, i.e., 0, 0.01, etc
+p &lt;- seq(0, 1, by = .01)
+
+# crear data frame con input - output
+df &lt;- data.frame(proporcion = p, entropia = entropy(p))
+head(df)
+##   proporcion   entropia
+## 1       0.00        NaN
+## 2       0.01 0.08079314
+## 3       0.02 0.14144054
+## 4       0.03 0.19439186
+## 5       0.04 0.24229219
+## 6       0.05 0.28639696
+
+ggplot(df, aes(x = proporcion, y = entropia)) + 
+  geom_line() +
+  xlab(&quot;P(X)&quot;) +
+  ylab(&quot;H(X)&quot;) +
+  theme_minimal()</code></pre>
+<p><img src="/blog/2017-12-26-what-about-tree-models_files/figure-html/unnamed-chunk-7-1.png" width="70%" style="display: block; margin: auto;" /></p>
+<ul>
+<li><p>3 approaches might be used when <em>prunning</em> the tree: CER, GI and H</p></li>
+<li><p>Gini index or the cross-entropy are typically used to evaluate the quality of a particular split (more sensitive to node purity that is the classification error rate)</p></li>
+<li><p>classification error rate is preferable if prediction accuracy of the final pruned tree is the goal</p></li>
+</ul>
+</div>
