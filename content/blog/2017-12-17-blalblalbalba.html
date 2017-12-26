@@ -32,8 +32,10 @@ head(mtcars)
 ## Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
 ## Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
 ## Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
+bg_col &lt;- &quot;#f2f2f2&quot;
 ggplot(mtcars, aes(x = mpg, y = disp)) +
-  geom_point()</code></pre>
+  geom_point() +
+  theme(plot.background = element_rect(fill = bg_col))</code></pre>
 <p><img src="/blog/2017-12-17-blalblalbalba_files/figure-html/unnamed-chunk-1-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p><span class="math display">\[x_2\]</span></p>
 </div>
