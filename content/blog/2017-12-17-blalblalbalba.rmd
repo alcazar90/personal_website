@@ -16,7 +16,7 @@ knitr::opts_chunk$set(collapse = TRUE, comments = "#>", message = FALSE,
 
 ## Grafico 1
 
-:smile:
+`r blogdown::shortcode('tweet', '852205086956818432')`
 
 ```{r, fig.align="center"}
 library(ggplot2)

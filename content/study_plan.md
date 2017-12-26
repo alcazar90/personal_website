@@ -7,7 +7,7 @@ slug = ""
 tags = ["learning", "MOOC", "education"]
 title = "Study Plan"
 showcomments = false
-showpagemeta = true
+showpagemeta = false
 +++
 
 The following courses are a collection of resources that I discover in my personal research to found high quality material.
@@ -23,7 +23,7 @@ The last course is based on the book: [Introduction to Applied Linear Algebra by
 
 ## Data Science
 
-[Data Science Specialization Coursera](https://www.coursera.org/specializations/jhu-data-science)
+[Data Science Specialization Coursera](https://www.coursera.org/specializations/jhu-data-science) [70% Complete]
 
 [Statistical Learning](https://lagunita.stanford.edu/courses/HumanitiesSciences/StatLearning/Winter2016/about)
 
@@ -32,13 +32,13 @@ The last course is based on the book: [Introduction to Applied Linear Algebra by
 
 ### Foundations
 
-[Introduction to Computer Science and Programming Using Python. MITx via EDX](https://www.edx.org/es/course/introduction-computer-science-mitx-6-00-1x-11)
+[Introduction to Computer Science and Programming Using Python. MITx via EDX](https://www.edx.org/es/course/introduction-computer-science-mitx-6-00-1x-11) [Complete]
 
 [Introduction to Computational Thinking and Data Science. MITx via EDX](https://www.edx.org/es/course/introduction-computational-thinking-data-mitx-6-00-2x-6)
 
 ### Artificial Intelligence MicroMasters
 
-[Artificial Intelligence (AI)](https://www.edx.org/es/course/artificial-intelligence-ai-columbiax-csmm-101x-4)
+[Artificial Intelligence (AI)](https://www.edx.org/es/course/artificial-intelligence-ai-columbiax-csmm-101x-4) [Complete]
 
 [Machine Learning](https://www.edx.org/es/course/machine-learning-columbiax-csmm-102x-2)
 

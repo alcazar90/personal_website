@@ -1,6 +1,6 @@
 ## Basic Configuration
 
-baseurl = "http://alkzar.cl/" 
+baseurl = "http://www.alkzar.cl/" 
 builddrafts = false
 canonifyurls = true
 relativeURLs = true
