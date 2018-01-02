@@ -27,19 +27,19 @@ The last course is based on the book: [Introduction to Applied Linear Algebra by
 
 [Statistical Learning](https://lagunita.stanford.edu/courses/HumanitiesSciences/StatLearning/Winter2016/about)
 
-[Machine Learning](https://www.coursera.org/learn/machine-learning) [Complete](https://www.coursera.org/account/accomplishments/certificate/ZDMPQ4RV7WCF)
+[Machine Learning](https://www.coursera.org/learn/machine-learning) [[Complete]](https://www.coursera.org/account/accomplishments/certificate/ZDMPQ4RV7WCF)
 
 ## Computer Science
 
 ### Foundations
 
-[Introduction to Computer Science and Programming Using Python. MITx via EDX](https://www.edx.org/es/course/introduction-computer-science-mitx-6-00-1x-11) [Complete](https://courses.edx.org/certificates/user/8109033/course/course-v1:MITx+6.00.1x+2T2017)
+[Introduction to Computer Science and Programming Using Python. MITx via EDX](https://www.edx.org/es/course/introduction-computer-science-mitx-6-00-1x-11) [[Complete]](https://courses.edx.org/certificates/user/8109033/course/course-v1:MITx+6.00.1x+2T2017)
 
 [Introduction to Computational Thinking and Data Science. MITx via EDX](https://www.edx.org/es/course/introduction-computational-thinking-data-mitx-6-00-2x-6)
 
 ### Artificial Intelligence MicroMasters
 
-[Artificial Intelligence (AI)](https://www.edx.org/es/course/artificial-intelligence-ai-columbiax-csmm-101x-4) [Complete](https://courses.edx.org/certificates/user/8109033/course/course-v1:ColumbiaX+CSMM.101x+2T2017_2)
+[Artificial Intelligence (AI)](https://www.edx.org/es/course/artificial-intelligence-ai-columbiax-csmm-101x-4) [[Complete]](https://courses.edx.org/certificates/user/8109033/course/course-v1:ColumbiaX+CSMM.101x+2T2017_2)
 
 [Machine Learning](https://www.edx.org/es/course/machine-learning-columbiax-csmm-102x-2)
 
