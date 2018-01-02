@@ -27,7 +27,7 @@ The last course is based on the book: [Introduction to Applied Linear Algebra by
 
 [Statistical Learning](https://lagunita.stanford.edu/courses/HumanitiesSciences/StatLearning/Winter2016/about)
 
-
+[Machine Learning](https://www.coursera.org/learn/machine-learning) [Complete]
 ## Computer Science
 
 ### Foundations
@@ -59,7 +59,12 @@ Greedy Algorithms, Minimum Spanning Trees, and Dynamic Programming
 Shortest Paths Revisited, NP-Complete Problems and What To Do About Them
 
 
+### Probabilistic Graphical Models
 
+[Specialization](https://www.coursera.org/specializations/probabilistic-graphical-models)
+Part I: Representation
+Part II: Inference
+Part III: Learning
 
 
 
