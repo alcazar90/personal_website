@@ -1,6 +1,6 @@
 ## Basic Configuration
 
-baseurl = "http://www.alkzar.cl/" 
+baseurl = "https://www.alkzar.cl/" 
 builddrafts = false
 canonifyurls = false
 relativeURLs = false
@@ -35,7 +35,7 @@ dateformat = "Jan 2, 2006"
 ## Site Meta Settings
 [params.meta]
 description = "Simple minimalist theme"
-keywords = "minimalist,blog,goa,hugo,developer"
+keywords = "blog,artificial-intelligence,machine-learning,data-science,computer-science"
 
 ## Social Accounts
 [params.social]
