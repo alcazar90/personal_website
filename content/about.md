@@ -10,7 +10,7 @@ showcomments = false
 showpagemeta = false
 +++
 
-I'm economic analyst working at Central bank of Chile. I have the ambition to play an interdisciplinary role analysing data, blending artificial intelligence with classic data analysis.
+I'm economic analyst working at [Central bank of Chile](http://www.bcentral.cl/). I have the ambition to play an interdisciplinary role analysing data, blending artificial intelligence with classic data analysis.
 
 So to achieve this goal I started the mythical journey of self-learning with the help of many online resources and learning by doing.
 
