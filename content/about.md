@@ -14,4 +14,4 @@ I'm economic analyst working at Central bank of Chile. I have the ambition to pl
 
 So to achieve this goal I started the mythical journey of self-learning with the help of many online resources and learning by doing.
 
-None mastery was acquiered without consistent practice...so this blog in part have the purpose to be pictures of practice.
+None mastery is acquiered without deliberative and consistent practice as Peter Norvig say in his post [Teach Yourself Programming in Ten Years](http://norvig.com/21-days.html)...so this blog in part have the purpose to be engine and pictures of practice.
