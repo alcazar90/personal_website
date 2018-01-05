@@ -10,8 +10,8 @@ showcomments = false
 showpagemeta = false
 +++
 
-I'm economic analyst working at [Central bank of Chile](http://www.bcentral.cl/). I have the ambition to play an interdisciplinary role analysing data, blending artificial intelligence with classic data analysis.
+I'm an economic analyst working at the [Central Bank of Chile](http://www.bcentral.cl/). I have the ambition to play an interdisciplinary role analysing data and blending artificial intelligence with classic data analysis.
 
-So to achieve this goal I started the mythical journey of self-learning with the help of many online resources and learning by doing.
+So to achieve this goal I taking a learning by doing approach and I became a self learning monk with the help of many online resources and cups of tea.
 
-None mastery is acquiered without deliberative and consistent practice as Peter Norvig say in his post [Teach Yourself Programming in Ten Years](http://norvig.com/21-days.html)...so this blog in part have the purpose to be engine and pictures of practice.
+None mastery is acquiered without deliberative and consistent practice, as Peter Norvig said in his post [Teach Yourself Programming in Ten Years](http://norvig.com/21-days.html)...so this blog have the purpose to left a trail of my learning.
