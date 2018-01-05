@@ -34,7 +34,7 @@ dateformat = "Jan 2, 2006"
 
 ## Site Meta Settings
 [params.meta]
-description = "Simple minimalist theme"
+description = "Analytics + Artificial-Intelligence Blog"
 keywords = "blog,artificial-intelligence,machine-learning,data-science,computer-science"
 
 ## Social Accounts
