@@ -5,7 +5,7 @@ date: '2018-01-16'
 slug: a-data-wrangling-case-with-r
 categories: []
 tags: []
-comments: no
+comments: yes
 showcomments: yes
 showpagemeta: yes
 ---
@@ -16,6 +16,9 @@ So, for other side, data in real life isn’t always friendly. Data can take dif
 
 ![](img/spreadsheet_shock.jpg#center){ width=60% }
 
+But to be fair not all the spreadsheets are a mess when we talk about "share". For "mess" I refer to a more than one table island floating in a ocean of blank cells with clouds of metainformation headers relative to the tables...ok
+ 
+You can look by yourself to catch what I try to said in the following magistral example, but let me give you some context before that. The following tweets are a...
 
 `r blogdown::shortcode('tweet', '717815339480977410#center')`
 `r blogdown::shortcode('tweet', '718170667573579776')`
