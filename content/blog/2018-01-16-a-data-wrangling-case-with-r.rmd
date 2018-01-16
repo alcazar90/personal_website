@@ -14,10 +14,9 @@ Data wrangling refer to the process to map raw data to a format more suitable to
 
 So, for other side, data in real life isn’t always friendly. Data can take different formats and also many people (or institutions) share the data in not the most “shareable” format. One of these types of formats are the spreadsheets kind.
 
-![My picture](/img/spreadsheet_shock.jpeg)
-...also data in real life isn't always friendly.
+![](img/spreadsheet_shock.jpg#center){ width=60% }
 
 
-`r blogdown::shortcode('tweet', '717815339480977410')`
+`r blogdown::shortcode('tweet', '717815339480977410#center')`
 `r blogdown::shortcode('tweet', '718170667573579776')`
 
