@@ -3,8 +3,8 @@ title: A data wrangling case with spreadsheets using R
 author: Cristóbal Alcázar
 date: '2018-01-16'
 slug: a-data-wrangling-case-with-r
-categories: []
-tags: []
+categories: [R]
+tags: [R, Data-Science]
 comments: yes
 showcomments: yes
 showpagemeta: yes
@@ -12,12 +12,36 @@ showpagemeta: yes
 
 
 
-<p>Data wrangling refer to the process to map raw data to a format more suitable to model, visualize or in general to work with it. This process is usually thinking as an early stage of the data analysis pipeline. But can required in other different stages, so a good data wrangling skills is a must to the data analysis process.</p>
-<p>So, for other side, data in real life isn’t always friendly. Data can take different formats and also many people (or institutions) share the data in not the most “shareable” format. One of these types of formats are the spreadsheets kind.</p>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Data wrangling is the process of mapping raw data to a format more suitable to model, visualize or in general to work it. This process is usually thinking as an early stage of the data analysis pipeline (<em>i.e. first I need a nice table to start the analysis</em>). But the skills involved in the process are useful whenever you need to reshape or try to look your data from different perspectives or also when you need to adapt to some tool that required a specific format. The point is: <strong>good data wrangling skills more than a benefit is a must in the data analysis process.</strong></p>
+<p>Also data in real life isn’t always friendly. Data can take different formats and also many people (or institutions) share the data in not the most <em>“shareable”</em> way. One of these types of format are the spreadsheets kind.</p>
 <div class="figure">
 <img src="img/spreadsheet_shock.jpg#center" style="width:60.0%" />
 
 </div>
-<p>But to be fair not all the spreadsheets are a mess when we talk about “share”. For “mess” I refer to a more than one table island floating in a ocean of blank cells with clouds of metainformation headers relative to the tables…ok</p>
-<p>You can look by yourself to catch what I try to said in the following magistral example, but let me give you some context before that. The following tweets are in the context of extract information from a spreadsheets and common problems</p>
-<p>{{% tweet "717815339480977410#center" %}} {{% tweet "718170667573579776" %}}</p>
+<p>To be fair not all the spreadsheets are a mess when we talk about share. For “mess” I refer to more than one table (<em>per sheet</em>) island floating in a ocean of blank cells with clouds of metainformation headers relative to the tables…ok</p>
+<p>You can look by yourself to catch what I try to say in the following magistral example, but let me give you some context before that. These tweets represent a challenge accepted by <a href="http://varianceexplained.org/">David Robinson –<em>data scientist at stackoverflow</em>–</a>, that consist in turn a <a href="https://pbs.twimg.com/media/CfYprHYUMAAItQ7.jpg:large">spreadsheet</a> (<em>xlsx file</em>) into a tidy data…but what about that? Well, as I said before, spreadsheets can be extremely difficult to manage into a workable format. I mean is a time consuming task and David Robinson deal with this problem with <a href="http://rpubs.com/dgrtwo/tidying-enron">a very fluently approach</a>.</p>
+{{% tweet "717815339480977410#center" %}}
+{{% tweet "718170667573579776" %}}
+<p>Basically the idea of this post is highlight some steps of the cleaning and then apply the insights of these steps in a case with a data contained into 3 xlsx files with many sheets.</p>
+</div>
+<div id="the-highlights-steps" class="section level2">
+<h2>The highlights steps</h2>
+<div id="step-1-the-coordinate-view" class="section level3">
+<h3>Step 1: the coordinate-view</h3>
+<pre class="r"><code>tidy_excel &lt;- function(x) {
+  x %&gt;% 
+    setNames(seq_len(ncol(x))) %&gt;% 
+    mutate(row = row_number()) %&gt;% 
+    tidyr::gather(column, value, -row) %&gt;% 
+    mutate(column = as.integer(column)) %&gt;% 
+    group_by(row) %&gt;% 
+    filter(!all(is.na(value))) %&gt;% 
+    group_by(column) %&gt;% 
+    filter(!all(is.na(value))) %&gt;% 
+    ungroup() %&gt;% 
+    arrange(column, row)
+}</code></pre>
+</div>
+</div>

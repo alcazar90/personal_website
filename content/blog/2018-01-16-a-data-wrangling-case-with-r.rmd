@@ -3,23 +3,50 @@ title: A data wrangling case with spreadsheets using R
 author: Cristóbal Alcázar
 date: '2018-01-16'
 slug: a-data-wrangling-case-with-r
-categories: []
-tags: []
+categories: [R]
+tags: [R, Data-Science]
 comments: yes
 showcomments: yes
 showpagemeta: yes
 ---
 
-Data wrangling refer to the process to map raw data to a format more suitable to model, visualize or in general to work with it. This process is usually thinking as an early stage of the data analysis pipeline. But can required in other different stages, so a good data wrangling skills is a must to the data analysis process.
+## Introduction 
 
-So, for other side, data in real life isn’t always friendly. Data can take different formats and also many people (or institutions) share the data in not the most “shareable” format. One of these types of formats are the spreadsheets kind.
+Data wrangling is the process of mapping raw data to a format more suitable to model, visualize or in general to work it. This process is usually thinking as an early stage of the data analysis pipeline (*i.e. first I need a nice table to start the analysis*). But the skills involved in the process are useful whenever you need to reshape or try to look your data from different perspectives or also when you need to adapt to some tool that required a specific format. The point is: **good data wrangling skills more than a benefit is a must in the data analysis process.**
+
+Also data in real life isn’t always friendly. Data can take different formats and also many people (or institutions) share the data in not the most *“shareable”* way. One of these types of format are the spreadsheets kind.
 
 ![](img/spreadsheet_shock.jpg#center){ width=60% }
 
-But to be fair not all the spreadsheets are a mess when we talk about "share". For "mess" I refer to a more than one table island floating in a ocean of blank cells with clouds of metainformation headers relative to the tables...ok
+To be fair not all the spreadsheets are a mess when we talk about share. For "mess" I refer to more than one table (*per sheet*) island floating in a ocean of blank cells with clouds of metainformation headers relative to the tables...ok
  
-You can look by yourself to catch what I try to said in the following magistral example, but let me give you some context before that. The following tweets are a...
+You can look by yourself to catch what I try to say in the following magistral example, but let me give you some context before that. These tweets represent a challenge accepted by [David Robinson --*data scientist at stackoverflow*--](http://varianceexplained.org/), that consist in turn a [spreadsheet](https://pbs.twimg.com/media/CfYprHYUMAAItQ7.jpg:large) (*xlsx file*) into a tidy data...but what about that? Well, as I said before, spreadsheets can be extremely difficult to manage into a workable format. I mean is a time consuming task and David Robinson deal with this problem with [a very fluently approach](http://rpubs.com/dgrtwo/tidying-enron). 
+
 
 `r blogdown::shortcode('tweet', '717815339480977410#center')`
+
 `r blogdown::shortcode('tweet', '718170667573579776')`
+
+Basically the idea of this post is highlight some steps of the cleaning and then apply the insights of these steps in a case with a data contained into 3 xlsx files with many sheets.
+
+## The highlights steps
+
+### Step 1: the coordinate-view
+
+```{r}
+tidy_excel <- function(x) {
+  x %>% 
+    setNames(seq_len(ncol(x))) %>% 
+    mutate(row = row_number()) %>% 
+    tidyr::gather(column, value, -row) %>% 
+    mutate(column = as.integer(column)) %>% 
+    group_by(row) %>% 
+    filter(!all(is.na(value))) %>% 
+    group_by(column) %>% 
+    filter(!all(is.na(value))) %>% 
+    ungroup() %>% 
+    arrange(column, row)
+}
+```
+
 

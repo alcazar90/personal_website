@@ -10,7 +10,7 @@ showcomments = false
 showpagemeta = false
 +++
 
-I'm a data analyst working at the [Central Bank of Chile](http://www.bcentral.cl/). I have the ambition to play an interdisciplinary role blending artificial intelligence with classic data analysis.
+I'm a data analyst working at the [Central Bank of Chile](http://www.bcentral.cl/). I have the ambition to play an interdisciplinary role blending artificial intelligence with classic data analysis. Specially interested in interpretability
 
 So to achieve this goal I taken a learning by doing approach and I became a self learning monk with the help of many online resources and cups of tea.
 

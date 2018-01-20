@@ -4,12 +4,8 @@ author: Cristóbal Alcázar
 date: '2017-12-26'
 draft: true
 slug: what-about-tree-models
-categories:
-  - R
-  - ML
-tags:
-  - ML
-  - AI
+categories: [R, ML]
+tags: [ML, AI, tree]
 comments: yes
 showcomments: yes
 showpagemeta: yes
