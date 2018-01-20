@@ -20,20 +20,45 @@ Also data in real life isn’t always friendly. Data can take different formats 
 
 To be fair not all the spreadsheets are a mess when we talk about share. For "mess" I refer to more than one table (*per sheet*) island floating in a ocean of blank cells with clouds of metainformation headers relative to the tables...ok
  
-You can look by yourself to catch what I try to say in the following magistral example, but let me give you some context before that. These tweets represent a challenge accepted by [David Robinson --*data scientist at stackoverflow*--](http://varianceexplained.org/), that consist in turn a [spreadsheet](https://pbs.twimg.com/media/CfYprHYUMAAItQ7.jpg:large) (*xlsx file*) into a tidy data...but what about that? Well, as I said before, spreadsheets can be extremely difficult to manage into a workable format. I mean is a time consuming task and David Robinson deal with this problem with [a very fluently approach](http://rpubs.com/dgrtwo/tidying-enron). 
-
+You can look by yourself to catch what I try to say in the following magistral example, but let me give you some context before that. These tweets represent a challenge accepted by <a href="http://varianceexplained.org/" target="_blank">David Robinson --*data scientist at stackoverflow*--</a>, that consist in turn a <a href="https://pbs.twimg.com/media/CfYprHYUMAAItQ7.jpg:large" target="_blank">spreadsheet</a> (*xlsx file*) into a tidy data...but what about that? Well, as I said before, spreadsheets can be extremely difficult to manage into a workable format. I mean is a time consuming task and isn't so rare to be in front of a messy spreadsheet. David Robinson dealt with the problem in <a href="http://rpubs.com/dgrtwo/tidying-enron" target="_blank">a very simple and fluently way</a>.
 
 `r blogdown::shortcode('tweet', '717815339480977410#center')`
 
 `r blogdown::shortcode('tweet', '718170667573579776')`
 
-Basically the idea of this post is highlight some steps of the cleaning and then apply the insights of these steps in a case with a data contained into 3 xlsx files with many sheets.
+Basically the idea of this post is highlight some steps of the cleaning and then apply the insights of these steps on a case of a data contained into 3 xlsx files with many sheets.
 
 ## The highlights steps
 
-### Step 1: the coordinate-view
+### Step 1: The coordinate-view
+
+Consider the next innocent table as an example.
+
+![](img/sheet_example.png#center){ width=50% }
+
+It's easy to import the above spreadsheet and obtain rectangular table in R, filled with missing values (NA) instead of the blank cells. You can take a look to the first six rows.
+
+```{r, echo=FALSE}
+colA <- c("Expanded Homicide Data Table 8", "Murder Victims", "by Weapon, 2004-2008", "Weapons", "Total", "Total firearms:", "Handguns", "Rifles", "Shotguns", "Other guns", "Firearms, type not stated", "Knives or cutting instruments", "Blunt objetcs (clubs, hammers, etc)", "Personal weapons (hands, fist, feet, etc)1", "Poison", "Explosives", "Fire", "Narcotics", "Drowning", "Strangulation", "Asphyxiation", "Other weapons or weapons not stated", "1 Pushed is included in personal weapons")
+colB <- c(NA, NA, NA, 2004, 14210, 9385, 7286, 403, 507, 117, 1072, 1866, 667, 
+          943, 13, 1, 118, 80, 16, 156, 109, 856, NA)
+colC <- c(NA, NA, NA, 2005, 14965, 10158, 7565, 445, 522, 138, 1488, 1920, 608,
+          905, 9, 2,  125, 46, 20, 118, 96, 958, NA)
+colD <- c(NA, NA, NA, 2006, 15087, 10225, 7836, 438, 490, 107, 1354, 1830, 618, 
+          841, 12, 1, 117, 48, 12, 137, 106, 1140, NA)
+colE <- c(NA, NA, NA, 2007, 14916, 10129, 7398, 453, 457, 116, 1705, 1817, 647, 869, 
+          10, 1, 131, 52, 12, 134, 109, 1005, NA)
+colF <- c(NA, NA, NA, 2008, 14180, 9484, 6755, 375, 444, 79, 1831, 1897, 614, 861,
+          10, 10, 86, 33, 15, 88, 89, 993, NA)
+example <- data.frame(X1 = colA, X2 = colB, X3 = colC, X4 = colD, X5 = colE, X6 = colF)
+head(example)
+```
+
+The important of this step is make explicitly the position of each value (cell) on the spreadsheet --in the row *i* and the column *j* is the value $x_{i,j}$--and the following function reorganize the data in that way.
 
 ```{r}
+library(dplyr)
+library(tidyr)
 tidy_excel <- function(x) {
   x %>% 
     setNames(seq_len(ncol(x))) %>% 
@@ -47,6 +72,12 @@ tidy_excel <- function(x) {
     ungroup() %>% 
     arrange(column, row)
 }
+
+tidy_excel(example)
 ```
 
 
+## Step 2: Make your shot with regex
+
+
+<iframe src="https://giphy.com/embed/VIikhF8kK7eFO" width="480" height="313" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/video-games-assassins-creed-iv-black-flag-VIikhF8kK7eFO"></a></p>

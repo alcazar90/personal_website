@@ -21,16 +21,32 @@ showpagemeta: yes
 
 </div>
 <p>To be fair not all the spreadsheets are a mess when we talk about share. For “mess” I refer to more than one table (<em>per sheet</em>) island floating in a ocean of blank cells with clouds of metainformation headers relative to the tables…ok</p>
-<p>You can look by yourself to catch what I try to say in the following magistral example, but let me give you some context before that. These tweets represent a challenge accepted by <a href="http://varianceexplained.org/">David Robinson –<em>data scientist at stackoverflow</em>–</a>, that consist in turn a <a href="https://pbs.twimg.com/media/CfYprHYUMAAItQ7.jpg:large">spreadsheet</a> (<em>xlsx file</em>) into a tidy data…but what about that? Well, as I said before, spreadsheets can be extremely difficult to manage into a workable format. I mean is a time consuming task and David Robinson deal with this problem with <a href="http://rpubs.com/dgrtwo/tidying-enron">a very fluently approach</a>.</p>
+<p>You can look by yourself to catch what I try to say in the following magistral example, but let me give you some context before that. These tweets represent a challenge accepted by <a href="http://varianceexplained.org/" target="_blank">David Robinson –<em>data scientist at stackoverflow</em>–</a>, that consist in turn a <a href="https://pbs.twimg.com/media/CfYprHYUMAAItQ7.jpg:large" target="_blank">spreadsheet</a> (<em>xlsx file</em>) into a tidy data…but what about that? Well, as I said before, spreadsheets can be extremely difficult to manage into a workable format. I mean is a time consuming task and isn’t so rare to be in front of a messy spreadsheet. David Robinson dealt with the problem in <a href="http://rpubs.com/dgrtwo/tidying-enron" target="_blank">a very simple and fluently way</a>.</p>
 {{% tweet "717815339480977410#center" %}}
 {{% tweet "718170667573579776" %}}
-<p>Basically the idea of this post is highlight some steps of the cleaning and then apply the insights of these steps in a case with a data contained into 3 xlsx files with many sheets.</p>
+<p>Basically the idea of this post is highlight some steps of the cleaning and then apply the insights of these steps on a case of a data contained into 3 xlsx files with many sheets.</p>
 </div>
 <div id="the-highlights-steps" class="section level2">
 <h2>The highlights steps</h2>
 <div id="step-1-the-coordinate-view" class="section level3">
-<h3>Step 1: the coordinate-view</h3>
-<pre class="r"><code>tidy_excel &lt;- function(x) {
+<h3>Step 1: The coordinate-view</h3>
+<p>Consider the next innocent table as an example.</p>
+<div class="figure">
+<img src="img/sheet_example.png#center" style="width:50.0%" />
+
+</div>
+<p>It’s easy to import the above spreadsheet and obtain rectangular table in R, filled with missing values (NA) instead of the blank cells. You can take a look to the first six rows.</p>
+<pre><code>##                               X1    X2    X3    X4    X5    X6
+## 1 Expanded Homicide Data Table 8    NA    NA    NA    NA    NA
+## 2                 Murder Victims    NA    NA    NA    NA    NA
+## 3           by Weapon, 2004-2008    NA    NA    NA    NA    NA
+## 4                        Weapons  2004  2005  2006  2007  2008
+## 5                          Total 14210 14965 15087 14916 14180
+## 6                Total firearms:  9385 10158 10225 10129  9484</code></pre>
+<p>The important of this step is make explicitly the position of each value (cell) on the spreadsheet –in the row <em>i</em> and the column <em>j</em> is the value <span class="math inline">\(x_{i,j}\)</span>–and the following function reorganize the data in that way.</p>
+<pre class="r"><code>library(dplyr)
+library(tidyr)
+tidy_excel &lt;- function(x) {
   x %&gt;% 
     setNames(seq_len(ncol(x))) %&gt;% 
     mutate(row = row_number()) %&gt;% 
@@ -42,6 +58,30 @@ showpagemeta: yes
     filter(!all(is.na(value))) %&gt;% 
     ungroup() %&gt;% 
     arrange(column, row)
-}</code></pre>
+}
+
+tidy_excel(example)
+## # A tibble: 138 x 3
+##      row column                          value
+##    &lt;int&gt;  &lt;int&gt;                          &lt;chr&gt;
+##  1     1      1 Expanded Homicide Data Table 8
+##  2     2      1                 Murder Victims
+##  3     3      1           by Weapon, 2004-2008
+##  4     4      1                        Weapons
+##  5     5      1                          Total
+##  6     6      1                Total firearms:
+##  7     7      1                       Handguns
+##  8     8      1                         Rifles
+##  9     9      1                       Shotguns
+## 10    10      1                     Other guns
+## # ... with 128 more rows</code></pre>
 </div>
+</div>
+<div id="step-2-make-your-shot-with-regex" class="section level2">
+<h2>Step 2: Make your shot with regex</h2>
+<iframe src="https://giphy.com/embed/VIikhF8kK7eFO" width="480" height="313" frameBorder="0" class="giphy-embed" allowFullScreen>
+</iframe>
+<p>
+<a href="https://giphy.com/gifs/video-games-assassins-creed-iv-black-flag-VIikhF8kK7eFO"></a>
+</p>
 </div>
