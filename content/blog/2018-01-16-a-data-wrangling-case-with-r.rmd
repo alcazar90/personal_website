@@ -35,7 +35,7 @@ So in the rest of the post I will dedicate to highlight some steps of the David 
 
 Consider the next innocent table as an example.
 
-![](img/sheet_example.png#center){ width=65% }
+![](img/murdervictims.png#center){ width=65% }
 
 It's easy to import the above spreadsheet with the `readxl::read_excel` function and obtain a rectangular table in R, filled with missing values (NA) instead of blank cells. You can take a look of the first six rows.
 
