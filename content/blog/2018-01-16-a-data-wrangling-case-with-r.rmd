@@ -12,31 +12,38 @@ showpagemeta: yes
 
 ## Introduction 
 
-Data wrangling is the process of mapping raw data to a format more suitable to model, visualize or in general to work it. This process is usually thinking as an early stage of the data analysis pipeline (*i.e. first I need a nice table to start the analysis*). But the skills involved in the process are useful whenever you need to reshape or try to look your data from different perspectives or also when you need to adapt to some tool that required a specific format. The point is: **good data wrangling skills more than a benefit is a must in the data analysis process.**
+Data wrangling is the process of mapping raw data to a format more suitable to model, visualize or in general to work it. This process is usually thought as an early stage of the data analysis pipeline (*i.e. I need a nice table to start the analysis*). But the skills involved in the process are useful whenever you need to reshape, try to look your data from different perspectives or when you need to adapt some new tool that required a specific format. The reflexion is: **data wrangling skills have more to say that only in an initial stage of the analysis, it can be augmented with these skills, enabling more flexibility and expressiveness in the whole pipeline**.
 
-Also data in real life isn’t always friendly. Data can take different formats and also many people (or institutions) share the data in not the most *“shareable”* way. One of these types of format are the spreadsheets kind.
+But more than the reflexion, the reason of this post is to show the essential of data wrangling: dominate data or take control of it. As you know, data in real life aren't always friendly, is not uncommon to found problems with the shape or/and format how came data. And one of these type of problems are the spreadsheets kind.
 
 ![](img/spreadsheet_shock.jpg#center){ width=60% }
 
-To be fair not all the spreadsheets are a mess when we talk about share. For "mess" I refer to more than one table (*per sheet*) island floating in a ocean of blank cells with clouds of metainformation headers relative to the tables...ok
- 
-You can look by yourself to catch what I try to say in the following magistral example, but let me give you some context before that. These tweets represent a challenge accepted by <a href="http://varianceexplained.org/" target="_blank">David Robinson --*data scientist at stackoverflow*--</a>, that consist in turn a <a href="https://pbs.twimg.com/media/CfYprHYUMAAItQ7.jpg:large" target="_blank">spreadsheet</a> (*xlsx file*) into a tidy data...but what about that? Well, as I said before, spreadsheets can be extremely difficult to manage into a workable format. I mean is a time consuming task and isn't so rare to be in front of a messy spreadsheet. David Robinson dealt with the problem in <a href="http://rpubs.com/dgrtwo/tidying-enron" target="_blank">a very simple and fluently way</a>.
+To be fair not all the spreadsheets are a problem. Let me clarify what I refer for "problem", the mess of more than one table per sheet like islands floating in a ocean of blank cells with clouds of metainformation headers relative to the tables...ok
+
+
+You can look by yourself what I try to say in the following magistral example, but let me give you some context before that. Below of this paragraph you can find a series of tweets belonged to very well known data scientists (*if you don't hear about them, I strongly recommend that you follow them*). The discussion is about a challenge to turn <a href="https://t.co/v9ucC0Vj2t" target="_blank">this spreadsheet</a> (a xlsx file) into a tidy data--*the grace is that the spreadsheet suffer the problems that I tried to describe*--and <a href="http://varianceexplained.org/" target="_blank">David Robinson (*the challenged*) </a>deal with the problem in  <a href="http://rpubs.com/dgrtwo/tidying-enron" target="_blank">a very simple and fluently way</a>.
 
 `r blogdown::shortcode('tweet', '717815339480977410#center')`
 
 `r blogdown::shortcode('tweet', '718170667573579776')`
 
-Basically the idea of this post is highlight some steps of the cleaning and then apply the insights of these steps on a case of a data contained into 3 xlsx files with many sheets.
+So in the rest of the post I will dedicate to highlight some steps of the David Robinson answer to the tweet challenge, and then apply the insights on a case of data contained in multiple xlsx files with many sheets.
 
 ## The highlights steps
 
-### Step 1: The coordinate-view
+### Step 1: The coordinate-form
 
 Consider the next innocent table as an example.
 
-![](img/sheet_example.png#center){ width=50% }
+![](img/sheet_example.png#center){ width=65% }
 
-It's easy to import the above spreadsheet and obtain rectangular table in R, filled with missing values (NA) instead of the blank cells. You can take a look to the first six rows.
+It's easy to import the above spreadsheet with the `readxl::read_excel` function and obtain a rectangular table in R, filled with missing values (NA) instead of blank cells. You can take a look of the first six rows.
+
+```{r, eval=FALSE}
+library(readxl)
+df <- readxl::read_excel("./innocent_table.xlsx")
+head(df)
+```
 
 ```{r, echo=FALSE}
 colA <- c("Expanded Homicide Data Table 8", "Murder Victims", "by Weapon, 2004-2008", "Weapons", "Total", "Total firearms:", "Handguns", "Rifles", "Shotguns", "Other guns", "Firearms, type not stated", "Knives or cutting instruments", "Blunt objetcs (clubs, hammers, etc)", "Personal weapons (hands, fist, feet, etc)1", "Poison", "Explosives", "Fire", "Narcotics", "Drowning", "Strangulation", "Asphyxiation", "Other weapons or weapons not stated", "1 Pushed is included in personal weapons")
@@ -54,12 +61,18 @@ example <- data.frame(X1 = colA, X2 = colB, X3 = colC, X4 = colD, X5 = colE, X6 
 head(example)
 ```
 
-The important of this step is make explicitly the position of each value (cell) on the spreadsheet --in the row *i* and the column *j* is the value $x_{i,j}$--and the following function reorganize the data in that way.
+
+
+The importance of this step is to describe explicitly the position of each cell-value of the spreadsheet into the R's data frame--*in row* $i$ *and column* $j$ *you found the value* $x_{i,j}$--and the following function reorganize the data accordingly.
 
 ```{r}
 library(dplyr)
 library(tidyr)
 tidy_excel <- function(x) {
+  #
+  # Take a data frame imported from the spreadsheet and make
+  # explicit, in the data frame, the position of each value
+  #
   x %>% 
     setNames(seq_len(ncol(x))) %>% 
     mutate(row = row_number()) %>% 
@@ -76,8 +89,26 @@ tidy_excel <- function(x) {
 tidy_excel(example)
 ```
 
+As you can observe, two new index-columns are created, one by each dimension (rows and columns). In this way, all the original columns can be express as values of these two dimensions. 
 
-## Step 2: Make your shot with regex
+- **Q:** *Why can be useful this coordinate form?*
+
+- **A:** *It's possible to take advantage of manipulate the data based on the physical position of the template using operations over the columns and the rows. In fact,* `tidy_excel` *apart of reshape data into the coordinate form is also an example of this. Pay attention to this code snippet.*
+
+```{r, eval = FALSE}
+# ...from the definition of tidy_excel
+  group_by(row) %>%  # group by row index
+  filter(!all(is.na(value))) %>%  # discard empty rows (row-groups that contain only NA values)
+  group_by(column) %>%  # group by col index
+  filter(!all(is.na(value))) # discard empty cols (col-groups that contain only NA values)
+```
+
+Another useful reason of the coordinate-form is explain in the next step.
+
+### Step 2: Make your shot with regex
 
 
-<iframe src="https://giphy.com/embed/VIikhF8kK7eFO" width="480" height="313" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/video-games-assassins-creed-iv-black-flag-VIikhF8kK7eFO"></a></p>
+<iframe src="https://giphy.com/embed/VIikhF8kK7eFO" width="480" height="313" frameBorder="0" align="middle"></iframe><p><a href="https://giphy.com/gifs/video-games-assassins-creed-iv-black-flag-VIikhF8kK7eFO"></a></p>
+
+## The Case
+

@@ -14,28 +14,31 @@ showpagemeta: yes
 
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>Data wrangling is the process of mapping raw data to a format more suitable to model, visualize or in general to work it. This process is usually thinking as an early stage of the data analysis pipeline (<em>i.e. first I need a nice table to start the analysis</em>). But the skills involved in the process are useful whenever you need to reshape or try to look your data from different perspectives or also when you need to adapt to some tool that required a specific format. The point is: <strong>good data wrangling skills more than a benefit is a must in the data analysis process.</strong></p>
-<p>Also data in real life isn’t always friendly. Data can take different formats and also many people (or institutions) share the data in not the most <em>“shareable”</em> way. One of these types of format are the spreadsheets kind.</p>
+<p>Data wrangling is the process of mapping raw data to a format more suitable to model, visualize or in general to work it. This process is usually thought as an early stage of the data analysis pipeline (<em>i.e. I need a nice table to start the analysis</em>). But the skills involved in the process are useful whenever you need to reshape, try to look your data from different perspectives or when you need to adapt some new tool that required a specific format. The reflexion is: <strong>data wrangling skills have more to say that only in an initial stage of the analysis, it can be augmented with these skills, enabling more flexibility and expressiveness in the whole pipeline</strong>.</p>
+<p>But more than the reflexion, the reason of this post is to show the essential of data wrangling: dominate data or take control of it. As you know, data in real life aren’t always friendly, is not uncommon to found problems with the shape or/and format how came data. And one of these type of problems are the spreadsheets kind.</p>
 <div class="figure">
 <img src="img/spreadsheet_shock.jpg#center" style="width:60.0%" />
 
 </div>
-<p>To be fair not all the spreadsheets are a mess when we talk about share. For “mess” I refer to more than one table (<em>per sheet</em>) island floating in a ocean of blank cells with clouds of metainformation headers relative to the tables…ok</p>
-<p>You can look by yourself to catch what I try to say in the following magistral example, but let me give you some context before that. These tweets represent a challenge accepted by <a href="http://varianceexplained.org/" target="_blank">David Robinson –<em>data scientist at stackoverflow</em>–</a>, that consist in turn a <a href="https://pbs.twimg.com/media/CfYprHYUMAAItQ7.jpg:large" target="_blank">spreadsheet</a> (<em>xlsx file</em>) into a tidy data…but what about that? Well, as I said before, spreadsheets can be extremely difficult to manage into a workable format. I mean is a time consuming task and isn’t so rare to be in front of a messy spreadsheet. David Robinson dealt with the problem in <a href="http://rpubs.com/dgrtwo/tidying-enron" target="_blank">a very simple and fluently way</a>.</p>
+<p>To be fair not all the spreadsheets are a problem. Let me clarify what I refer for “problem”, the mess of more than one table per sheet like islands floating in a ocean of blank cells with clouds of metainformation headers relative to the tables…ok</p>
+<p>You can look by yourself what I try to say in the following magistral example, but let me give you some context before that. Below of this paragraph you can find a series of tweets belonged to very well known data scientists (<em>if you don’t hear about them, I strongly recommend that you follow them</em>). The discussion is about a challenge to turn <a href="https://t.co/v9ucC0Vj2t" target="_blank">this spreadsheet</a> (a xlsx file) into a tidy data–<em>the grace is that the spreadsheet suffer the problems that I tried to describe</em>–and <a href="http://varianceexplained.org/" target="_blank">David Robinson (<em>the challenged</em>) </a>deal with the problem in <a href="http://rpubs.com/dgrtwo/tidying-enron" target="_blank">a very simple and fluently way</a>.</p>
 {{% tweet "717815339480977410#center" %}}
 {{% tweet "718170667573579776" %}}
-<p>Basically the idea of this post is highlight some steps of the cleaning and then apply the insights of these steps on a case of a data contained into 3 xlsx files with many sheets.</p>
+<p>So in the rest of the post I will dedicate to highlight some steps of the David Robinson answer to the tweet challenge, and then apply the insights on a case of data contained in multiple xlsx files with many sheets.</p>
 </div>
 <div id="the-highlights-steps" class="section level2">
 <h2>The highlights steps</h2>
-<div id="step-1-the-coordinate-view" class="section level3">
-<h3>Step 1: The coordinate-view</h3>
+<div id="step-1-the-coordinate-form" class="section level3">
+<h3>Step 1: The coordinate-form</h3>
 <p>Consider the next innocent table as an example.</p>
 <div class="figure">
-<img src="img/sheet_example.png#center" style="width:50.0%" />
+<img src="img/sheet_example.png#center" style="width:65.0%" />
 
 </div>
-<p>It’s easy to import the above spreadsheet and obtain rectangular table in R, filled with missing values (NA) instead of the blank cells. You can take a look to the first six rows.</p>
+<p>It’s easy to import the above spreadsheet with the <code>readxl::read_excel</code> function and obtain a rectangular table in R, filled with missing values (NA) instead of blank cells. You can take a look of the first six rows.</p>
+<pre class="r"><code>library(readxl)
+df &lt;- readxl::read_excel(&quot;./innocent_table.xlsx&quot;)
+head(df)</code></pre>
 <pre><code>##                               X1    X2    X3    X4    X5    X6
 ## 1 Expanded Homicide Data Table 8    NA    NA    NA    NA    NA
 ## 2                 Murder Victims    NA    NA    NA    NA    NA
@@ -43,10 +46,14 @@ showpagemeta: yes
 ## 4                        Weapons  2004  2005  2006  2007  2008
 ## 5                          Total 14210 14965 15087 14916 14180
 ## 6                Total firearms:  9385 10158 10225 10129  9484</code></pre>
-<p>The important of this step is make explicitly the position of each value (cell) on the spreadsheet –in the row <em>i</em> and the column <em>j</em> is the value <span class="math inline">\(x_{i,j}\)</span>–and the following function reorganize the data in that way.</p>
+<p>The importance of this step is to describe explicitly the position of each cell-value of the spreadsheet into the R’s data frame–<em>in row</em> <span class="math inline">\(i\)</span> <em>and column</em> <span class="math inline">\(j\)</span> <em>you found the value</em> <span class="math inline">\(x_{i,j}\)</span>–and the following function reorganize the data accordingly.</p>
 <pre class="r"><code>library(dplyr)
 library(tidyr)
 tidy_excel &lt;- function(x) {
+  #
+  # Take a data frame imported from the spreadsheet and make
+  # explicit, in the data frame, the position of each value
+  #
   x %&gt;% 
     setNames(seq_len(ncol(x))) %&gt;% 
     mutate(row = row_number()) %&gt;% 
@@ -75,13 +82,27 @@ tidy_excel(example)
 ##  9     9      1                       Shotguns
 ## 10    10      1                     Other guns
 ## # ... with 128 more rows</code></pre>
+<p>As you can observe, two new index-columns are created, one by each dimension (rows and columns). In this way, all the original columns can be express as values of these two dimensions.</p>
+<ul>
+<li><p><strong>Q:</strong> <em>Why can be useful this coordinate form?</em></p></li>
+<li><p><strong>A:</strong> <em>It’s possible to take advantage of manipulate the data based on the physical position of the template using operations over the columns and the rows. In fact,</em> <code>tidy_excel</code> <em>apart of reshape data into the coordinate form is also an example of this. Pay attention to this code snippet.</em></p></li>
+</ul>
+<pre class="r"><code># ...from the definition of tidy_excel
+  group_by(row) %&gt;%  # group by row index
+  filter(!all(is.na(value))) %&gt;%  # discard empty rows (row-groups that contain only NA values)
+  group_by(column) %&gt;%  # group by col index
+  filter(!all(is.na(value))) # discard empty cols (col-groups that contain only NA values)</code></pre>
+<p>Another useful reason of the coordinate-form is explain in the next step.</p>
 </div>
-</div>
-<div id="step-2-make-your-shot-with-regex" class="section level2">
-<h2>Step 2: Make your shot with regex</h2>
-<iframe src="https://giphy.com/embed/VIikhF8kK7eFO" width="480" height="313" frameBorder="0" class="giphy-embed" allowFullScreen>
+<div id="step-2-make-your-shot-with-regex" class="section level3">
+<h3>Step 2: Make your shot with regex</h3>
+<iframe src="https://giphy.com/embed/VIikhF8kK7eFO" width="480" height="313" frameBorder="0" align="middle">
 </iframe>
 <p>
 <a href="https://giphy.com/gifs/video-games-assassins-creed-iv-black-flag-VIikhF8kK7eFO"></a>
 </p>
+</div>
+</div>
+<div id="the-case" class="section level2">
+<h2>The Case</h2>
 </div>
