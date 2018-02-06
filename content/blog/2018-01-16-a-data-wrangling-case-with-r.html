@@ -12,24 +12,27 @@ showpagemeta: yes
 
 
 
-<div id="introduction" class="section level2">
-<h2>Introduction</h2>
-<p>Data wrangling is the process of mapping raw data to a format more suitable to model, visualize or in general to work it. This process is usually thought as an early stage of the data analysis pipeline (<em>i.e. I need a nice table to start the analysis</em>). But the skills involved in the process are useful whenever you need to reshape, try to look your data from different perspectives or when you need to adapt some new tool that required a specific format. The reflexion is: <strong>data wrangling skills have more to say that only in an initial stage of the analysis, it can be augmented with these skills, enabling more flexibility and expressiveness in the whole pipeline</strong>.</p>
-<p>But more than the reflexion, the reason of this post is to show the essential of data wrangling: dominate data or take control of it. As you know, data in real life aren’t always friendly, is not uncommon to found problems with the shape or/and format how came data. And one of these type of problems are the spreadsheets kind.</p>
 <div class="figure">
 <img src="img/spreadsheet_shock.jpg#center" style="width:60.0%" />
 
 </div>
-<p>To be fair not all the spreadsheets are a problem. Let me clarify what I refer for “problem”, the mess of more than one table per sheet like islands floating in a ocean of blank cells with clouds of metainformation headers relative to the tables…ok</p>
-<p>You can look by yourself what I try to say in the following magistral example, but let me give you some context before that. Below of this paragraph you can find a series of tweets belonged to very well known data scientists (<em>if you don’t hear about them, I strongly recommend that you follow them</em>). The discussion is about a challenge to turn <a href="https://t.co/v9ucC0Vj2t" target="_blank">this spreadsheet</a> (a xlsx file) into a tidy data–<em>the grace is that the spreadsheet suffer the problems that I tried to describe</em>–and <a href="http://varianceexplained.org/" target="_blank">David Robinson (<em>the challenged</em>) </a>deal with the problem in <a href="http://rpubs.com/dgrtwo/tidying-enron" target="_blank">a very simple and fluently way</a>.</p>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Data wrangling is the process of mapping raw data to a format more suitable to model, visualize or in general to work it. This process is usually thought as an early stage of the data analysis pipeline (<em>e.g. I need a nice table to start the analysis</em>). But the skills involved in the process are useful whenever you need to reshape or look your data from different perspectives, or when you need to adapt some new tool that required a specific format. The reflexion:</p>
+<blockquote>
+<p><em>data wrangling skills have more to say that only in an initial stage of the analysis, the latter can be augmented with these skills, enabling more flexibility and expressiveness in the whole pipeline.</em></p>
+</blockquote>
+<p>But the reason of this post is show you the essential of data wrangling: dominate data or take control of it. As you know, data in real life aren’t always friendly and is not uncommon to found problems relative to the shape or format. An one case that contain both of these problem are the spreadsheet data.</p>
+<p>(Just) to be fair not all the spreadsheets are a problem. Let me clarify what I refer by “problem”, <em>the mess of more than one table per sheet like islands floating in a ocean of blank cells with clouds of metainformation headers relative to the tables…ok.</em></p>
+<p>You can look by yourself what I try to say in the following magistral example, but first some context. Below of this paragraph you can find a series of tweets belonged to very well known data scientists (<em>if you don’t hear about them, I strongly recommend that you follow them</em>). The discussion is about a challenge to turn <a href="https://t.co/v9ucC0Vj2t" target="_blank">this spreadsheet</a> (a xlsx file) into a tidy data–<em>the grace is that spreadsheet suffer the problems that I tried to describe</em>–and <a href="http://varianceexplained.org/" target="_blank">David Robinson (<em>the challenged</em>) </a>deal with the problem in <a href="http://rpubs.com/dgrtwo/tidying-enron" target="_blank">a very simple and fluently way</a>.</p>
 {{% tweet "717815339480977410#center" %}}
 {{% tweet "718170667573579776" %}}
-<p>So in the rest of the post I will dedicate to highlight some steps of the David Robinson answer to the tweet challenge, and then apply the insights on a case of data contained in multiple xlsx files with many sheets.</p>
+<p>In the rest of the post I will dedicate to highlight some steps of the David Robinson answer to the tweet challenge, and then apply the insights on a case of data contained in multiple “xlsx”&quot; files with many sheets.</p>
 </div>
 <div id="the-highlights-steps" class="section level2">
 <h2>The highlights steps</h2>
-<div id="step-1-the-coordinate-form" class="section level3">
-<h3>Step 1: The coordinate-form</h3>
+<div id="step-1-the-coordinate-view" class="section level3">
+<h3>Step 1: The coordinate-view</h3>
 <p>Consider the next innocent table as an example.</p>
 <div class="figure">
 <img src="img/murdervictims.png#center" style="width:65.0%" />
@@ -38,22 +41,28 @@ showpagemeta: yes
 <p>It’s easy to import the above spreadsheet with the <code>readxl::read_excel</code> function and obtain a rectangular table in R, filled with missing values (NA) instead of blank cells. You can take a look of the first six rows.</p>
 <pre class="r"><code>library(readxl)
 df &lt;- readxl::read_excel(&quot;./innocent_table.xlsx&quot;)
-head(df)</code></pre>
-<pre><code>##                               X1    X2    X3    X4    X5    X6
-## 1 Expanded Homicide Data Table 8    NA    NA    NA    NA    NA
-## 2                 Murder Victims    NA    NA    NA    NA    NA
-## 3           by Weapon, 2004-2008    NA    NA    NA    NA    NA
-## 4                        Weapons  2004  2005  2006  2007  2008
-## 5                          Total 14210 14965 15087 14916 14180
-## 6                Total firearms:  9385 10158 10225 10129  9484</code></pre>
-<p>The importance of this step is to describe explicitly the position of each cell-value of the spreadsheet into the R’s data frame–<em>in row</em> <span class="math inline">\(i\)</span> <em>and column</em> <span class="math inline">\(j\)</span> <em>you found the value</em> <span class="math inline">\(x_{i,j}\)</span>–and the following function reorganize the data accordingly.</p>
+df</code></pre>
+<pre><code>## # A tibble: 23 x 6
+##                                X1    X2    X3    X4    X5    X6
+##                             &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Expanded Homicide Data Table 8    NA    NA    NA    NA    NA
+##  2                 Murder Victims    NA    NA    NA    NA    NA
+##  3           by Weapon, 2004-2008    NA    NA    NA    NA    NA
+##  4                        Weapons  2004  2005  2006  2007  2008
+##  5                          Total 14210 14965 15087 14916 14180
+##  6                Total firearms:  9385 10158 10225 10129  9484
+##  7                       Handguns  7286  7565  7836  7398  6755
+##  8                         Rifles   403   445   438   453   375
+##  9                       Shotguns   507   522   490   457   444
+## 10                     Other guns   117   138   107   116    79
+## # ... with 13 more rows</code></pre>
+<p>The importance of this step is to describe explicitly the position of each cell-value of the spreadsheet into the R’s data frame structure–<em>in row</em> <span class="math inline">\(i\)</span> <em>and column</em> <span class="math inline">\(j\)</span> <em>you found the value</em> <span class="math inline">\(x_{i,j}\)</span>–and the following function, created and used by David Robinson in his answer, reorganize the data accordingly.</p>
 <pre class="r"><code>library(dplyr)
 library(tidyr)
 tidy_excel &lt;- function(x) {
-  #
-  # Take a data frame imported from the spreadsheet and make
-  # explicit, in the data frame, the position of each value
-  #
+  # x is a data imported from an excel file with readxl::read_excel
+  #   function.
+  # Return a data frame with the coordinate view representation.
   x %&gt;% 
     setNames(seq_len(ncol(x))) %&gt;% 
     mutate(row = row_number()) %&gt;% 
@@ -67,7 +76,7 @@ tidy_excel &lt;- function(x) {
     arrange(column, row)
 }
 
-tidy_excel(example)
+tidy_excel(df)
 ## # A tibble: 138 x 3
 ##      row column                          value
 ##    &lt;int&gt;  &lt;int&gt;                          &lt;chr&gt;
@@ -82,17 +91,52 @@ tidy_excel(example)
 ##  9     9      1                       Shotguns
 ## 10    10      1                     Other guns
 ## # ... with 128 more rows</code></pre>
-<p>As you can observe, two new index-columns are created, one by each dimension (rows and columns). In this way, all the original columns can be express as values of these two dimensions.</p>
-<ul>
-<li><p><strong>Q:</strong> <em>Why can be useful this coordinate form?</em></p></li>
-<li><p><strong>A:</strong> <em>It’s possible to take advantage of manipulate the data based on the physical position of the template using operations over the columns and the rows. In fact,</em> <code>tidy_excel</code> <em>apart of reshape data into the coordinate form is also an example of this. Pay attention to this code snippet.</em></p></li>
-</ul>
+<p>As you can observe, the cells of the spreadsheet are melted into one column (<em>value</em>) and two new index-variables are created, one by each dimension (<em>row</em> and <em>column</em>), to mapping a cell coordinate of the spreadsheet with his content. This is the reason of the section title part <em>“coordinate-view”</em>.</p>
+<p>The legitimate question now is <strong>why can be useful the coordinate-view? What is the advantage with the previous form?</strong></p>
+<blockquote>
+<p><strong>A:</strong> <em>It’s possible to take advantage of manipulate data based on the physical position of the template using operations over columns and rows. In fact,</em> <code>tidy_excel</code> <em>apart of reshape data into the coordinate-view is also an example of this. Pay attention to the following code snippet from the function definition of</em> <code>tidy_excel</code>.</p>
+</blockquote>
 <pre class="r"><code># ...from the definition of tidy_excel
   group_by(row) %&gt;%  # group by row index
   filter(!all(is.na(value))) %&gt;%  # discard empty rows (row-groups that contain only NA values)
   group_by(column) %&gt;%  # group by col index
   filter(!all(is.na(value))) # discard empty cols (col-groups that contain only NA values)</code></pre>
-<p>Another useful reason of the coordinate-form is explain in the next step.</p>
+<p>We can give more life to the above answer with an example. Imagine that we want to know the index of a header that contain “weapon” and years (2004…2008) of the previous table. Indeed like the data is very small you can know the answer just by looking. But imagine that we have multiple spreadsheets like that, and the row index can vary between the files. In this case it would be useful a way to identify the row-index that contain the header and deal with the particularities of each spreadsheet.</p>
+<pre class="r"><code># 4-row
+df
+## # A tibble: 23 x 6
+##                                X1    X2    X3    X4    X5    X6
+##                             &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Expanded Homicide Data Table 8    NA    NA    NA    NA    NA
+##  2                 Murder Victims    NA    NA    NA    NA    NA
+##  3           by Weapon, 2004-2008    NA    NA    NA    NA    NA
+##  4                        Weapons  2004  2005  2006  2007  2008
+##  5                          Total 14210 14965 15087 14916 14180
+##  6                Total firearms:  9385 10158 10225 10129  9484
+##  7                       Handguns  7286  7565  7836  7398  6755
+##  8                         Rifles   403   445   438   453   375
+##  9                       Shotguns   507   522   490   457   444
+## 10                     Other guns   117   138   107   116    79
+## # ... with 13 more rows
+
+# identify the header table in the coordinate-view representation
+header_names_pattern &lt;- &quot;Weapons|2004|2005|2006|2007|2008&quot;
+
+# filter the column value based on a string pattern
+df %&gt;% 
+  tidy_excel %&gt;% 
+  filter(stringr::str_detect(value, header_names_pattern))
+## # A tibble: 7 x 3
+##     row column                value
+##   &lt;int&gt;  &lt;int&gt;                &lt;chr&gt;
+## 1     3      1 by Weapon, 2004-2008
+## 2     4      1              Weapons
+## 3     4      2                 2004
+## 4     4      3                 2005
+## 5     4      4                 2006
+## 6     4      5                 2007
+## 7     4      6                 2008</code></pre>
+<p>A filter operation to found a pattern over the value-variable, will gives directly information about the cells location that match the pattern. Then we can extract the header index and discard the above cells that doesn’t correspond to the table.</p>
 </div>
 <div id="step-2-make-your-shot-with-regex" class="section level3">
 <h3>Step 2: Make your shot with regex</h3>

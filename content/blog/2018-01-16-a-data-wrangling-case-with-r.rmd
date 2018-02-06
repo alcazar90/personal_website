@@ -10,28 +10,34 @@ showcomments: yes
 showpagemeta: yes
 ---
 
-## Introduction 
-
-Data wrangling is the process of mapping raw data to a format more suitable to model, visualize or in general to work it. This process is usually thought as an early stage of the data analysis pipeline (*i.e. I need a nice table to start the analysis*). But the skills involved in the process are useful whenever you need to reshape, try to look your data from different perspectives or when you need to adapt some new tool that required a specific format. The reflexion is: **data wrangling skills have more to say that only in an initial stage of the analysis, it can be augmented with these skills, enabling more flexibility and expressiveness in the whole pipeline**.
-
-But more than the reflexion, the reason of this post is to show the essential of data wrangling: dominate data or take control of it. As you know, data in real life aren't always friendly, is not uncommon to found problems with the shape or/and format how came data. And one of these type of problems are the spreadsheets kind.
+```{r, message=FALSE, echo=FALSE}
+library(dplyr)
+```
 
 ![](img/spreadsheet_shock.jpg#center){ width=60% }
 
-To be fair not all the spreadsheets are a problem. Let me clarify what I refer for "problem", the mess of more than one table per sheet like islands floating in a ocean of blank cells with clouds of metainformation headers relative to the tables...ok
+## Introduction 
+
+Data wrangling is the process of mapping raw data to a format more suitable to model, visualize or in general to work it. This process is usually thought as an early stage of the data analysis pipeline (*e.g. I need a nice table to start the analysis*). But the skills involved in the process are useful whenever you need to reshape or look your data from different perspectives, or when you need to adapt some new tool that required a specific format. The reflexion:
+
+>*data wrangling skills have more to say that only in an initial stage of the analysis, the latter can be augmented with these skills, enabling more flexibility and expressiveness in the whole pipeline.*
+
+But the reason of this post is show you the essential of data wrangling: dominate data or take control of it. As you know, data in real life aren't always friendly and is not uncommon to found problems relative to the shape or format. An one case that contain both of these problem are the spreadsheet data.
 
 
-You can look by yourself what I try to say in the following magistral example, but let me give you some context before that. Below of this paragraph you can find a series of tweets belonged to very well known data scientists (*if you don't hear about them, I strongly recommend that you follow them*). The discussion is about a challenge to turn <a href="https://t.co/v9ucC0Vj2t" target="_blank">this spreadsheet</a> (a xlsx file) into a tidy data--*the grace is that the spreadsheet suffer the problems that I tried to describe*--and <a href="http://varianceexplained.org/" target="_blank">David Robinson (*the challenged*) </a>deal with the problem in  <a href="http://rpubs.com/dgrtwo/tidying-enron" target="_blank">a very simple and fluently way</a>.
+(Just) to be fair not all the spreadsheets are a problem. Let me clarify what I refer by "problem", *the mess of more than one table per sheet like islands floating in a ocean of blank cells with clouds of metainformation headers relative to the tables...ok.*
+
+You can look by yourself what I try to say in the following magistral example, but first some context. Below of this paragraph you can find a series of tweets belonged to very well known data scientists (*if you don't hear about them, I strongly recommend that you follow them*). The discussion is about a challenge to turn <a href="https://t.co/v9ucC0Vj2t" target="_blank">this spreadsheet</a> (a xlsx file) into a tidy data--*the grace is that spreadsheet suffer the problems that I tried to describe*--and <a href="http://varianceexplained.org/" target="_blank">David Robinson (*the challenged*) </a>deal with the problem in  <a href="http://rpubs.com/dgrtwo/tidying-enron" target="_blank">a very simple and fluently way</a>.
 
 `r blogdown::shortcode('tweet', '717815339480977410#center')`
 
 `r blogdown::shortcode('tweet', '718170667573579776')`
 
-So in the rest of the post I will dedicate to highlight some steps of the David Robinson answer to the tweet challenge, and then apply the insights on a case of data contained in multiple xlsx files with many sheets.
+In the rest of the post I will dedicate to highlight some steps of the David Robinson answer to the tweet challenge, and then apply the insights on a case of data contained in multiple "xlsx"" files with many sheets.
 
 ## The highlights steps
 
-### Step 1: The coordinate-form
+### Step 1: The coordinate-view
 
 Consider the next innocent table as an example.
 
@@ -42,7 +48,7 @@ It's easy to import the above spreadsheet with the `readxl::read_excel` function
 ```{r, eval=FALSE}
 library(readxl)
 df <- readxl::read_excel("./innocent_table.xlsx")
-head(df)
+df
 ```
 
 ```{r, echo=FALSE}
@@ -57,22 +63,21 @@ colE <- c(NA, NA, NA, 2007, 14916, 10129, 7398, 453, 457, 116, 1705, 1817, 647, 
           10, 1, 131, 52, 12, 134, 109, 1005, NA)
 colF <- c(NA, NA, NA, 2008, 14180, 9484, 6755, 375, 444, 79, 1831, 1897, 614, 861,
           10, 10, 86, 33, 15, 88, 89, 993, NA)
-example <- data.frame(X1 = colA, X2 = colB, X3 = colC, X4 = colD, X5 = colE, X6 = colF)
-head(example)
+df <- data_frame(X1 = colA, X2 = colB, X3 = colC, X4 = colD, X5 = colE, X6 = colF)
+df
 ```
 
 
 
-The importance of this step is to describe explicitly the position of each cell-value of the spreadsheet into the R's data frame--*in row* $i$ *and column* $j$ *you found the value* $x_{i,j}$--and the following function reorganize the data accordingly.
+The importance of this step is to describe explicitly the position of each cell-value of the spreadsheet into the R's data frame structure--*in row* $i$ *and column* $j$ *you found the value* $x_{i,j}$--and the following function, created and used by David Robinson in his answer, reorganize the data accordingly.
 
 ```{r}
 library(dplyr)
 library(tidyr)
 tidy_excel <- function(x) {
-  #
-  # Take a data frame imported from the spreadsheet and make
-  # explicit, in the data frame, the position of each value
-  #
+  # x is a data imported from an excel file with readxl::read_excel
+  #   function.
+  # Return a data frame with the coordinate view representation.
   x %>% 
     setNames(seq_len(ncol(x))) %>% 
     mutate(row = row_number()) %>% 
@@ -86,14 +91,15 @@ tidy_excel <- function(x) {
     arrange(column, row)
 }
 
-tidy_excel(example)
+tidy_excel(df)
 ```
 
-As you can observe, two new index-columns are created, one by each dimension (rows and columns). In this way, all the original columns can be express as values of these two dimensions. 
 
-- **Q:** *Why can be useful this coordinate form?*
+As you can observe, the cells of the spreadsheet are melted into one column (*value*) and two new index-variables are created, one by each dimension (*row* and *column*), to mapping a cell coordinate of the spreadsheet with his content. This is the reason of the section title part *"coordinate-view"*.
 
-- **A:** *It's possible to take advantage of manipulate the data based on the physical position of the template using operations over the columns and the rows. In fact,* `tidy_excel` *apart of reshape data into the coordinate form is also an example of this. Pay attention to this code snippet.*
+The legitimate question now is **why can be useful the coordinate-view? What is the advantage with the previous form?**
+
+> **A:** *It's possible to take advantage of manipulate data based on the physical position of the template using operations over columns and rows. In fact,* `tidy_excel` *apart of reshape data into the coordinate-view is also an example of this. Pay attention to the following code snippet from the function definition of* `tidy_excel`.
 
 ```{r, eval = FALSE}
 # ...from the definition of tidy_excel
@@ -103,7 +109,24 @@ As you can observe, two new index-columns are created, one by each dimension (ro
   filter(!all(is.na(value))) # discard empty cols (col-groups that contain only NA values)
 ```
 
-Another useful reason of the coordinate-form is explain in the next step.
+We can give more life to the above answer with an example. Imagine that we want to know the index of a header that contain "weapon" and years (2004...2008) of the previous table. Indeed like the data is very small you can know the answer just by looking. But imagine that we have multiple spreadsheets like that, and the row index can vary between the files. In this case it would be useful a way to identify the row-index that contain the header and deal with the particularities of each spreadsheet.
+
+```{r}
+# 4-row
+df
+
+# identify the header table in the coordinate-view representation
+header_names_pattern <- "Weapons|2004|2005|2006|2007|2008"
+
+# filter the column value based on a string pattern
+df %>% 
+  tidy_excel %>% 
+  filter(stringr::str_detect(value, header_names_pattern))
+```
+
+A filter operation to found a pattern over the value-variable, will gives directly information about the cells location that match the pattern. Then we can extract the header index and discard the above cells that doesn't correspond to the table.
+
+
 
 ### Step 2: Make your shot with regex
 
