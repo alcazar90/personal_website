@@ -27,7 +27,7 @@ But the reason of this post is show you the essential of data wrangling: dominat
 
 (Just) to be fair not all the spreadsheets are a problem. Let me clarify what I refer by "problem", *the mess of more than one table per sheet like islands floating in a ocean of blank cells with clouds of metainformation headers relative to the tables...ok.*
 
-You can look by yourself what I try to say in the following magistral example, but first some context. Below of this paragraph you can find a series of tweets belonged to very well known data scientists (*if you don't hear about them, I strongly recommend that you follow them*). The discussion is about a challenge to turn <a href="https://t.co/v9ucC0Vj2t" target="_blank">this spreadsheet</a> (a xlsx file) into a tidy data--*the grace is that spreadsheet suffer the problems that I tried to describe*--and <a href="http://varianceexplained.org/" target="_blank">David Robinson (*the challenged*) </a>deal with the problem in  <a href="http://rpubs.com/dgrtwo/tidying-enron" target="_blank">a very simple and fluently way</a>.
+You can look by yourself what I try to say in the following magistral example, but first some context. Below of this paragraph you can find a series of tweets belonged to very well known data scientists (*if you don't hear about them, I strongly recommend that you follow them*). The discussion is about a challenge to turn <a href="https://t.co/v9ucC0Vj2t" target="_blank">this spreadsheet</a> (a xlsx file) into a tidy data--*the grace is that the spreadsheet suffer the problems that I tried to describe*--and <a href="http://varianceexplained.org/" target="_blank">David Robinson (*the challenged*) </a>deal with the problem in  <a href="http://rpubs.com/dgrtwo/tidying-enron" target="_blank">a very simple and fluently way</a>.
 
 `r blogdown::shortcode('tweet', '717815339480977410#center')`
 
@@ -64,7 +64,7 @@ colE <- c(NA, NA, NA, 2007, 14916, 10129, 7398, 453, 457, 116, 1705, 1817, 647, 
 colF <- c(NA, NA, NA, 2008, 14180, 9484, 6755, 375, 444, 79, 1831, 1897, 614, 861,
           10, 10, 86, 33, 15, 88, 89, 993, NA)
 df <- data_frame(X1 = colA, X2 = colB, X3 = colC, X4 = colD, X5 = colE, X6 = colF)
-df
+head(df)
 ```
 
 
@@ -109,7 +109,7 @@ The legitimate question now is **why can be useful the coordinate-view? What is 
   filter(!all(is.na(value))) # discard empty cols (col-groups that contain only NA values)
 ```
 
-We can give more life to the above answer with an example. Imagine that we want to know the index of a header that contain "weapon" and years (2004...2008) of the previous table. Indeed like the data is very small you can know the answer just by looking. But imagine that we have multiple spreadsheets like that, and the row index can vary between the files. In this case it would be useful a way to identify the row-index that contain the header and deal with the particularities of each spreadsheet.
+We can give more life to the above answer with an example. Imagine that we want to know the index of a header that contain "weapon" and years (2004...2008) of the previous table. Indeed like the data is very small you can know the answer just by looking. But suppose that we have multiple spreadsheets like that and the row index header can vary between the files. In this case it would be useful a way to identify the row-index that contain the header and deal with the particularities of each spreadsheet.
 
 ```{r}
 # 4-row
@@ -120,18 +120,83 @@ header_names_pattern <- "Weapons|2004|2005|2006|2007|2008"
 
 # filter the column value based on a string pattern
 df %>% 
-  tidy_excel %>% 
+  tidy_excel %>%  # apply the coordinate-view
   filter(stringr::str_detect(value, header_names_pattern))
 ```
 
-A filter operation to found a pattern over the value-variable, will gives directly information about the cells location that match the pattern. Then we can extract the header index and discard the above cells that doesn't correspond to the table.
 
+The above code is just a logical filter operation over the data. In other words, we give to the `dplyr::filter` function a logical vector (*TRUE / FALSE*) of the same length that the rows of the data and return only the rows in which the index is *TRUE*. The coordinate view allow us to know directly in which row and column the relevant values are located in the spreadsheet. If we pay atention to the row variable you can see that the header content is located in the fourth row.
+
+How we generate the logical vector with `stringr::str_detect` is the following step.
 
 
 ### Step 2: Make your shot with regex
 
-
-<iframe src="https://giphy.com/embed/VIikhF8kK7eFO" width="480" height="313" frameBorder="0" align="middle"></iframe><p><a href="https://giphy.com/gifs/video-games-assassins-creed-iv-black-flag-VIikhF8kK7eFO"></a></p>
+> *"A regular expression (or just regex) is a sequence of character that define a search pattern."* (<a href="https://en.m.wikipedia.org/wiki/Regular_expression" target="_blank">Wikipedia</a>)
+ 
 
 ## The Case
+
+
+**Describe better the problem and the goal**
+
+The aim of this case is use the insights of the highlights step and extract tables from three excel files (*xlsx*), Each of these correspond to a year files contain multiple sheets with the same information but different months.
+
+- Use the name of the files and sheet as metadata information to then identify each
+data
+- Each excel sheet into one data frame
+
+
+```{r}
+# first we load the packages used during the analysis
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(purrr)
+library(readxl)
+
+
+files <- list.files("./post_data/a_data_wrangling_case_with_spreadsheets_using_r", full.names = TRUE)
+files
+
+sheet_per_file <- map(files, readxl::excel_sheets)
+sheet_per_file
+```
+
+We need a pair of arguments for `read_excel` to read each sheet:
+
+- *path to the xlsx file* 
+
+- *the name of the sheet*. 
+
+A possible way to build these pair of arguments are the **cross product** between the variables `files` and `sheet_per_file`. But before that the crude world gives us an inconvenient, the first file contain more than twelve sheet and, as we know, a year has twelve months..so a sheet is being a fly (*Hoja13*).
+
+```{r}
+# for each sheet name vector we discard the names that aren't relevant
+pattern <- c("Enero|Febrero|Marzo|Abril|Mayo|Junio|Julio|Agosto|Septiembre|Octubre|Noviembre|Diciembre")
+relevant_sheet_name <- map(sheet_per_file, 
+                           ~ .x[str_detect(.x, pattern)])
+```
+
+We continue with the cross product (`purrr::cross`)...and we obtain a nested list of 36 element (`arg_list`), in which each element is a list of length two with the necessaries arguments to read each sheet. Below you can see the first two pairs of argument to feed `read_excel`.
+
+```{r}
+arg_list <- map2(files, relevant_sheet_name, ~ list(.x, .y))
+arg_list <- map(arg_list, purrr::cross)
+arg_list <- purrr::flatten(arg_list)
+head(arg_list, n = 2)
+```
+
+Now two things will happen, first I will iterate a list (`arg_list`) over a function, guess which one?...`read_excel` to read each sheet and store in a list called `raw_data`. Then I will give a name to each element (*dataframe*) of the output list `raw_data`. We need the metainformation to identify each dataframe with his corresponding file and sheet. So using *regex* we extract from each `arg_list` element the <u>year</u> and <u>month</u> from the first and second argument respectively. Look how the sheets are in `raw_data`, you can see the name after the dollar sign.
+```{r}
+raw_data <- invoke_map(read_excel, arg_list)
+
+# add metainformation from the names of the files and sheet into the name
+# of elemenet list
+list_names <- map(arg_list, ~ paste(str_extract(.x[[1]], "[0-9]+"), 
+                                    str_extract(.x[[2]], "[aA-zZ]+"), sep = "_"))
+
+names(raw_data) <- list_names
+head(raw_data, n = 2)
+```
 
