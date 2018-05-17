@@ -32,7 +32,7 @@ In what this selection is based?
 
 - [Applied Numerical Computing.- UCLA](http://www.seas.ucla.edu/~vandenbe/ee133a.html)
 
-    The last course is based on the book: [Introduction to Applied Linear Algebra by S. Boyd and L. Vandenberghe](https://web.stanford.edu/~boyd/vmls/vmls.pdf)
+    This course is based on the book: [Introduction to Applied Linear Algebra by S. Boyd and L. Vandenberghe](https://web.stanford.edu/~boyd/vmls/vmls.pdf)
 
 - [Convex Optimization.- Stanford](https://lagunita.stanford.edu/courses/Engineering/CVX101/Winter2014/info)
 
@@ -70,7 +70,7 @@ The MIT introductory course on Computer Science and programming using python.
 
 [Artificial Intelligence (AI)](https://www.edx.org/es/course/artificial-intelligence-ai-columbiax-csmm-101x-4) [[Complete]](https://courses.edx.org/certificates/user/8109033/course/course-v1:ColumbiaX+CSMM.101x+2T2017_2)
 
-[Machine Learning](https://www.edx.org/es/course/machine-learning-columbiax-csmm-102x-2)
+[Machine Learning](https://www.edx.org/es/course/machine-learning-columbiax-csmm-102x-2) [[Complete]](https://courses.edx.org/certificates/70d4fbadbabf44e89eb20ddde7453437)
 
 [Robotics](https://www.edx.org/es/course/robotics-columbiax-csmm-103x-2)
 

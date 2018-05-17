@@ -1,6 +1,7 @@
-
+<html>
+  <head></head>
+  <body>
 {{ partial "sub_footer.html" . }}
-</div>
 
 {{ with .Site.Params.extra }}
 {{ if .highlightjs }}
@@ -16,7 +17,12 @@ hljs.initHighlightingOnLoad();
 -->
 
 <script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<!--
 <script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+-->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
 
 <script>
 hljs.configure({languages: []});

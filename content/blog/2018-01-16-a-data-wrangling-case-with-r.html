@@ -12,46 +12,31 @@ showpagemeta: yes
 
 
 
-<div class="figure">
-<img src="img/spreadsheet_shock.jpg#center" style="width:60.0%" />
-
-</div>
-<div id="introduction" class="section level2">
-<h2>Introduction</h2>
-<p>Data wrangling is the process of mapping raw data to a format more suitable to model, visualize or in general to work it. This process is usually thought as an early stage of the data analysis pipeline (<em>e.g. I need a nice table to start the analysis</em>). But the skills involved in the process are useful whenever you need to reshape or look your data from different perspectives, or when you need to adapt some new tool that required a specific format. The reflexion:</p>
-<blockquote>
-<p><em>data wrangling skills have more to say that only in an initial stage of the analysis, the latter can be augmented with these skills, enabling more flexibility and expressiveness in the whole pipeline.</em></p>
-</blockquote>
-<p>But the reason of this post is show you the essential of data wrangling: dominate data or take control of it. As you know, data in real life aren’t always friendly and is not uncommon to found problems relative to the shape or format. An one case that contain both of these problem are the spreadsheet data.</p>
-<p>(Just) to be fair not all the spreadsheets are a problem. Let me clarify what I refer by “problem”, <em>the mess of more than one table per sheet like islands floating in a ocean of blank cells with clouds of metainformation headers relative to the tables…ok.</em></p>
-<p>You can look by yourself what I try to say in the following magistral example, but first some context. Below of this paragraph you can find a series of tweets belonged to very well known data scientists (<em>if you don’t hear about them, I strongly recommend that you follow them</em>). The discussion is about a challenge to turn <a href="https://t.co/v9ucC0Vj2t" target="_blank">this spreadsheet</a> (a xlsx file) into a tidy data–<em>the grace is that the spreadsheet suffer the problems that I tried to describe</em>–and <a href="http://varianceexplained.org/" target="_blank">David Robinson (<em>the challenged</em>) </a>deal with the problem in <a href="http://rpubs.com/dgrtwo/tidying-enron" target="_blank">a very simple and fluently way</a>.</p>
+<p><img src="img/spreadsheet_shock-min.jpg#center" style="width:60.0%" /></p>
+<p>A typical real world situation is the problem of collect data from a set of files and structured into one dataset. “Why data is separate?” you can think, well this could response to many reasons. For example, some phenomenon are measure along the time and you can only access to data by period or a bussiness is collecting some information of his units and the origin process of data was not centralized. So you end up with one file per unit in your hands.</p>
+<p>Another typical situation is that data is share or is avaiable in excel files. That is because excel is the main used analytical tool in the world (I guess!) and many of us we didn’t have a class of best practices on how share and document data. The problem with excel files are the “spreadsheet intrinsic issues”. What is that?…is just a fancy way to call the messy format problems that are common to find in spreadsheet files like multiple header levels, more than one table per sheet, different data types values in same column, and the list goes on.</p>
+<p>You can look by yourself what I try to say in the following magistral example, but first some context. Below of this paragraph you can find a series of tweets belonged to very well known data scientists. The discussion is about a challenge to turn <a href="https://t.co/v9ucC0Vj2t" target="_blank">this spreadsheet</a> (a xlsx file) into a tidy data and <a href="http://varianceexplained.org/" target="_blank">David Robinson (<em>the challenged</em>) </a>deal with the problem in <a href="http://rpubs.com/dgrtwo/tidying-enron" target="_blank">a very simple and fluently way</a>.</p>
 {{% tweet "717815339480977410#center" %}}
 {{% tweet "718170667573579776" %}}
-<p>In the rest of the post I will dedicate to highlight some steps of the David Robinson answer to the tweet challenge, and then apply the insights on a case of data contained in multiple “xlsx”&quot; files with many sheets.</p>
-</div>
-<div id="the-highlights-steps" class="section level2">
-<h2>The highlights steps</h2>
+<p>The rest of the post is dedicated to highlight some steps of David Robinson answer to the tweet challenge, and then apply the insights on a case of data contained in multiple “xlsx”&quot; files with many sheets.</p>
 <div id="step-1-the-coordinate-view" class="section level3">
 <h3>Step 1: The coordinate-view</h3>
 <p>Consider the next innocent table as an example.</p>
-<div class="figure">
-<img src="img/murdervictims.png#center" style="width:65.0%" />
-
-</div>
+<p><img src="img/murdervictims.png#center" style="width:65.0%" /></p>
 <p>It’s easy to import the above spreadsheet with the <code>readxl::read_excel</code> function and obtain a rectangular table in R, filled with missing values (NA) instead of blank cells. You can take a look of the first six rows.</p>
 <pre class="r"><code>library(readxl)
 df &lt;- readxl::read_excel(&quot;./innocent_table.xlsx&quot;)
 df</code></pre>
 <pre><code>## # A tibble: 6 x 6
-##                               X1    X2    X3    X4    X5    X6
-##                            &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1 Expanded Homicide Data Table 8    NA    NA    NA    NA    NA
-## 2                 Murder Victims    NA    NA    NA    NA    NA
-## 3           by Weapon, 2004-2008    NA    NA    NA    NA    NA
-## 4                        Weapons  2004  2005  2006  2007  2008
-## 5                          Total 14210 14965 15087 14916 14180
-## 6                Total firearms:  9385 10158 10225 10129  9484</code></pre>
-<p>The importance of this step is to describe explicitly the position of each cell-value of the spreadsheet into the R’s data frame structure–<em>in row</em> <span class="math inline">\(i\)</span> <em>and column</em> <span class="math inline">\(j\)</span> <em>you found the value</em> <span class="math inline">\(x_{i,j}\)</span>–and the following function, created and used by David Robinson in his answer, reorganize the data accordingly.</p>
+##   X1                   X2    X3    X4    X5    X6
+##   &lt;chr&gt;             &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 Expanded Homicid~    NA    NA    NA    NA    NA
+## 2 Murder Victims       NA    NA    NA    NA    NA
+## 3 by Weapon, 2004-~    NA    NA    NA    NA    NA
+## 4 Weapons            2004  2005  2006  2007  2008
+## 5 Total             14210 14965 15087 14916 14180
+## 6 Total firearms:    9385 10158 10225 10129  9484</code></pre>
+<p>The important thing here is to describe explicitly the position of each cell-value that belong to the spreadsheet into the R’s data frame structure–<em>in row</em> <span class="math inline">\(i\)</span> <em>and column</em> <span class="math inline">\(j\)</span> <em>you found the cell-value</em> <span class="math inline">\(x_{i,j}\)</span>–and the following function, <strong>written and used by David Robinson in his answer</strong>, reorganize data accordingly.</p>
 <pre class="r"><code>library(dplyr)
 library(tidyr)
 tidy_excel &lt;- function(x) {
@@ -73,65 +58,66 @@ tidy_excel &lt;- function(x) {
 
 tidy_excel(df)
 ## # A tibble: 138 x 3
-##      row column                          value
-##    &lt;int&gt;  &lt;int&gt;                          &lt;chr&gt;
+##      row column value                         
+##    &lt;int&gt;  &lt;int&gt; &lt;chr&gt;                         
 ##  1     1      1 Expanded Homicide Data Table 8
-##  2     2      1                 Murder Victims
-##  3     3      1           by Weapon, 2004-2008
-##  4     4      1                        Weapons
-##  5     5      1                          Total
-##  6     6      1                Total firearms:
-##  7     7      1                       Handguns
-##  8     8      1                         Rifles
-##  9     9      1                       Shotguns
-## 10    10      1                     Other guns
+##  2     2      1 Murder Victims                
+##  3     3      1 by Weapon, 2004-2008          
+##  4     4      1 Weapons                       
+##  5     5      1 Total                         
+##  6     6      1 Total firearms:               
+##  7     7      1 Handguns                      
+##  8     8      1 Rifles                        
+##  9     9      1 Shotguns                      
+## 10    10      1 Other guns                    
 ## # ... with 128 more rows</code></pre>
 <p>As you can observe, the cells of the spreadsheet are melted into one column (<em>value</em>) and two new index-variables are created, one by each dimension (<em>row</em> and <em>column</em>), to mapping a cell coordinate of the spreadsheet with his content. This is the reason of the section title part <em>“coordinate-view”</em>.</p>
-<p>The legitimate question now is <strong>why can be useful the coordinate-view? What is the advantage with the previous form?</strong></p>
+<p>A legitimate question now is <strong>why can be useful a coordinate-view? What is the advantage with the original form?</strong></p>
 <blockquote>
-<p><strong>A:</strong> <em>It’s possible to take advantage of manipulate data based on the physical position of the template using operations over columns and rows. In fact,</em> <code>tidy_excel</code> <em>apart of reshape data into the coordinate-view is also an example of this. Pay attention to the following code snippet from the function definition of</em> <code>tidy_excel</code>.</p>
+<p><strong>A:</strong> It’s possible to take advantage of manipulate data based on his template structure and found regions with relevant data in the spreadsheet using filter operations over rows and columns.</p>
 </blockquote>
+<p>In fact, <code>tidy_excel</code> apart of reshape data into the coordinate-view is also an example of this. Pay attention to the following code snippet from the function definition of <code>tidy_excel</code>.</p>
 <pre class="r"><code># ...from the definition of tidy_excel
   group_by(row) %&gt;%  # group by row index
   filter(!all(is.na(value))) %&gt;%  # discard empty rows (row-groups that contain only NA values)
   group_by(column) %&gt;%  # group by col index
   filter(!all(is.na(value))) # discard empty cols (col-groups that contain only NA values)</code></pre>
-<p>We can give more life to the above answer with an example. Imagine that we want to know the index of a header that contain “weapon” and years (2004…2008) of the previous table. Indeed like the data is very small you can know the answer just by looking. But suppose that we have multiple spreadsheets like that and the row index header can vary between the files. In this case it would be useful a way to identify the row-index that contain the header and deal with the particularities of each spreadsheet.</p>
-<pre class="r"><code># 4-row
+<p>We can give more life to the above answer with an example. Imagine we want to know the index of column names that contain the word “Weapon” and years from 2004 to 2008 of the previous table. Indeed like the data is very small you can know the answer just by looking. But suppose that we have multiple spreadsheets like this containing different period of years. In this case it would be useful a way to identify the row-index that contain the column names and deal with the particularities of each spreadsheet.</p>
+<pre class="r"><code># the column names are in the 4 row-index
 df
 ## # A tibble: 23 x 6
-##                                X1    X2    X3    X4    X5    X6
-##                             &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Expanded Homicide Data Table 8    NA    NA    NA    NA    NA
-##  2                 Murder Victims    NA    NA    NA    NA    NA
-##  3           by Weapon, 2004-2008    NA    NA    NA    NA    NA
-##  4                        Weapons  2004  2005  2006  2007  2008
-##  5                          Total 14210 14965 15087 14916 14180
-##  6                Total firearms:  9385 10158 10225 10129  9484
-##  7                       Handguns  7286  7565  7836  7398  6755
-##  8                         Rifles   403   445   438   453   375
-##  9                       Shotguns   507   522   490   457   444
-## 10                     Other guns   117   138   107   116    79
+##    X1                  X2    X3    X4    X5    X6
+##    &lt;chr&gt;            &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Expanded Homici~    NA    NA    NA    NA    NA
+##  2 Murder Victims      NA    NA    NA    NA    NA
+##  3 by Weapon, 2004~    NA    NA    NA    NA    NA
+##  4 Weapons           2004  2005  2006  2007  2008
+##  5 Total            14210 14965 15087 14916 14180
+##  6 Total firearms:   9385 10158 10225 10129  9484
+##  7 Handguns          7286  7565  7836  7398  6755
+##  8 Rifles             403   445   438   453   375
+##  9 Shotguns           507   522   490   457   444
+## 10 Other guns         117   138   107   116    79
 ## # ... with 13 more rows
 
-# identify the header table in the coordinate-view representation
-header_names_pattern &lt;- &quot;Weapons|2004|2005|2006|2007|2008&quot;
+# identify keywords in the column names
+column_names_pattern &lt;- &quot;Weapons|2004|2005|2006|2007|2008&quot;
 
-# filter the column value based on a string pattern
+# filter the coordinate view of data based on the previous key-words
 df %&gt;% 
   tidy_excel %&gt;%  # apply the coordinate-view
-  filter(stringr::str_detect(value, header_names_pattern))
+  filter(stringr::str_detect(value, column_names_pattern))  # use regex to detect cell that satisfy a pattern
 ## # A tibble: 7 x 3
-##     row column                value
-##   &lt;int&gt;  &lt;int&gt;                &lt;chr&gt;
+##     row column value               
+##   &lt;int&gt;  &lt;int&gt; &lt;chr&gt;               
 ## 1     3      1 by Weapon, 2004-2008
-## 2     4      1              Weapons
-## 3     4      2                 2004
-## 4     4      3                 2005
-## 5     4      4                 2006
-## 6     4      5                 2007
-## 7     4      6                 2008</code></pre>
-<p>The above code is just a logical filter operation over the data. In other words, we give to the <code>dplyr::filter</code> function a logical vector (<em>TRUE / FALSE</em>) of the same length that the rows of the data and return only the rows in which the index is <em>TRUE</em>. The coordinate view allow us to know directly in which row and column the relevant values are located in the spreadsheet. If we pay atention to the row variable you can see that the header content is located in the fourth row.</p>
+## 2     4      1 Weapons             
+## 3     4      2 2004                
+## 4     4      3 2005                
+## 5     4      4 2006                
+## 6     4      5 2007                
+## 7     4      6 2008</code></pre>
+<p>The above code is just a logical filter operation over data. In other words, we give to the <code>dplyr::filter</code> function a logical vector (<em>TRUE / FALSE</em>) of the same length that rows of the data and return only rows in which the index is <em>TRUE</em>. The coordinate view allow us to know directly in which row and column the relevant values are located in the spreadsheet. If we pay atention to the row variable you can see that the header content is located in the fourth row.</p>
 <p>How we generate the logical vector with <code>stringr::str_detect</code> is the following step.</p>
 </div>
 <div id="step-2-make-your-shot-with-regex" class="section level3">
@@ -140,15 +126,13 @@ df %&gt;%
 <p><em>“A regular expression (or just regex) is a sequence of character that define a search pattern.”</em> (<a href="https://en.m.wikipedia.org/wiki/Regular_expression" target="_blank">Wikipedia</a>)</p>
 </blockquote>
 </div>
-</div>
-<div id="the-case" class="section level2">
-<h2>The Case</h2>
-<p><strong>Describe better the problem and the goal</strong></p>
-<p>The aim of this case is use the insights of the highlights step and extract tables from three excel files (<em>xlsx</em>), Each of these correspond to a year files contain multiple sheets with the same information but different months.</p>
-<ul>
-<li>Use the name of the files and sheet as metadata information to then identify each data</li>
-<li>Each excel sheet into one data frame</li>
-</ul>
+<div id="a-data-wrangling-case-with-excel-files" class="section level3">
+<h3>A data wrangling case with excel files</h3>
+<p>This is a short case that deal with the problem described previously, we have many spreadsheet files and we want to put all together into one dataset. The data has information of all corporate bonds issues and current debt status of bonds on the chilean local fixed-income market. This information is public available on the website of the “Comisión para el mercado financiero (CMF)” to download in xlsx files <a href="http://www.cmfchile.cl/portal/estadisticas/606/w3-propertyvalue-20153.html">here</a>.</p>
+<p><img src="img/xlsx_file_case-min.png#center" style="width:100.0%" /></p>
+<p>The goal is to use the insights that we highlight from David Robinson answer to make a spreadsheet into a tidy data and generalize for the situation that we have more than one file. An important feature of this set of files is that contain information of the same phenomenon (bond issues) by different periods of time.</p>
+<p>We have three xlsx files corresponding to information of 2013, 2014 and 2015. Each of these files contain more than one sheet because data is reported in a monthly frequency. So we use the <code>purrr package</code> to apply operations over many sheets at the same time (<em>if you don’t know purrr check</em> <a href="https://jennybc.github.io/purrr-tutorial/">Jenny Bryan’s tutorial</a>)</p>
+<p>A first thing to do is explore each file and the number of sheet that contain using <code>readxl::excel_sheets</code>.</p>
 <pre class="r"><code># first we load the packages used during the analysis
 library(dplyr)
 library(tidyr)
@@ -166,31 +150,36 @@ files
 sheet_per_file &lt;- map(files, readxl::excel_sheets)
 sheet_per_file
 ## [[1]]
-##  [1] &quot;Enero&quot;      &quot;Febrero&quot;    &quot;Marzo&quot;      &quot;Abril&quot;      &quot;Mayo&quot;      
-##  [6] &quot;Junio&quot;      &quot;Julio&quot;      &quot;Agosto&quot;     &quot;Septiembre&quot; &quot;Octubre&quot;   
-## [11] &quot;Noviembre&quot;  &quot;Diciembre&quot;  &quot;Hoja13&quot;    
+##  [1] &quot;Enero&quot;      &quot;Febrero&quot;    &quot;Marzo&quot;     
+##  [4] &quot;Abril&quot;      &quot;Mayo&quot;       &quot;Junio&quot;     
+##  [7] &quot;Julio&quot;      &quot;Agosto&quot;     &quot;Septiembre&quot;
+## [10] &quot;Octubre&quot;    &quot;Noviembre&quot;  &quot;Diciembre&quot; 
+## [13] &quot;Hoja13&quot;    
 ## 
 ## [[2]]
-##  [1] &quot;Enero&quot;      &quot;Febrero&quot;    &quot;Marzo&quot;      &quot;Abril&quot;      &quot;Mayo&quot;      
-##  [6] &quot;Junio&quot;      &quot;Julio&quot;      &quot;Agosto&quot;     &quot;Septiembre&quot; &quot;Octubre&quot;   
-## [11] &quot;Noviembre&quot;  &quot;Diciembre&quot; 
+##  [1] &quot;Enero&quot;      &quot;Febrero&quot;    &quot;Marzo&quot;     
+##  [4] &quot;Abril&quot;      &quot;Mayo&quot;       &quot;Junio&quot;     
+##  [7] &quot;Julio&quot;      &quot;Agosto&quot;     &quot;Septiembre&quot;
+## [10] &quot;Octubre&quot;    &quot;Noviembre&quot;  &quot;Diciembre&quot; 
 ## 
 ## [[3]]
-##  [1] &quot;Enero 2015&quot;      &quot;Febrero 2015&quot;    &quot;Marzo 2015&quot;     
-##  [4] &quot;Abril 2015&quot;      &quot;Mayo 2015&quot;       &quot;Junio 2015&quot;     
-##  [7] &quot;Julio 2015&quot;      &quot;Agosto 2015&quot;     &quot;Septiembre 2015&quot;
-## [10] &quot;Octubre 2015&quot;    &quot;Noviembre 2015&quot;  &quot;Diciembre 2015&quot;</code></pre>
-<p>We need a pair of arguments for <code>read_excel</code> to read each sheet:</p>
-<ul>
-<li><p><em>path to the xlsx file</em></p></li>
-<li><p><em>the name of the sheet</em>.</p></li>
-</ul>
-<p>A possible way to build these pair of arguments are the <strong>cross product</strong> between the variables <code>files</code> and <code>sheet_per_file</code>. But before that the crude world gives us an inconvenient, the first file contain more than twelve sheet and, as we know, a year has twelve months..so a sheet is being a fly (<em>Hoja13</em>).</p>
+##  [1] &quot;Enero 2015&quot;      &quot;Febrero 2015&quot;   
+##  [3] &quot;Marzo 2015&quot;      &quot;Abril 2015&quot;     
+##  [5] &quot;Mayo 2015&quot;       &quot;Junio 2015&quot;     
+##  [7] &quot;Julio 2015&quot;      &quot;Agosto 2015&quot;    
+##  [9] &quot;Septiembre 2015&quot; &quot;Octubre 2015&quot;   
+## [11] &quot;Noviembre 2015&quot;  &quot;Diciembre 2015&quot;</code></pre>
+<p>Now at least we need two arguments for <code>read_excel</code> to bring each excel sheet into R:</p>
+<ol style="list-style-type: decimal">
+<li><em>path to the xlsx file</em></li>
+<li><em>name of the sheet to read</em>.</li>
+</ol>
+<p>A possible way to build these pair of arguments are the <strong>cross product</strong> between the variables <code>files</code> and <code>sheet_per_file</code>. But before that, the crude world gives us an inconvenient, the first file contain more than twelve sheet and, as we know, a year has twelve months..so a sheet is being a fly (<em>Hoja13</em>).</p>
 <pre class="r"><code># for each sheet name vector we discard the names that aren&#39;t relevant
 pattern &lt;- c(&quot;Enero|Febrero|Marzo|Abril|Mayo|Junio|Julio|Agosto|Septiembre|Octubre|Noviembre|Diciembre&quot;)
 relevant_sheet_name &lt;- map(sheet_per_file, 
                            ~ .x[str_detect(.x, pattern)])</code></pre>
-<p>We continue with the cross product (<code>purrr::cross</code>)…and we obtain a nested list of 36 element (<code>arg_list</code>), in which each element is a list of length two with the necessaries arguments to read each sheet. Below you can see the first two pairs of argument to feed <code>read_excel</code>.</p>
+<p>We continue with the cross product (<code>purrr::cross</code>) and we obtain a nested list of 36 element (<code>arg_list</code>), in which each element of the list has a length of two with it necessary arguments to read each sheet. Below you can see the first two pairs of argument to feed <code>read_excel</code>.</p>
 <pre class="r"><code>arg_list &lt;- map2(files, relevant_sheet_name, ~ list(.x, .y))
 arg_list &lt;- map(arg_list, purrr::cross)
 arg_list &lt;- purrr::flatten(arg_list)
@@ -209,7 +198,7 @@ head(arg_list, n = 2)
 ## 
 ## [[2]][[2]]
 ## [1] &quot;Febrero&quot;</code></pre>
-<p>Now two things will happen, first I will iterate a list (<code>arg_list</code>) over a function, guess which one?…<code>read_excel</code> to read each sheet and store in a list called <code>raw_data</code>. Then I will give a name to each element (<em>dataframe</em>) of the output list <code>raw_data</code>. We need the metainformation to identify each dataframe with his corresponding file and sheet. So using <em>regex</em> we extract from each <code>arg_list</code> element the <u>year</u> and <u>month</u> from the first and second argument respectively. Look how the sheets are in <code>raw_data</code>, you can see the name after the dollar sign.</p>
+<p>Now two things will happen, first we will iterate a list (<code>arg_list</code>) over a function, guess which one?…<code>read_excel</code> to read each sheet and store in a list called <code>raw_data</code>. Then we will give a name to each element (<em>a dataframe</em>) of the output list <code>raw_data</code>. We need this metainformation to identify each dataframe with his corresponding file and sheet. So using <em>regex</em> we extract from each <code>arg_list</code> element the <u>year</u> and <u>month</u> from the first and second argument respectively. Look how the sheets are in <code>raw_data</code>, you can see the name after the dollar sign.</p>
 <pre class="r"><code>raw_data &lt;- invoke_map(read_excel, arg_list)
 
 # add metainformation from the names of the files and sheet into the name
@@ -221,41 +210,926 @@ names(raw_data) &lt;- list_names
 head(raw_data, n = 2)
 ## $`2013_Enero`
 ## # A tibble: 1,127 x 25
-##    `DETALLE DEUDA VIGENTE`  X__1                     X__2
-##                      &lt;chr&gt; &lt;chr&gt;                    &lt;chr&gt;
-##  1      BONOS CORPORATIVOS  &lt;NA&gt;                     &lt;NA&gt;
-##  2  al 31 de enero de 2013  &lt;NA&gt;                     &lt;NA&gt;
-##  3                    &lt;NA&gt;  &lt;NA&gt;                     &lt;NA&gt;
-##  4                    &lt;NA&gt;  &lt;NA&gt; *VALOR U.F.(31/01/2013)=
-##  5                     Rut  &lt;NA&gt;                 Sociedad
-##  6                76675290     K           AD Retail S.A.
-##  7                76675290     K           AD Retail S.A.
-##  8                94272000     9           AES Gener S.A.
-##  9                94272000     9           AES Gener S.A.
-## 10                94272000     9           AES Gener S.A.
-## # ... with 1,117 more rows, and 22 more variables: X__3 &lt;chr&gt;, X__4 &lt;chr&gt;,
-## #   X__5 &lt;chr&gt;, X__6 &lt;chr&gt;, X__7 &lt;chr&gt;, X__8 &lt;chr&gt;, X__9 &lt;chr&gt;,
-## #   X__10 &lt;chr&gt;, X__11 &lt;chr&gt;, X__12 &lt;chr&gt;, X__13 &lt;chr&gt;, X__14 &lt;chr&gt;,
-## #   X__15 &lt;chr&gt;, X__16 &lt;chr&gt;, X__17 &lt;chr&gt;, X__18 &lt;chr&gt;, X__19 &lt;chr&gt;,
-## #   X__20 &lt;chr&gt;, X__21 &lt;chr&gt;, X__22 &lt;chr&gt;, X__23 &lt;chr&gt;, X__24 &lt;chr&gt;
+##    `DETALLE DEUDA ~ X__1  X__2  X__3  X__4  X__5 
+##    &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+##  1 BONOS CORPORATI~ &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+##  2 al 31 de enero ~ &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+##  3 &lt;NA&gt;             &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+##  4 &lt;NA&gt;             &lt;NA&gt;  *VAL~ &lt;NA&gt;  &lt;NA&gt;  2280~
+##  5 Rut              &lt;NA&gt;  Soci~ &quot;Tip~ Nº I~ Fech~
+##  6 76675290         K     AD R~ Línea 694   40884
+##  7 76675290         K     AD R~ 1E    694   40892
+##  8 94272000         9     AES ~ Línea 516   39395
+##  9 94272000         9     AES ~ 1E    516   39400
+## 10 94272000         9     AES ~ Línea 517   39395
+## # ... with 1,117 more rows, and 19 more
+## #   variables: X__6 &lt;chr&gt;, X__7 &lt;chr&gt;,
+## #   X__8 &lt;chr&gt;, X__9 &lt;chr&gt;, X__10 &lt;chr&gt;,
+## #   X__11 &lt;chr&gt;, X__12 &lt;chr&gt;, X__13 &lt;chr&gt;,
+## #   X__14 &lt;chr&gt;, X__15 &lt;chr&gt;, X__16 &lt;chr&gt;,
+## #   X__17 &lt;chr&gt;, X__18 &lt;chr&gt;, X__19 &lt;chr&gt;,
+## #   X__20 &lt;chr&gt;, X__21 &lt;chr&gt;, X__22 &lt;chr&gt;,
+## #   X__23 &lt;chr&gt;, X__24 &lt;chr&gt;
 ## 
 ## $`2013_Febrero`
 ## # A tibble: 1,131 x 25
-##        X__1 `DETALLE DEUDA VIGENTE`                     X__2
-##       &lt;chr&gt;                   &lt;chr&gt;                    &lt;chr&gt;
-##  1     &lt;NA&gt;      BONOS CORPORATIVOS                     &lt;NA&gt;
-##  2     &lt;NA&gt;                      al                    41333
-##  3     &lt;NA&gt;                    &lt;NA&gt;                     &lt;NA&gt;
-##  4     &lt;NA&gt;                    &lt;NA&gt; *VALOR U.F.(28/02/2013)=
-##  5      Rut                    &lt;NA&gt;                 Sociedad
-##  6     &lt;NA&gt;                    &lt;NA&gt;                     &lt;NA&gt;
-##  7 76675290                       K           AD Retail S.A.
-##  8 76675290                       K           AD Retail S.A.
-##  9 94272000                       9           AES Gener S.A.
-## 10 94272000                       9           AES Gener S.A.
-## # ... with 1,121 more rows, and 22 more variables: X__3 &lt;chr&gt;, X__4 &lt;chr&gt;,
-## #   X__5 &lt;chr&gt;, X__6 &lt;chr&gt;, X__7 &lt;chr&gt;, X__8 &lt;chr&gt;, X__9 &lt;chr&gt;,
-## #   X__10 &lt;chr&gt;, X__11 &lt;chr&gt;, X__12 &lt;chr&gt;, X__13 &lt;chr&gt;, X__14 &lt;chr&gt;,
-## #   X__15 &lt;chr&gt;, X__16 &lt;chr&gt;, X__17 &lt;chr&gt;, X__18 &lt;chr&gt;, X__19 &lt;chr&gt;,
-## #   X__20 &lt;chr&gt;, X__21 &lt;chr&gt;, X__22 &lt;chr&gt;, X__23 &lt;chr&gt;, X__24 &lt;chr&gt;</code></pre>
+##    X__1  `DETALLE DEUDA ~ X__2  X__3  X__4  X__5 
+##    &lt;chr&gt; &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+##  1 &lt;NA&gt;  BONOS CORPORATI~ &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+##  2 &lt;NA&gt;  al               41333 &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+##  3 &lt;NA&gt;  &lt;NA&gt;             &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+##  4 &lt;NA&gt;  &lt;NA&gt;             *VAL~ &lt;NA&gt;  &lt;NA&gt;  2283~
+##  5 Rut   &lt;NA&gt;             Soci~ &quot;Tip~ Nº I~ Fech~
+##  6 &lt;NA&gt;  &lt;NA&gt;             &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+##  7 7667~ K                AD R~ Línea 694   40884
+##  8 7667~ K                AD R~ 1E    694   40892
+##  9 9427~ 9                AES ~ Línea 516   39395
+## 10 9427~ 9                AES ~ 1E    516   39400
+## # ... with 1,121 more rows, and 19 more
+## #   variables: X__6 &lt;chr&gt;, X__7 &lt;chr&gt;,
+## #   X__8 &lt;chr&gt;, X__9 &lt;chr&gt;, X__10 &lt;chr&gt;,
+## #   X__11 &lt;chr&gt;, X__12 &lt;chr&gt;, X__13 &lt;chr&gt;,
+## #   X__14 &lt;chr&gt;, X__15 &lt;chr&gt;, X__16 &lt;chr&gt;,
+## #   X__17 &lt;chr&gt;, X__18 &lt;chr&gt;, X__19 &lt;chr&gt;,
+## #   X__20 &lt;chr&gt;, X__21 &lt;chr&gt;, X__22 &lt;chr&gt;,
+## #   X__23 &lt;chr&gt;, X__24 &lt;chr&gt;</code></pre>
+<p>It is necessary to clean before to collapse <code>raw_data</code> into one dataset. We want to discard rows with meta-information and select all the columns until column <em>“Valor Par (en miles de $)”</em>. So first we need to detect the row that contain the column names of the table in the spreadsheet, then the name of our last column, and finally the last row that contain values. We can do this by applying regular expressions on coordinate view. Another point is to encapsulate all this process into the function <code>clean_spreadsheet</code> to apply simultaneously over each dataframe.</p>
+<pre class="r"><code>clean_spreadsheet &lt;- function(df) {
+  tbl &lt;- tidy_excel(df)
+  last_col &lt;- tbl %&gt;% 
+    filter(str_detect(value, &quot;[Vv][Aa][Ll][Oo][Rr] [Pp][Aa][Rr]&quot;)) %&gt;% 
+    select(column) %&gt;% 
+    max()
+  last_row &lt;- tbl %&gt;% 
+    filter(str_detect(value, &quot;[Tt][Oo][Tt][Aa][Ll]&quot;)) %&gt;% 
+    select(row) %&gt;% 
+    min()
+  first_row &lt;- tbl %&gt;%
+    filter(str_detect(value, &quot;[Rr][Uu][Tt]&quot;)) %&gt;% 
+    select(row) %&gt;% 
+    min()
+  sub_tbl &lt;- tbl %&gt;%
+    filter(row &lt;= last_row - 1, column &lt;= last_col,
+           row &gt;= first_row + 1) %&gt;% 
+    tidyr::spread(column, value) %&gt;% 
+    select(-row)
+
+}
+
+clean_data &lt;- purrr::map(raw_data, clean_spreadsheet)
+head(clean_data, n = 2)
+## $`2013_Enero`
+## # A tibble: 962 x 19
+##    `1`     `2`   `3`      `4`   `5`   `6`   `7`  
+##    &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+##  1 766752~ K     AD Reta~ Línea 694   40884 U.F. 
+##  2 766752~ K     AD Reta~ 1E    694   40892 U.F. 
+##  3 942720~ 9     AES Gen~ Línea 516   39395 US$  
+##  4 942720~ 9     AES Gen~ 1E    516   39400 U.F. 
+##  5 942720~ 9     AES Gen~ Línea 517   39395 US$  
+##  6 942720~ 9     AES Gen~ 1E    517   39400 U.F. 
+##  7 942720~ 9     AES Gen~ 2E    517   39905 US$  
+##  8 761292~ 3     Agrosup~ Línea 678   40801 U.F. 
+##  9 761292~ 3     Agrosup~ 1E    678   40802 U.F. 
+## 10 761292~ 3     Agrosup~ 1E    678   40802 $    
+## # ... with 952 more rows, and 12 more variables:
+## #   `8` &lt;chr&gt;, `9` &lt;chr&gt;, `10` &lt;chr&gt;, `11` &lt;chr&gt;,
+## #   `12` &lt;chr&gt;, `13` &lt;chr&gt;, `14` &lt;chr&gt;,
+## #   `15` &lt;chr&gt;, `16` &lt;chr&gt;, `17` &lt;chr&gt;,
+## #   `18` &lt;chr&gt;, `19` &lt;chr&gt;
+## 
+## $`2013_Febrero`
+## # A tibble: 965 x 19
+##    `1`     `2`   `3`      `4`   `5`   `6`   `7`  
+##    &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+##  1 766752~ K     AD Reta~ Línea 694   40884 U.F. 
+##  2 766752~ K     AD Reta~ 1E    694   40892 U.F. 
+##  3 942720~ 9     AES Gen~ Línea 516   39395 US$  
+##  4 942720~ 9     AES Gen~ 1E    516   39400 U.F. 
+##  5 942720~ 9     AES Gen~ Línea 517   39395 US$  
+##  6 942720~ 9     AES Gen~ 1E    517   39400 U.F. 
+##  7 942720~ 9     AES Gen~ 2E    517   39905 US$  
+##  8 761292~ 3     Agrosup~ Línea 678   40801 U.F. 
+##  9 761292~ 3     Agrosup~ 1E    678   40802 U.F. 
+## 10 761292~ 3     Agrosup~ 1E    678   40802 $    
+## # ... with 955 more rows, and 12 more variables:
+## #   `8` &lt;chr&gt;, `9` &lt;chr&gt;, `10` &lt;chr&gt;, `11` &lt;chr&gt;,
+## #   `12` &lt;chr&gt;, `13` &lt;chr&gt;, `14` &lt;chr&gt;,
+## #   `15` &lt;chr&gt;, `16` &lt;chr&gt;, `17` &lt;chr&gt;,
+## #   `18` &lt;chr&gt;, `19` &lt;chr&gt;</code></pre>
+<p>Are dataframes of the same dimensions? We are interested in that each data has the same number of column because evidently could have different rows (more or less bonds as observations).</p>
+<pre class="r"><code>purrr::map(clean_data, ~ ncol(.)) %&gt;% 
+  unlist() %&gt;% 
+  table()
+## .
+## 17 19 20 
+##  3 31  2</code></pre>
+<p>Approximately a 86% of the data has 19 columns, then is make sense to focus on the case of 19 columns.</p>
+<pre class="r"><code>data &lt;- clean_data %&gt;% 
+            purrr::keep(~dim(.)[2] == 19) %&gt;% 
+            purrr::imap(~ mutate(.x, periodo_reporte = .y)) %&gt;% 
+            bind_rows() %&gt;% 
+            mutate(mes = str_extract(periodo_reporte, &quot;[^_\\a]+$&quot;),
+                   anho = str_extract(periodo_reporte, &quot;^[^_\\D]+&quot;)) %&gt;% 
+            select(anho, mes, `1`:`19`)
+
+col_names &lt;- c(&quot;anho&quot;, &quot;mes&quot;, &quot;rut&quot;, &quot;dv&quot;, &quot;sociedad&quot;, &quot;tipo_bono&quot;, &quot;num_inscripccion&quot;, &quot;fecha_inscripccion&quot;,
+  &quot;unidad&quot;, &quot;monto_inscrito_miles&quot;, &quot;serie&quot;, &quot;tasa_emision&quot;, &quot;objetivo_emision1&quot;,
+  &quot;objetivo_emision2&quot;, &quot;objetivo_emision3&quot;, &quot;anhos_vencimiento&quot;, &quot;valor_nominal_inicial&quot;, &quot;valor_nominal_vigente&quot;,
+  &quot;valor_nominal_reaj&quot;, &quot;int_dev_no_pagado&quot;, &quot;valor_par&quot;)
+
+names(data) &lt;- col_names
+data
+## # A tibble: 33,261 x 21
+##    anho  mes   rut     dv    sociedad   tipo_bono
+##    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;    
+##  1 2013  Enero 766752~ K     AD Retail~ Línea    
+##  2 2013  Enero 766752~ K     AD Retail~ 1E       
+##  3 2013  Enero 942720~ 9     AES Gener~ Línea    
+##  4 2013  Enero 942720~ 9     AES Gener~ 1E       
+##  5 2013  Enero 942720~ 9     AES Gener~ Línea    
+##  6 2013  Enero 942720~ 9     AES Gener~ 1E       
+##  7 2013  Enero 942720~ 9     AES Gener~ 2E       
+##  8 2013  Enero 761292~ 3     Agrosuper~ Línea    
+##  9 2013  Enero 761292~ 3     Agrosuper~ 1E       
+## 10 2013  Enero 761292~ 3     Agrosuper~ 1E       
+## # ... with 33,251 more rows, and 15 more
+## #   variables: num_inscripccion &lt;chr&gt;,
+## #   fecha_inscripccion &lt;chr&gt;, unidad &lt;chr&gt;,
+## #   monto_inscrito_miles &lt;chr&gt;, serie &lt;chr&gt;,
+## #   tasa_emision &lt;chr&gt;, objetivo_emision1 &lt;chr&gt;,
+## #   objetivo_emision2 &lt;chr&gt;,
+## #   objetivo_emision3 &lt;chr&gt;,
+## #   anhos_vencimiento &lt;chr&gt;,
+## #   valor_nominal_inicial &lt;chr&gt;,
+## #   valor_nominal_vigente &lt;chr&gt;,
+## #   valor_nominal_reaj &lt;chr&gt;,
+## #   int_dev_no_pagado &lt;chr&gt;, valor_par &lt;chr&gt;</code></pre>
+<p>If we take a look to the variable <code>fecha_inscripccion</code>.</p>
+<pre class="r"><code>data %&gt;% 
+  select(fecha_inscripccion)
+## # A tibble: 33,261 x 1
+##    fecha_inscripccion
+##    &lt;chr&gt;             
+##  1 40884             
+##  2 40892             
+##  3 39395             
+##  4 39400             
+##  5 39395             
+##  6 39400             
+##  7 39905             
+##  8 40801             
+##  9 40802             
+## 10 40802             
+## # ... with 33,251 more rows</code></pre>
+<p>These numbers doesn’t look as a date but actually is how excel stores the dates. David Robinson use the following function to clean these values.</p>
+<pre class="r"><code>convert_excel_date &lt;- function(x) {
+  # created by David Robinson
+  result &lt;- as.Date(&quot;1900-01-01&quot;) + as.numeric(x) - 2 
+  ifelse(is.na(result), x, as.character(result))
+}
+
+data &lt;- data %&gt;% 
+            mutate(fecha_inscripccion = lubridate::ymd(convert_excel_date(fecha_inscripccion)))
+
+data %&gt;% 
+  select(fecha_inscripccion)
+## # A tibble: 33,261 x 1
+##    fecha_inscripccion
+##    &lt;date&gt;            
+##  1 2011-12-07        
+##  2 2011-12-15        
+##  3 2007-11-09        
+##  4 2007-11-14        
+##  5 2007-11-09        
+##  6 2007-11-14        
+##  7 2009-04-02        
+##  8 2011-09-15        
+##  9 2011-09-16        
+## 10 2011-09-16        
+## # ... with 33,251 more rows</code></pre>
+<p>We can take a look to the first ten observations.</p>
+<div style="border: 1px solid #ddd; padding: 5px; overflow-y: scroll; height:200px; overflow-x: scroll; width:100%; ">
+<table class="table table-striped" style="font-size: 14px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+anho
+</th>
+<th style="text-align:left;">
+mes
+</th>
+<th style="text-align:left;">
+rut
+</th>
+<th style="text-align:left;">
+dv
+</th>
+<th style="text-align:left;">
+sociedad
+</th>
+<th style="text-align:left;">
+tipo_bono
+</th>
+<th style="text-align:left;">
+num_inscripccion
+</th>
+<th style="text-align:left;">
+fecha_inscripccion
+</th>
+<th style="text-align:left;">
+unidad
+</th>
+<th style="text-align:left;">
+monto_inscrito_miles
+</th>
+<th style="text-align:left;">
+serie
+</th>
+<th style="text-align:left;">
+tasa_emision
+</th>
+<th style="text-align:left;">
+objetivo_emision1
+</th>
+<th style="text-align:left;">
+objetivo_emision2
+</th>
+<th style="text-align:left;">
+objetivo_emision3
+</th>
+<th style="text-align:left;">
+anhos_vencimiento
+</th>
+<th style="text-align:left;">
+valor_nominal_inicial
+</th>
+<th style="text-align:left;">
+valor_nominal_vigente
+</th>
+<th style="text-align:left;">
+valor_nominal_reaj
+</th>
+<th style="text-align:left;">
+int_dev_no_pagado
+</th>
+<th style="text-align:left;">
+valor_par
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+76675290
+</td>
+<td style="text-align:left;">
+K
+</td>
+<td style="text-align:left;">
+AD Retail S.A.
+</td>
+<td style="text-align:left;">
+Línea
+</td>
+<td style="text-align:left;">
+694
+</td>
+<td style="text-align:left;">
+2011-12-07
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+4000
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+RP
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+10
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+76675290
+</td>
+<td style="text-align:left;">
+K
+</td>
+<td style="text-align:left;">
+AD Retail S.A.
+</td>
+<td style="text-align:left;">
+1E
+</td>
+<td style="text-align:left;">
+694
+</td>
+<td style="text-align:left;">
+2011-12-15
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+2000
+</td>
+<td style="text-align:left;">
+A
+</td>
+<td style="text-align:left;">
+6.05
+</td>
+<td style="text-align:left;">
+RP
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+9.5
+</td>
+<td style="text-align:left;">
+2000000
+</td>
+<td style="text-align:left;">
+2000000
+</td>
+<td style="text-align:left;">
+45615080
+</td>
+<td style="text-align:left;">
+986849
+</td>
+<td style="text-align:left;">
+46601929
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+94272000
+</td>
+<td style="text-align:left;">
+9
+</td>
+<td style="text-align:left;">
+AES Gener S.A.
+</td>
+<td style="text-align:left;">
+Línea
+</td>
+<td style="text-align:left;">
+516
+</td>
+<td style="text-align:left;">
+2007-11-09
+</td>
+<td style="text-align:left;">
+US$
+</td>
+<td style="text-align:left;">
+200000
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+MNE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+10
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+94272000
+</td>
+<td style="text-align:left;">
+9
+</td>
+<td style="text-align:left;">
+AES Gener S.A.
+</td>
+<td style="text-align:left;">
+1E
+</td>
+<td style="text-align:left;">
+516
+</td>
+<td style="text-align:left;">
+2007-11-14
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+2800
+</td>
+<td style="text-align:left;">
+O
+</td>
+<td style="text-align:left;">
+3.4
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+MNE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+7.5
+</td>
+<td style="text-align:left;">
+1200000
+</td>
+<td style="text-align:left;">
+1200000
+</td>
+<td style="text-align:left;">
+27369048
+</td>
+<td style="text-align:left;">
+153787
+</td>
+<td style="text-align:left;">
+27522835
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+94272000
+</td>
+<td style="text-align:left;">
+9
+</td>
+<td style="text-align:left;">
+AES Gener S.A.
+</td>
+<td style="text-align:left;">
+Línea
+</td>
+<td style="text-align:left;">
+517
+</td>
+<td style="text-align:left;">
+2007-11-09
+</td>
+<td style="text-align:left;">
+US$
+</td>
+<td style="text-align:left;">
+400000
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+MNE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+30
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+94272000
+</td>
+<td style="text-align:left;">
+9
+</td>
+<td style="text-align:left;">
+AES Gener S.A.
+</td>
+<td style="text-align:left;">
+1E
+</td>
+<td style="text-align:left;">
+517
+</td>
+<td style="text-align:left;">
+2007-11-14
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+5600
+</td>
+<td style="text-align:left;">
+N
+</td>
+<td style="text-align:left;">
+4.0999999999999996
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+MNE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+21
+</td>
+<td style="text-align:left;">
+4400000
+</td>
+<td style="text-align:left;">
+4400000
+</td>
+<td style="text-align:left;">
+100353176
+</td>
+<td style="text-align:left;">
+678889
+</td>
+<td style="text-align:left;">
+101032065
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+94272000
+</td>
+<td style="text-align:left;">
+9
+</td>
+<td style="text-align:left;">
+AES Gener S.A.
+</td>
+<td style="text-align:left;">
+2E
+</td>
+<td style="text-align:left;">
+517
+</td>
+<td style="text-align:left;">
+2009-04-02
+</td>
+<td style="text-align:left;">
+US$
+</td>
+<td style="text-align:left;">
+196000
+</td>
+<td style="text-align:left;">
+Q
+</td>
+<td style="text-align:left;">
+8
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+10
+</td>
+<td style="text-align:left;">
+196000000
+</td>
+<td style="text-align:left;">
+102200000
+</td>
+<td style="text-align:left;">
+48181168
+</td>
+<td style="text-align:left;">
+1260130
+</td>
+<td style="text-align:left;">
+49441298
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+76129263
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+Agrosuper S.A.
+</td>
+<td style="text-align:left;">
+Línea
+</td>
+<td style="text-align:left;">
+678
+</td>
+<td style="text-align:left;">
+2011-09-15
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+8500
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+RP
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+10
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+76129263
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+Agrosuper S.A.
+</td>
+<td style="text-align:left;">
+1E
+</td>
+<td style="text-align:left;">
+678
+</td>
+<td style="text-align:left;">
+2011-09-16
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+5000
+</td>
+<td style="text-align:left;">
+A
+</td>
+<td style="text-align:left;">
+3.4
+</td>
+<td style="text-align:left;">
+RP
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+7
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+76129263
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+Agrosuper S.A.
+</td>
+<td style="text-align:left;">
+1E
+</td>
+<td style="text-align:left;">
+678
+</td>
+<td style="text-align:left;">
+2011-09-16
+</td>
+<td style="text-align:left;">
+$
+</td>
+<td style="text-align:left;">
+100000000
+</td>
+<td style="text-align:left;">
+B
+</td>
+<td style="text-align:left;">
+6.1
+</td>
+<td style="text-align:left;">
+RP
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+7
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>

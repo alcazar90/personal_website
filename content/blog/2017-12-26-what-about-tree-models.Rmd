@@ -36,7 +36,7 @@ A simple tree can be built using two things, at least if we ignore the details, 
 
 We want to *learn a function from data* that maps a d-euclidean predictor space ($X \in \R^d$) to a response variable $Y$.
 
-$$f: \R^d \rightarrow Y$$
+$$f:\R  \rightarrow Y$$
 For a simple tree this function $f$ could take the following form:
 
 $$f(x) = \sum_{m = 1}^{m}c_mI(x \in R_m)$$

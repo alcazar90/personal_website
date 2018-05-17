@@ -9,33 +9,28 @@ comments: yes
 showcomments: yes
 showpagemeta: yes
 ---
+```{r set-options, echo = FALSE, cache = FALSE}
+options(width = 50)
+```
 
 ```{r, message=FALSE, echo=FALSE}
 library(dplyr)
 ```
 
-![](img/spreadsheet_shock.jpg#center){ width=60% }
-
-## Introduction 
-
-Data wrangling is the process of mapping raw data to a format more suitable to model, visualize or in general to work it. This process is usually thought as an early stage of the data analysis pipeline (*e.g. I need a nice table to start the analysis*). But the skills involved in the process are useful whenever you need to reshape or look your data from different perspectives, or when you need to adapt some new tool that required a specific format. The reflexion:
-
->*data wrangling skills have more to say that only in an initial stage of the analysis, the latter can be augmented with these skills, enabling more flexibility and expressiveness in the whole pipeline.*
-
-But the reason of this post is show you the essential of data wrangling: dominate data or take control of it. As you know, data in real life aren't always friendly and is not uncommon to found problems relative to the shape or format. An one case that contain both of these problem are the spreadsheet data.
+![](img/spreadsheet_shock-min.jpg#center){ width=60% }
 
 
-(Just) to be fair not all the spreadsheets are a problem. Let me clarify what I refer by "problem", *the mess of more than one table per sheet like islands floating in a ocean of blank cells with clouds of metainformation headers relative to the tables...ok.*
+A typical real world situation is the problem of collect data from a set of files and structured into one dataset. "Why data is separate?" you can think, well this could response to many reasons. For example, some phenomenon are measure along the time and you can only access to data by period or a bussiness is collecting some information of his units and the origin process of data was not centralized. So you end up with one file per unit in your hands.
 
-You can look by yourself what I try to say in the following magistral example, but first some context. Below of this paragraph you can find a series of tweets belonged to very well known data scientists (*if you don't hear about them, I strongly recommend that you follow them*). The discussion is about a challenge to turn <a href="https://t.co/v9ucC0Vj2t" target="_blank">this spreadsheet</a> (a xlsx file) into a tidy data--*the grace is that the spreadsheet suffer the problems that I tried to describe*--and <a href="http://varianceexplained.org/" target="_blank">David Robinson (*the challenged*) </a>deal with the problem in  <a href="http://rpubs.com/dgrtwo/tidying-enron" target="_blank">a very simple and fluently way</a>.
+Another typical situation is that data is share or is avaiable in excel files. That is because excel is the main used analytical tool in the world (I guess!) and many of us we didn't have a class of best practices on how share and document data. The problem with excel files are the "spreadsheet intrinsic issues". What is that?...is just a fancy way to call the messy format problems that are common to find in spreadsheet files like multiple header levels, more than one table per sheet, different data types values in same column, and the list goes on.
+
+You can look by yourself what I try to say in the following magistral example, but first some context. Below of this paragraph you can find a series of tweets belonged to very well known data scientists. The discussion is about a challenge to turn <a href="https://t.co/v9ucC0Vj2t" target="_blank">this spreadsheet</a> (a xlsx file) into a tidy data and <a href="http://varianceexplained.org/" target="_blank">David Robinson (*the challenged*) </a>deal with the problem in  <a href="http://rpubs.com/dgrtwo/tidying-enron" target="_blank">a very simple and fluently way</a>.
 
 `r blogdown::shortcode('tweet', '717815339480977410#center')`
 
 `r blogdown::shortcode('tweet', '718170667573579776')`
 
-In the rest of the post I will dedicate to highlight some steps of the David Robinson answer to the tweet challenge, and then apply the insights on a case of data contained in multiple "xlsx"" files with many sheets.
-
-## The highlights steps
+The rest of the post is dedicated to highlight some steps of David Robinson answer to the tweet challenge, and then apply the insights on a case of data contained in multiple "xlsx"" files with many sheets.
 
 ### Step 1: The coordinate-view
 
@@ -68,8 +63,7 @@ head(df)
 ```
 
 
-
-The importance of this step is to describe explicitly the position of each cell-value of the spreadsheet into the R's data frame structure--*in row* $i$ *and column* $j$ *you found the value* $x_{i,j}$--and the following function, created and used by David Robinson in his answer, reorganize the data accordingly.
+The important thing here is to describe explicitly the position of each cell-value that belong to the spreadsheet into the R's data frame structure--*in row* $i$ *and column* $j$ *you found the cell-value* $x_{i,j}$--and the following function, **written and used by David Robinson in his answer**, reorganize data accordingly.
 
 ```{r}
 library(dplyr)
@@ -97,9 +91,12 @@ tidy_excel(df)
 
 As you can observe, the cells of the spreadsheet are melted into one column (*value*) and two new index-variables are created, one by each dimension (*row* and *column*), to mapping a cell coordinate of the spreadsheet with his content. This is the reason of the section title part *"coordinate-view"*.
 
-The legitimate question now is **why can be useful the coordinate-view? What is the advantage with the previous form?**
+A legitimate question now is **why can be useful a coordinate-view? What is the advantage with the original form?**
 
-> **A:** *It's possible to take advantage of manipulate data based on the physical position of the template using operations over columns and rows. In fact,* `tidy_excel` *apart of reshape data into the coordinate-view is also an example of this. Pay attention to the following code snippet from the function definition of* `tidy_excel`.
+> **A:** It's possible to take advantage of manipulate data based on his template structure and found regions with relevant data in the spreadsheet using filter operations over rows and columns. 
+
+In fact, `tidy_excel` apart of reshape data into the coordinate-view is also an example of this. Pay attention to the following code snippet from the function definition of `tidy_excel`.
+
 
 ```{r, eval = FALSE}
 # ...from the definition of tidy_excel
@@ -109,43 +106,42 @@ The legitimate question now is **why can be useful the coordinate-view? What is 
   filter(!all(is.na(value))) # discard empty cols (col-groups that contain only NA values)
 ```
 
-We can give more life to the above answer with an example. Imagine that we want to know the index of a header that contain "weapon" and years (2004...2008) of the previous table. Indeed like the data is very small you can know the answer just by looking. But suppose that we have multiple spreadsheets like that and the row index header can vary between the files. In this case it would be useful a way to identify the row-index that contain the header and deal with the particularities of each spreadsheet.
+We can give more life to the above answer with an example. Imagine we want to know the index of column names that contain the word "Weapon" and years from 2004 to 2008 of the previous table. Indeed like the data is very small you can know the answer just by looking. But suppose that we have multiple spreadsheets like this containing different period of years. In this case it would be useful a way to identify the row-index that contain the column names and deal with the particularities of each spreadsheet.
 
 ```{r}
-# 4-row
+# the column names are in the 4 row-index
 df
 
-# identify the header table in the coordinate-view representation
-header_names_pattern <- "Weapons|2004|2005|2006|2007|2008"
+# identify keywords in the column names
+column_names_pattern <- "Weapons|2004|2005|2006|2007|2008"
 
-# filter the column value based on a string pattern
+# filter the coordinate view of data based on the previous key-words
 df %>% 
   tidy_excel %>%  # apply the coordinate-view
-  filter(stringr::str_detect(value, header_names_pattern))
+  filter(stringr::str_detect(value, column_names_pattern))  # use regex to detect cell that satisfy a pattern
 ```
 
 
-The above code is just a logical filter operation over the data. In other words, we give to the `dplyr::filter` function a logical vector (*TRUE / FALSE*) of the same length that the rows of the data and return only the rows in which the index is *TRUE*. The coordinate view allow us to know directly in which row and column the relevant values are located in the spreadsheet. If we pay atention to the row variable you can see that the header content is located in the fourth row.
+The above code is just a logical filter operation over data. In other words, we give to the `dplyr::filter` function a logical vector (*TRUE / FALSE*) of the same length that rows of the data and return only rows in which the index is *TRUE*. The coordinate view allow us to know directly in which row and column the relevant values are located in the spreadsheet. If we pay atention to the row variable you can see that the header content is located in the fourth row.
 
 How we generate the logical vector with `stringr::str_detect` is the following step.
-
 
 ### Step 2: Make your shot with regex
 
 > *"A regular expression (or just regex) is a sequence of character that define a search pattern."* (<a href="https://en.m.wikipedia.org/wiki/Regular_expression" target="_blank">Wikipedia</a>)
  
 
-## The Case
+### A data wrangling case with excel files
 
+This is a short case that deal with the problem described previously, we have many spreadsheet files and we want to put all together into one dataset. The data has information of all corporate bonds issues and current debt status of bonds on the chilean local fixed-income market. This information is public available on the website of the "Comisión para el mercado financiero (CMF)" to download in xlsx files [here](http://www.cmfchile.cl/portal/estadisticas/606/w3-propertyvalue-20153.html).
 
-**Describe better the problem and the goal**
+![](img/xlsx_file_case-min.png#center){ width=100% }
 
-The aim of this case is use the insights of the highlights step and extract tables from three excel files (*xlsx*), Each of these correspond to a year files contain multiple sheets with the same information but different months.
+The goal is to use the insights that we highlight from David Robinson answer to make a spreadsheet into a tidy data and generalize for the situation that we have more than one file. An important feature of this set of files is that contain information of the same phenomenon (bond issues) by different periods of time.
 
-- Use the name of the files and sheet as metadata information to then identify each
-data
-- Each excel sheet into one data frame
+We have three xlsx files corresponding to information of 2013, 2014 and 2015. Each of these files contain more than one sheet because data is reported in a monthly frequency. So we use the `purrr package` to apply operations over many sheets at the same time (*if you don't know purrr check* [Jenny Bryan's tutorial](https://jennybc.github.io/purrr-tutorial/))
 
+A first thing to do is explore each file and the number of sheet that contain using `readxl::excel_sheets`.
 
 ```{r}
 # first we load the packages used during the analysis
@@ -163,13 +159,12 @@ sheet_per_file <- map(files, readxl::excel_sheets)
 sheet_per_file
 ```
 
-We need a pair of arguments for `read_excel` to read each sheet:
+Now at least we need two arguments for `read_excel` to bring each excel sheet into R:
 
-- *path to the xlsx file* 
+1. *path to the xlsx file* 
+2. *name of the sheet to read*. 
 
-- *the name of the sheet*. 
-
-A possible way to build these pair of arguments are the **cross product** between the variables `files` and `sheet_per_file`. But before that the crude world gives us an inconvenient, the first file contain more than twelve sheet and, as we know, a year has twelve months..so a sheet is being a fly (*Hoja13*).
+A possible way to build these pair of arguments are the **cross product** between the variables `files` and `sheet_per_file`. But before that, the crude world gives us an inconvenient, the first file contain more than twelve sheet and, as we know, a year has twelve months..so a sheet is being a fly (*Hoja13*).
 
 ```{r}
 # for each sheet name vector we discard the names that aren't relevant
@@ -178,7 +173,7 @@ relevant_sheet_name <- map(sheet_per_file,
                            ~ .x[str_detect(.x, pattern)])
 ```
 
-We continue with the cross product (`purrr::cross`)...and we obtain a nested list of 36 element (`arg_list`), in which each element is a list of length two with the necessaries arguments to read each sheet. Below you can see the first two pairs of argument to feed `read_excel`.
+We continue with the cross product (`purrr::cross`) and we obtain a nested list of 36 element (`arg_list`), in which each element of the list has a length of two with it necessary arguments to read each sheet. Below you can see the first two pairs of argument to feed `read_excel`.
 
 ```{r}
 arg_list <- map2(files, relevant_sheet_name, ~ list(.x, .y))
@@ -187,7 +182,8 @@ arg_list <- purrr::flatten(arg_list)
 head(arg_list, n = 2)
 ```
 
-Now two things will happen, first I will iterate a list (`arg_list`) over a function, guess which one?...`read_excel` to read each sheet and store in a list called `raw_data`. Then I will give a name to each element (*dataframe*) of the output list `raw_data`. We need the metainformation to identify each dataframe with his corresponding file and sheet. So using *regex* we extract from each `arg_list` element the <u>year</u> and <u>month</u> from the first and second argument respectively. Look how the sheets are in `raw_data`, you can see the name after the dollar sign.
+Now two things will happen, first we will iterate a list (`arg_list`) over a function, guess which one?...`read_excel` to read each sheet and store in a list called `raw_data`. Then we will give a name to each element (*a dataframe*) of the output list `raw_data`. We need this metainformation to identify each dataframe with his corresponding file and sheet. So using *regex* we extract from each `arg_list` element the <u>year</u> and <u>month</u> from the first and second argument respectively. Look how the sheets are in `raw_data`, you can see the name after the dollar sign.
+
 ```{r}
 raw_data <- invoke_map(read_excel, arg_list)
 
@@ -198,5 +194,95 @@ list_names <- map(arg_list, ~ paste(str_extract(.x[[1]], "[0-9]+"),
 
 names(raw_data) <- list_names
 head(raw_data, n = 2)
+```
+
+It is necessary to clean before to collapse `raw_data` into one dataset. We want to discard rows with meta-information and select all the columns until column *"Valor Par (en miles de $)"*. So first we need to detect the row that contain the column names of the table in the spreadsheet, then the name of our last column, and finally the last row that contain values. We can do this by applying regular expressions on coordinate view. Another point is to  encapsulate all this process into the function `clean_spreadsheet` to apply simultaneously over each dataframe. 
+
+```{r}
+clean_spreadsheet <- function(df) {
+  tbl <- tidy_excel(df)
+  last_col <- tbl %>% 
+    filter(str_detect(value, "[Vv][Aa][Ll][Oo][Rr] [Pp][Aa][Rr]")) %>% 
+    select(column) %>% 
+    max()
+  last_row <- tbl %>% 
+    filter(str_detect(value, "[Tt][Oo][Tt][Aa][Ll]")) %>% 
+    select(row) %>% 
+    min()
+  first_row <- tbl %>%
+    filter(str_detect(value, "[Rr][Uu][Tt]")) %>% 
+    select(row) %>% 
+    min()
+  sub_tbl <- tbl %>%
+    filter(row <= last_row - 1, column <= last_col,
+           row >= first_row + 1) %>% 
+    tidyr::spread(column, value) %>% 
+    select(-row)
+
+}
+
+clean_data <- purrr::map(raw_data, clean_spreadsheet)
+head(clean_data, n = 2)
+```
+
+Are dataframes of the same dimensions? We are interested in that each data has the same number of column because evidently could have different rows (more or less bonds as observations).
+
+```{r}
+purrr::map(clean_data, ~ ncol(.)) %>% 
+  unlist() %>% 
+  table()
+```
+
+Approximately a 86% of the data has 19 columns, then is make sense to focus on the case of 19 columns.
+
+```{r}
+data <- clean_data %>% 
+            purrr::keep(~dim(.)[2] == 19) %>% 
+            purrr::imap(~ mutate(.x, periodo_reporte = .y)) %>% 
+            bind_rows() %>% 
+            mutate(mes = str_extract(periodo_reporte, "[^_\\a]+$"),
+                   anho = str_extract(periodo_reporte, "^[^_\\D]+")) %>% 
+            select(anho, mes, `1`:`19`)
+
+col_names <- c("anho", "mes", "rut", "dv", "sociedad", "tipo_bono", "num_inscripccion", "fecha_inscripccion",
+  "unidad", "monto_inscrito_miles", "serie", "tasa_emision", "objetivo_emision1",
+  "objetivo_emision2", "objetivo_emision3", "anhos_vencimiento", "valor_nominal_inicial", "valor_nominal_vigente",
+  "valor_nominal_reaj", "int_dev_no_pagado", "valor_par")
+
+names(data) <- col_names
+data
+```
+
+If we take a look to the variable `fecha_inscripccion`.
+
+```{r}
+data %>% 
+  select(fecha_inscripccion)
+```
+
+These numbers doesn't look as a date but actually is how excel stores the dates. David Robinson use the following function to clean these values. 
+
+```{r}
+convert_excel_date <- function(x) {
+  # created by David Robinson
+  result <- as.Date("1900-01-01") + as.numeric(x) - 2 
+  ifelse(is.na(result), x, as.character(result))
+}
+
+data <- data %>% 
+            mutate(fecha_inscripccion = lubridate::ymd(convert_excel_date(fecha_inscripccion)))
+
+data %>% 
+  select(fecha_inscripccion)
+```
+
+We can take a look to the first ten observations.
+
+```{r, echo = FALSE}
+data %>% 
+  slice(1:10) %>% 
+  knitr::kable("html") %>% 
+  kableExtra::kable_styling(bootstrap_options = "striped", font_size = 14) %>%
+  kableExtra::scroll_box(width = "100%", height = "200px")
 ```
 

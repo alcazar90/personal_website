@@ -27,7 +27,8 @@ showpagemeta: yes
 <h3>Partition and Prediction constants</h3>
 <p>A simple tree can be built using two things, at least if we ignore the details, <strong>partition</strong> and <strong>prediction constants</strong>. Yes, that is all we need.</p>
 <p>We want to <em>learn a function from data</em> that maps a d-euclidean predictor space (<span class="math inline">\(X \in \R^d\)</span>) to a response variable <span class="math inline">\(Y\)</span>.</p>
-<p><span class="math display">\[f: \R^d \rightarrow Y\]</span> For a simple tree this function <span class="math inline">\(f\)</span> could take the following form:</p>
+<p><span class="math display">\[f:\R  \rightarrow Y\]</span>
+For a simple tree this function <span class="math inline">\(f\)</span> could take the following form:</p>
 <p><span class="math display">\[f(x) = \sum_{m = 1}^{m}c_mI(x \in R_m)\]</span></p>
 <ul>
 <li><p>The <strong>partition</strong> gives <span class="math inline">\(M\)</span> different regions,</p></li>
@@ -149,7 +150,8 @@ ggplot(data = p, aes(x = x, y = y)) +
 <ul>
 <li>Cross entropy:</li>
 </ul>
-<p><span class="math display">\[D = -\sum_{k = 1}^{K}\widehat{p}_{mk}\;\log\widehat{p}_{mk}\]</span> Los dos criterios anteriores serán cercanos a 0 sí <span class="math inline">\(\widehat{p}_{mk}\)</span> toma valores cercanos a 0 o 1. Por lo qué los dos criterios tomaran valores pequeños sí el nodo <span class="math inline">\(m\)</span> es puro (predominio de una clase).</p>
+<p><span class="math display">\[D = -\sum_{k = 1}^{K}\widehat{p}_{mk}\;\log\widehat{p}_{mk}\]</span>
+Los dos criterios anteriores serán cercanos a 0 sí <span class="math inline">\(\widehat{p}_{mk}\)</span> toma valores cercanos a 0 o 1. Por lo qué los dos criterios tomaran valores pequeños sí el nodo <span class="math inline">\(m\)</span> es puro (predominio de una clase).</p>
 <p>Concepto que queda más claro si graficamos la función de entropía.</p>
 <pre class="r"><code># función de entropia (Claude Shannon / Teoría de la información) 
 entropy &lt;- function(p) {
