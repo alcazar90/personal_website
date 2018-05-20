@@ -3,8 +3,8 @@ title: A data wrangling case with spreadsheets using R
 author: Cristóbal Alcázar
 date: '2018-01-16'
 slug: a-data-wrangling-case-with-r
-categories: [R]
-tags: [R, Data-Science]
+categories: [R, TidyVerse]
+tags: [R, TidyVerse]
 comments: yes
 showcomments: yes
 showpagemeta: yes
@@ -13,7 +13,7 @@ showpagemeta: yes
 
 
 <p><img src="img/spreadsheet_shock-min.jpg#center" style="width:60.0%" /></p>
-<p>A typical real world situation is the problem of collect data from a set of files and structured into one dataset. “Why data is separate?” you can think, well this could response to many reasons. For example, some phenomenon are measure along the time and you can only access to data by period or a bussiness is collecting some information of his units and the origin process of data was not centralized. So you end up with one file per unit in your hands.</p>
+<p>A typical real world situation is the problem of collect data from a set of files and structured into one dataset. <em>“Why data is separate?”</em> you can think, well this could response to many reasons. For example, some phenomenon are measure along the time and you can only access to data by period or a bussiness is collecting some information of his units and the origin process of data was not centralized. So you end up with one file per unit in your hands.</p>
 <p>Another typical situation is that data is share or is avaiable in excel files. That is because excel is the main used analytical tool in the world (I guess!) and many of us we didn’t have a class of best practices on how share and document data. The problem with excel files are the “spreadsheet intrinsic issues”. What is that?…is just a fancy way to call the messy format problems that are common to find in spreadsheet files like multiple header levels, more than one table per sheet, different data types values in same column, and the list goes on.</p>
 <p>You can look by yourself what I try to say in the following magistral example, but first some context. Below of this paragraph you can find a series of tweets belonged to very well known data scientists. The discussion is about a challenge to turn <a href="https://t.co/v9ucC0Vj2t" target="_blank">this spreadsheet</a> (a xlsx file) into a tidy data and <a href="http://varianceexplained.org/" target="_blank">David Robinson (<em>the challenged</em>) </a>deal with the problem in <a href="http://rpubs.com/dgrtwo/tidying-enron" target="_blank">a very simple and fluently way</a>.</p>
 {{% tweet "717815339480977410#center" %}}
@@ -253,7 +253,7 @@ head(raw_data, n = 2)
 ## #   X__17 &lt;chr&gt;, X__18 &lt;chr&gt;, X__19 &lt;chr&gt;,
 ## #   X__20 &lt;chr&gt;, X__21 &lt;chr&gt;, X__22 &lt;chr&gt;,
 ## #   X__23 &lt;chr&gt;, X__24 &lt;chr&gt;</code></pre>
-<p>It is necessary to clean before to collapse <code>raw_data</code> into one dataset. We want to discard rows with meta-information and select all the columns until column <em>“Valor Par (en miles de $)”</em>. So first we need to detect the row that contain the column names of the table in the spreadsheet, then the name of our last column, and finally the last row that contain values. We can do this by applying regular expressions on coordinate view. Another point is to encapsulate all this process into the function <code>clean_spreadsheet</code> to apply simultaneously over each dataframe.</p>
+<p>It is necessary to clean before to collapse <code>raw_data</code> into one dataset. We want to discard rows with meta-information and select all the columns until column <em>“Valor Par (en miles de $)”</em>. So first we need to detect the row that contain the column names of the table in the spreadsheet, then the name of our last column, and finally the last row that contain values. We can do this by applying regular expressions on coordinate view and encapsulate all this process into the function <code>clean_spreadsheet</code> to apply simultaneously over each dataframe.</p>
 <pre class="r"><code>clean_spreadsheet &lt;- function(df) {
   tbl &lt;- tidy_excel(df)
   last_col &lt;- tbl %&gt;% 
@@ -324,7 +324,7 @@ head(clean_data, n = 2)
 ## .
 ## 17 19 20 
 ##  3 31  2</code></pre>
-<p>Approximately a 86% of the data has 19 columns, then is make sense to focus on the case of 19 columns.</p>
+<p>Approximately a 86% of the data has 19 columns, then is make sense to focus on the case of 19 columns. The other two cases require to compare columns to find the missing and extra column but these details distract us from the main purpose. So we follow with the case of 19 columns to ilustrate the approach.</p>
 <pre class="r"><code>data &lt;- clean_data %&gt;% 
             purrr::keep(~dim(.)[2] == 19) %&gt;% 
             purrr::imap(~ mutate(.x, periodo_reporte = .y)) %&gt;% 
@@ -365,7 +365,7 @@ data
 ## #   valor_nominal_vigente &lt;chr&gt;,
 ## #   valor_nominal_reaj &lt;chr&gt;,
 ## #   int_dev_no_pagado &lt;chr&gt;, valor_par &lt;chr&gt;</code></pre>
-<p>If we take a look to the variable <code>fecha_inscripccion</code>.</p>
+<p>The result is a data with 21 columns and 33261 observations. We are almost already, put our attention into the variable <code>fecha_inscripccion</code>.</p>
 <pre class="r"><code>data %&gt;% 
   select(fecha_inscripccion)
 ## # A tibble: 33,261 x 1
@@ -408,7 +408,7 @@ data %&gt;%
 ##  9 2011-09-16        
 ## 10 2011-09-16        
 ## # ... with 33,251 more rows</code></pre>
-<p>We can take a look to the first ten observations.</p>
+<p>Finally we have a clean dataset ready to analyze. You can take a look to a few observations!</p>
 <div style="border: 1px solid #ddd; padding: 5px; overflow-y: scroll; height:200px; overflow-x: scroll; width:100%; ">
 <table class="table table-striped" style="font-size: 14px; margin-left: auto; margin-right: auto;">
 <thead>
@@ -496,71 +496,6 @@ K
 AD Retail S.A.
 </td>
 <td style="text-align:left;">
-Línea
-</td>
-<td style="text-align:left;">
-694
-</td>
-<td style="text-align:left;">
-2011-12-07
-</td>
-<td style="text-align:left;">
-U.F.
-</td>
-<td style="text-align:left;">
-4000
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-RP
-</td>
-<td style="text-align:left;">
-FI
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-10
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-2013
-</td>
-<td style="text-align:left;">
-Enero
-</td>
-<td style="text-align:left;">
-76675290
-</td>
-<td style="text-align:left;">
-K
-</td>
-<td style="text-align:left;">
-AD Retail S.A.
-</td>
-<td style="text-align:left;">
 1E
 </td>
 <td style="text-align:left;">
@@ -626,71 +561,6 @@ Enero
 AES Gener S.A.
 </td>
 <td style="text-align:left;">
-Línea
-</td>
-<td style="text-align:left;">
-516
-</td>
-<td style="text-align:left;">
-2007-11-09
-</td>
-<td style="text-align:left;">
-US$
-</td>
-<td style="text-align:left;">
-200000
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-FI
-</td>
-<td style="text-align:left;">
-MNE
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-10
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-2013
-</td>
-<td style="text-align:left;">
-Enero
-</td>
-<td style="text-align:left;">
-94272000
-</td>
-<td style="text-align:left;">
-9
-</td>
-<td style="text-align:left;">
-AES Gener S.A.
-</td>
-<td style="text-align:left;">
 1E
 </td>
 <td style="text-align:left;">
@@ -737,71 +607,6 @@ NA
 </td>
 <td style="text-align:left;">
 27522835
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-2013
-</td>
-<td style="text-align:left;">
-Enero
-</td>
-<td style="text-align:left;">
-94272000
-</td>
-<td style="text-align:left;">
-9
-</td>
-<td style="text-align:left;">
-AES Gener S.A.
-</td>
-<td style="text-align:left;">
-Línea
-</td>
-<td style="text-align:left;">
-517
-</td>
-<td style="text-align:left;">
-2007-11-09
-</td>
-<td style="text-align:left;">
-US$
-</td>
-<td style="text-align:left;">
-400000
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-FI
-</td>
-<td style="text-align:left;">
-MNE
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-30
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
 </td>
 </tr>
 <tr>
@@ -951,52 +756,52 @@ Enero
 Agrosuper S.A.
 </td>
 <td style="text-align:left;">
-Línea
+2E
 </td>
 <td style="text-align:left;">
 678
 </td>
 <td style="text-align:left;">
-2011-09-15
+2012-08-17
 </td>
 <td style="text-align:left;">
 U.F.
 </td>
 <td style="text-align:left;">
-8500
+3500
 </td>
 <td style="text-align:left;">
-NA
+E
 </td>
 <td style="text-align:left;">
-NA
+3.5
 </td>
 <td style="text-align:left;">
 RP
 </td>
 <td style="text-align:left;">
-FI
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-10
-</td>
-<td style="text-align:left;">
 NA
 </td>
 <td style="text-align:left;">
 NA
 </td>
 <td style="text-align:left;">
-NA
+5
 </td>
 <td style="text-align:left;">
-NA
+1500000
 </td>
 <td style="text-align:left;">
-NA
+1500000
+</td>
+<td style="text-align:left;">
+34211310
+</td>
+<td style="text-align:left;">
+498450
+</td>
+<td style="text-align:left;">
+34709760
 </td>
 </tr>
 <tr>
@@ -1019,7 +824,7 @@ Agrosuper S.A.
 1E
 </td>
 <td style="text-align:left;">
-678
+679
 </td>
 <td style="text-align:left;">
 2011-09-16
@@ -1031,10 +836,10 @@ U.F.
 5000
 </td>
 <td style="text-align:left;">
-A
+D
 </td>
 <td style="text-align:left;">
-3.4
+3.8
 </td>
 <td style="text-align:left;">
 RP
@@ -1046,22 +851,22 @@ FI
 NA
 </td>
 <td style="text-align:left;">
-7
+21
 </td>
 <td style="text-align:left;">
-NA
+5000000
 </td>
 <td style="text-align:left;">
-NA
+5000000
 </td>
 <td style="text-align:left;">
-0
+114037700
 </td>
 <td style="text-align:left;">
-NA
+1802612
 </td>
 <td style="text-align:left;">
-NA
+115840312
 </td>
 </tr>
 <tr>
@@ -1072,34 +877,619 @@ NA
 Enero
 </td>
 <td style="text-align:left;">
-76129263
+61808000
 </td>
 <td style="text-align:left;">
-3
+5
 </td>
 <td style="text-align:left;">
-Agrosuper S.A.
+Aguas Andinas S.A.
+</td>
+<td style="text-align:left;">
+4E
+</td>
+<td style="text-align:left;">
+305
+</td>
+<td style="text-align:left;">
+2005-12-09
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+5000
+</td>
+<td style="text-align:left;">
+F
+</td>
+<td style="text-align:left;">
+4.1500000000000004
+</td>
+<td style="text-align:left;">
+RP
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+21
+</td>
+<td style="text-align:left;">
+5000000
+</td>
+<td style="text-align:left;">
+3684210
+</td>
+<td style="text-align:left;">
+84027767
+</td>
+<td style="text-align:left;">
+575282
+</td>
+<td style="text-align:left;">
+84603049
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+61808000
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Aguas Andinas S.A.
 </td>
 <td style="text-align:left;">
 1E
 </td>
 <td style="text-align:left;">
-678
+527
 </td>
 <td style="text-align:left;">
-2011-09-16
+2008-04-08
 </td>
 <td style="text-align:left;">
-$
+U.F.
 </td>
 <td style="text-align:left;">
-100000000
+2500
 </td>
 <td style="text-align:left;">
-B
+G
 </td>
 <td style="text-align:left;">
-6.1
+3
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+6
+</td>
+<td style="text-align:left;">
+2500000
+</td>
+<td style="text-align:left;">
+2500000
+</td>
+<td style="text-align:left;">
+57018850
+</td>
+<td style="text-align:left;">
+565969
+</td>
+<td style="text-align:left;">
+57584819
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+61808000
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Aguas Andinas S.A.
+</td>
+<td style="text-align:left;">
+1E
+</td>
+<td style="text-align:left;">
+580
+</td>
+<td style="text-align:left;">
+2009-05-13
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+3000
+</td>
+<td style="text-align:left;">
+I
+</td>
+<td style="text-align:left;">
+3.7
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+6.5
+</td>
+<td style="text-align:left;">
+2000000
+</td>
+<td style="text-align:left;">
+1360000
+</td>
+<td style="text-align:left;">
+31018254
+</td>
+<td style="text-align:left;">
+189543
+</td>
+<td style="text-align:left;">
+31207797
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+61808000
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Aguas Andinas S.A.
+</td>
+<td style="text-align:left;">
+1E
+</td>
+<td style="text-align:left;">
+580
+</td>
+<td style="text-align:left;">
+2009-05-13
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+3000
+</td>
+<td style="text-align:left;">
+J
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+9.5
+</td>
+<td style="text-align:left;">
+1000000
+</td>
+<td style="text-align:left;">
+1000000
+</td>
+<td style="text-align:left;">
+22807540
+</td>
+<td style="text-align:left;">
+150560
+</td>
+<td style="text-align:left;">
+22958100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+61808000
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Aguas Andinas S.A.
+</td>
+<td style="text-align:left;">
+1E
+</td>
+<td style="text-align:left;">
+629
+</td>
+<td style="text-align:left;">
+2010-03-30
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+4000
+</td>
+<td style="text-align:left;">
+K
+</td>
+<td style="text-align:left;">
+20.9
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+6.5
+</td>
+<td style="text-align:left;">
+1000000
+</td>
+<td style="text-align:left;">
+840000
+</td>
+<td style="text-align:left;">
+19158334
+</td>
+<td style="text-align:left;">
+183868
+</td>
+<td style="text-align:left;">
+19342202
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+61808000
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Aguas Andinas S.A.
+</td>
+<td style="text-align:left;">
+1E
+</td>
+<td style="text-align:left;">
+630
+</td>
+<td style="text-align:left;">
+2010-03-30
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+4000
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+4.2
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+21
+</td>
+<td style="text-align:left;">
+1750000
+</td>
+<td style="text-align:left;">
+1750000
+</td>
+<td style="text-align:left;">
+39913195
+</td>
+<td style="text-align:left;">
+553037
+</td>
+<td style="text-align:left;">
+40466232
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+61808000
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Aguas Andinas S.A.
+</td>
+<td style="text-align:left;">
+1E
+</td>
+<td style="text-align:left;">
+654
+</td>
+<td style="text-align:left;">
+2011-03-31
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+4400
+</td>
+<td style="text-align:left;">
+N
+</td>
+<td style="text-align:left;">
+3.17
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+1250000
+</td>
+<td style="text-align:left;">
+1250000
+</td>
+<td style="text-align:left;">
+28509425
+</td>
+<td style="text-align:left;">
+298893
+</td>
+<td style="text-align:left;">
+28808318
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+61808000
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Aguas Andinas S.A.
+</td>
+<td style="text-align:left;">
+1E
+</td>
+<td style="text-align:left;">
+655
+</td>
+<td style="text-align:left;">
+2011-03-31
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+4400
+</td>
+<td style="text-align:left;">
+P
+</td>
+<td style="text-align:left;">
+3.86
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+22.5
+</td>
+<td style="text-align:left;">
+1500000
+</td>
+<td style="text-align:left;">
+1500000
+</td>
+<td style="text-align:left;">
+34211310
+</td>
+<td style="text-align:left;">
+436012
+</td>
+<td style="text-align:left;">
+34647322
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+61808000
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Aguas Andinas S.A.
+</td>
+<td style="text-align:left;">
+2E
+</td>
+<td style="text-align:left;">
+655
+</td>
+<td style="text-align:left;">
+2011-12-14
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+1650
+</td>
+<td style="text-align:left;">
+Q
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+20.5
+</td>
+<td style="text-align:left;">
+1650000
+</td>
+<td style="text-align:left;">
+1650000
+</td>
+<td style="text-align:left;">
+37632441
+</td>
+<td style="text-align:left;">
+248424
+</td>
+<td style="text-align:left;">
+37880865
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+61808000
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Aguas Andinas S.A.
+</td>
+<td style="text-align:left;">
+1E
+</td>
+<td style="text-align:left;">
+712
+</td>
+<td style="text-align:left;">
+2012-03-28
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+3500
+</td>
+<td style="text-align:left;">
+R
+</td>
+<td style="text-align:left;">
+3.3
 </td>
 <td style="text-align:left;">
 RP
@@ -1114,19 +1504,604 @@ NA
 7
 </td>
 <td style="text-align:left;">
-NA
+1000000
+</td>
+<td style="text-align:left;">
+1000000
+</td>
+<td style="text-align:left;">
+22807540
+</td>
+<td style="text-align:left;">
+248845
+</td>
+<td style="text-align:left;">
+23056385
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+61808000
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Aguas Andinas S.A.
+</td>
+<td style="text-align:left;">
+1E
+</td>
+<td style="text-align:left;">
+713
+</td>
+<td style="text-align:left;">
+2012-03-28
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+3500
+</td>
+<td style="text-align:left;">
+S
+</td>
+<td style="text-align:left;">
+3.9
+</td>
+<td style="text-align:left;">
+RP
+</td>
+<td style="text-align:left;">
+FI
 </td>
 <td style="text-align:left;">
 NA
 </td>
 <td style="text-align:left;">
-0
+23
+</td>
+<td style="text-align:left;">
+2300000
+</td>
+<td style="text-align:left;">
+2300000
+</td>
+<td style="text-align:left;">
+52457342
+</td>
+<td style="text-align:left;">
+675406
+</td>
+<td style="text-align:left;">
+53132748
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+76030156
+</td>
+<td style="text-align:left;">
+6
+</td>
+<td style="text-align:left;">
+Aguas Nuevas S.A.
+</td>
+<td style="text-align:left;">
+1E
+</td>
+<td style="text-align:left;">
+502
+</td>
+<td style="text-align:left;">
+2007-06-26
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+3750
+</td>
+<td style="text-align:left;">
+A
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+RP
 </td>
 <td style="text-align:left;">
 NA
 </td>
 <td style="text-align:left;">
 NA
+</td>
+<td style="text-align:left;">
+21
+</td>
+<td style="text-align:left;">
+2500000
+</td>
+<td style="text-align:left;">
+2500000
+</td>
+<td style="text-align:left;">
+57018850
+</td>
+<td style="text-align:left;">
+483041
+</td>
+<td style="text-align:left;">
+57501891
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+99586130
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Almendral Telecomunicaciones S.A.
+</td>
+<td style="text-align:left;">
+1E
+</td>
+<td style="text-align:left;">
+432
+</td>
+<td style="text-align:left;">
+2005-08-19
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+5800
+</td>
+<td style="text-align:left;">
+A
+</td>
+<td style="text-align:left;">
+3.5
+</td>
+<td style="text-align:left;">
+RP
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+10
+</td>
+<td style="text-align:left;">
+5800000
+</td>
+<td style="text-align:left;">
+1919998.08
+</td>
+<td style="text-align:left;">
+43790433
+</td>
+<td style="text-align:left;">
+196195
+</td>
+<td style="text-align:left;">
+43986628
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+59123340
+</td>
+<td style="text-align:left;">
+8
+</td>
+<td style="text-align:left;">
+América Movil, S.A.B. de C.V.
+</td>
+<td style="text-align:left;">
+1E
+</td>
+<td style="text-align:left;">
+474
+</td>
+<td style="text-align:left;">
+2009-04-13
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+4000
+</td>
+<td style="text-align:left;">
+A
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+FP
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+4000000
+</td>
+<td style="text-align:left;">
+4000000
+</td>
+<td style="text-align:left;">
+91230160
+</td>
+<td style="text-align:left;">
+679170
+</td>
+<td style="text-align:left;">
+91909330
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+59123340
+</td>
+<td style="text-align:left;">
+8
+</td>
+<td style="text-align:left;">
+América Movil, S.A.B. de C.V.
+</td>
+<td style="text-align:left;">
+4E
+</td>
+<td style="text-align:left;">
+474
+</td>
+<td style="text-align:left;">
+2010-05-25
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+8000
+</td>
+<td style="text-align:left;">
+D
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+25
+</td>
+<td style="text-align:left;">
+5000000
+</td>
+<td style="text-align:left;">
+5000000
+</td>
+<td style="text-align:left;">
+114037700
+</td>
+<td style="text-align:left;">
+847969
+</td>
+<td style="text-align:left;">
+114885669
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+59181460
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Banco Pine S.A.
+</td>
+<td style="text-align:left;">
+1E
+</td>
+<td style="text-align:left;">
+738
+</td>
+<td style="text-align:left;">
+2012-11-30
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+1500
+</td>
+<td style="text-align:left;">
+A
+</td>
+<td style="text-align:left;">
+6
+</td>
+<td style="text-align:left;">
+FP
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+1500000
+</td>
+<td style="text-align:left;">
+1500000
+</td>
+<td style="text-align:left;">
+34211310
+</td>
+<td style="text-align:left;">
+289158
+</td>
+<td style="text-align:left;">
+34500468
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+96528990
+</td>
+<td style="text-align:left;">
+9
+</td>
+<td style="text-align:left;">
+Banmédica S.A.
+</td>
+<td style="text-align:left;">
+1E
+</td>
+<td style="text-align:left;">
+408
+</td>
+<td style="text-align:left;">
+2005-03-14
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+2000
+</td>
+<td style="text-align:left;">
+A
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+8
+</td>
+<td style="text-align:left;">
+1200000
+</td>
+<td style="text-align:left;">
+150000
+</td>
+<td style="text-align:left;">
+3421131
+</td>
+<td style="text-align:left;">
+73390
+</td>
+<td style="text-align:left;">
+3494521
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+96528990
+</td>
+<td style="text-align:left;">
+9
+</td>
+<td style="text-align:left;">
+Banmédica S.A.
+</td>
+<td style="text-align:left;">
+1E
+</td>
+<td style="text-align:left;">
+409
+</td>
+<td style="text-align:left;">
+2005-03-14
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+1500
+</td>
+<td style="text-align:left;">
+B
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+21
+</td>
+<td style="text-align:left;">
+800000
+</td>
+<td style="text-align:left;">
+533334
+</td>
+<td style="text-align:left;">
+12164037
+</td>
+<td style="text-align:left;">
+347915
+</td>
+<td style="text-align:left;">
+12511952
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:left;">
+Enero
+</td>
+<td style="text-align:left;">
+96528990
+</td>
+<td style="text-align:left;">
+9
+</td>
+<td style="text-align:left;">
+Banmédica S.A.
+</td>
+<td style="text-align:left;">
+1E
+</td>
+<td style="text-align:left;">
+528
+</td>
+<td style="text-align:left;">
+2008-04-09
+</td>
+<td style="text-align:left;">
+U.F.
+</td>
+<td style="text-align:left;">
+1700
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+2.75
+</td>
+<td style="text-align:left;">
+FI
+</td>
+<td style="text-align:left;">
+RP
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+700000
+</td>
+<td style="text-align:left;">
+700000
+</td>
+<td style="text-align:left;">
+15965278
+</td>
+<td style="text-align:left;">
+329585
+</td>
+<td style="text-align:left;">
+16294863
 </td>
 </tr>
 </tbody>

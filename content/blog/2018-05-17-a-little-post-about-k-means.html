@@ -1,0 +1,45 @@
+---
+title: A little post about k-means
+author: Cristóbal Alcázar
+date: '2018-05-17'
+slug: a-little-post-about-k-means
+categories: [ML, Python]
+tags: [ML, Supervised-Model]
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+
+
+<p>A few weeks ago I read the chapter 4 of book <a href="https://web.stanford.edu/~boyd/vmls/">“Introduction to Applied Linear Algebra”</a> (Boyd, Vandenberghe) called “Clustering” and I found it absolutely clear and simple. Chapter 4 introduce the clustering concept only based on vectors and distance–<em>subjects treated on chapters 1 and 3 respectively</em>–through the canonical example of clustering models k-means.</p>
+<p>In this post I want to make a review of chapter 4 and implement k-means on python.</p>
+<div id="clustering" class="section level3">
+<h3>Clustering</h3>
+<p>The idea of clustering is to partition a set of vectors into <span class="math inline">\(K\)</span> groups based on a distance measure. An intuitive way to think about is thinking on a 2D-table where each observation (row) is a vector and we want to assign it to a cluster based on some similarity measure. So the goal is to add a new categorical variable to the table with <span class="math inline">\(K\)</span> possible group values.</p>
+<p>To draw the concept and used an example of the chapter, imagine that we are in a hospital and we have a table with measures of a feature vector for each patient. A clustering could help to separate patient and get insights based on the groups. Maybe we could then assign labels or gives a more elaborate descriptions to the groups given the knowledge we found.</p>
+<p>A formalization of above idea:</p>
+<ul>
+<li><span class="math inline">\(k\)</span>: a parameter specifying the number of groups that we want to assign.</li>
+<li><span class="math inline">\(c\)</span>: the categorical variable with the group assignation (<em>same length of number observations</em>).</li>
+<li><span class="math inline">\(G_i, i \in (1,\dots,k)\)</span>: a set of indices represented vectors assigned to group <span class="math inline">\(i\)</span>.</li>
+<li><span class="math inline">\(z_i, i \in (1,\dots,k)\)</span>: a group <span class="math inline">\(i\)</span> representative n-vector (<em>this vector has the same length that vectors we want to assign a cluster</em>)</li>
+</ul>
+<p>The similarity within a group <span class="math inline">\(i\)</span> is given by the distance between vector members of a group <span class="math inline">\(i\)</span> and the group representative vector <span class="math inline">\(z_i\)</span>. In which all member share the fact that the distance between this group representative is the minimal with respect other group representative vectors.</p>
+<p>A simple measure of distance is the euclidean norm defined as:</p>
+<p><span class="math display">\[d(x, y) = ||x - y|| = \sqrt{\sum_{i=1}^{n}(x_i - y_i)^2}\]</span></p>
+<pre class="python"><code>def euclidean_norm(x, y):
+    &#39;&#39;&#39;
+    x: a float numpy 1-d array
+    y: a float numpy 1-d array
+    ---
+    Return the euclidean norm between x and y
+    &#39;&#39;&#39;
+    return np.sqrt(np.sum((x - y) ** 2))</code></pre>
+<p>The clustering objective function <span class="math inline">\(J^{clust}\)</span> <strong>measures the quality of choice on cluster assignments</strong>. In the sense that a better cluster assignment of <span class="math inline">\(x_i\)</span> is when that square euclidean norm is less.</p>
+<p><span class="math display">\[J^{clust} = (||x_1 - z_{c_1}||^2 + \dots + ||x_N - z_{c_N}||^2) / N\]</span></p>
+</div>
+<div id="k-means-algorithm" class="section level3">
+<h3><em>k</em>-means algorithm</h3>
+<p>Now the way that the chapter shows how to assign these <span class="math inline">\(k\)</span> groups is through <em>k</em>-means algorithm.</p>
+</div>

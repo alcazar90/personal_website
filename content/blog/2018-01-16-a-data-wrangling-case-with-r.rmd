@@ -3,8 +3,8 @@ title: A data wrangling case with spreadsheets using R
 author: Cristóbal Alcázar
 date: '2018-01-16'
 slug: a-data-wrangling-case-with-r
-categories: [R]
-tags: [R, Data-Science]
+categories: [R, TidyVerse]
+tags: [R, TidyVerse]
 comments: yes
 showcomments: yes
 showpagemeta: yes
@@ -20,7 +20,7 @@ library(dplyr)
 ![](img/spreadsheet_shock-min.jpg#center){ width=60% }
 
 
-A typical real world situation is the problem of collect data from a set of files and structured into one dataset. "Why data is separate?" you can think, well this could response to many reasons. For example, some phenomenon are measure along the time and you can only access to data by period or a bussiness is collecting some information of his units and the origin process of data was not centralized. So you end up with one file per unit in your hands.
+A typical real world situation is the problem of collect data from a set of files and structured into one dataset. *"Why data is separate?"* you can think, well this could response to many reasons. For example, some phenomenon are measure along the time and you can only access to data by period or a bussiness is collecting some information of his units and the origin process of data was not centralized. So you end up with one file per unit in your hands.
 
 Another typical situation is that data is share or is avaiable in excel files. That is because excel is the main used analytical tool in the world (I guess!) and many of us we didn't have a class of best practices on how share and document data. The problem with excel files are the "spreadsheet intrinsic issues". What is that?...is just a fancy way to call the messy format problems that are common to find in spreadsheet files like multiple header levels, more than one table per sheet, different data types values in same column, and the list goes on.
 
@@ -196,7 +196,7 @@ names(raw_data) <- list_names
 head(raw_data, n = 2)
 ```
 
-It is necessary to clean before to collapse `raw_data` into one dataset. We want to discard rows with meta-information and select all the columns until column *"Valor Par (en miles de $)"*. So first we need to detect the row that contain the column names of the table in the spreadsheet, then the name of our last column, and finally the last row that contain values. We can do this by applying regular expressions on coordinate view. Another point is to  encapsulate all this process into the function `clean_spreadsheet` to apply simultaneously over each dataframe. 
+It is necessary to clean before to collapse `raw_data` into one dataset. We want to discard rows with meta-information and select all the columns until column *"Valor Par (en miles de $)"*. So first we need to detect the row that contain the column names of the table in the spreadsheet, then the name of our last column, and finally the last row that contain values. We can do this by applying regular expressions on coordinate view and encapsulate all this process into the function `clean_spreadsheet` to apply simultaneously over each dataframe. 
 
 ```{r}
 clean_spreadsheet <- function(df) {
@@ -233,7 +233,7 @@ purrr::map(clean_data, ~ ncol(.)) %>%
   table()
 ```
 
-Approximately a 86% of the data has 19 columns, then is make sense to focus on the case of 19 columns.
+Approximately a 86% of the data has 19 columns, then is make sense to focus on the case of 19 columns. The other two cases require to compare columns to find the missing and extra column but these details distract us from the main purpose. So we follow with the case of 19 columns to ilustrate the approach.
 
 ```{r}
 data <- clean_data %>% 
@@ -253,7 +253,7 @@ names(data) <- col_names
 data
 ```
 
-If we take a look to the variable `fecha_inscripccion`.
+The result is a data with 21 columns and 33261 observations. We are almost already, put our attention into the variable `fecha_inscripccion`.
 
 ```{r}
 data %>% 
@@ -276,13 +276,24 @@ data %>%
   select(fecha_inscripccion)
 ```
 
-We can take a look to the first ten observations.
+Finally we have a clean dataset ready to analyze. You can take a look to a few observations!
 
 ```{r, echo = FALSE}
 data %>% 
-  slice(1:10) %>% 
+  filter(!is.na(valor_par)) %>% 
+  slice(1:25) %>% 
   knitr::kable("html") %>% 
   kableExtra::kable_styling(bootstrap_options = "striped", font_size = 14) %>%
   kableExtra::scroll_box(width = "100%", height = "200px")
 ```
+
+```{r, eval = FALSE, echo = FALSE}
+library(ggplot2)
+
+data %>% 
+  group_by(anho) %>% 
+  summarise(total_par_MM = sum(as.numeric(valor_par), na.rm = TRUE) / 1000000) %>% ggplot(aes(x = factor(anho), y = total_par_MM)) +
+  geom_bar(stat = "identity")
+```
+
 
