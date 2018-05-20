@@ -10,24 +10,24 @@ showcomments: yes
 showpagemeta: yes
 ---
 
-A few weeks ago I read the chapter 4 of book ["Introduction to Applied Linear Algebra"](https://web.stanford.edu/~boyd/vmls/) (Boyd, Vandenberghe) called "Clustering" and I found it absolutely clear and simple. Chapter 4 introduce the clustering concept only based on vectors and distance--*subjects treated on chapters 1 and 3 respectively*--through the canonical example of clustering models k-means.
+A few weeks ago I read the chapter 4 of book ["Introduction to Applied Linear Algebra"](https://web.stanford.edu/~boyd/vmls/) (Boyd, Vandenberghe) called "Clustering" and I found it so clear and simple. Chapter 4 introduce the clustering concept only based on vectors and distance--*subjects treated on chapters 1 and 3 respectively*--through the canonical example of clustering models k-means.
 
-In this post I want to make a review of chapter 4 and implement k-means on python.
+In this post I want to make a little review of chapter 4 and implement k-means on python.
 
 ### Clustering
 
-The idea of clustering is to partition a set of vectors into $K$ groups based on a distance measure. An intuitive way to think about is thinking on a 2D-table where each observation (row) is a vector and we want to assign it to a cluster based on some similarity measure. So the goal is to add a new categorical variable to the table with $K$ possible group values.
+The idea of clustering is to partition a set of vectors into $K$ groups based on a distance measure. An intuitive way to think about it is thinking on a 2D-table where each observation (row) is a vector and we want to assign it to a cluster based on some similarity measure. So the goal is to add a new categorical variable to the table with $K$ possible group values.
 
-To draw the concept and used an example of the chapter, imagine that we are in a hospital and we have a table with measures of a feature vector for each patient. A clustering could help to separate patient and get insights based on the groups. Maybe we could then assign labels or gives a more elaborate descriptions to the groups given the knowledge we found.
+To draw the concept and to use an example of the chapter, imagine that we are in a hospital and we have a table with measures of a feature vector for each patient. A clustering could help to separate patients and get insights based on the groups. Maybe we could then assign labels or give a more elaborate description to the groups given the knowledge that we found.
 
-A formalization of above idea:
+To formalize the idea above:
 
 - $k$: a parameter specifying the number of groups that we want to assign.
-- $c$: the categorical variable with the group assignation (*same length of number observations*).
-- $G_i, i \in (1,\dots,k)$: a set of indices represented vectors assigned to group $i$.
-- $z_i, i \in (1,\dots,k)$: a group $i$ representative n-vector (*this vector has the same length that vectors we want to assign a cluster*)
+- $c$: the categorical variable with the group assignation, with the size of the number of observations.
+- $G_i, i \in (1,\dots,k)$: a set of indices that represent vectors assigned to group $i$.
+- $z_i, i \in (1,\dots,k)$: a n-vector corresponding to  group $i$ , this vector has the same length that vectors we want to assign a cluster.
   
-The similarity within a group $i$ is given by the distance between vector members of a group $i$ and the group representative vector $z_i$. In which all member share the fact that the distance between this group representative is the minimal with respect other group representative vectors.
+The similarity within a group $i$ is given by the distance between vectors of a group $i$ and the group representative vector $z_i$. In which all members share the fact that the distance between this group representative ($z_i$) is the minimal with respect of another group representative's vectors.
 
 A simple measure of distance is the euclidean norm defined as:
 
@@ -44,7 +44,7 @@ def euclidean_norm(x, y):
     return np.sqrt(np.sum((x - y) ** 2))
 ```
 
-The clustering objective function $J^{clust}$ **measures the quality of choice on cluster assignments**. In the sense that a better cluster assignment of $x_i$ is when that square euclidean norm is less.
+The clustering objective function ($J^{clust}$) **measures the quality of choice on cluster assignments**. In the sense that a better cluster assignment of $x_i$ is when the square euclidean norm is lower.
 
 $$J^{clust} = (||x_1 - z_{c_1}||^2 + \dots + ||x_N - z_{c_N}||^2) / N$$
 
