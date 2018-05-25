@@ -291,6 +291,6 @@ img[src$='#floatright']
 .twitter-tweet {
 margin:auto;
 }
-.github-fork-ribbon right-top {
+.github-fork-ribbon.right-top {
       max-width: 100%;   /* resize github home ribbon */
 }
