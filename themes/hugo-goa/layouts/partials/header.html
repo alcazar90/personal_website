@@ -23,7 +23,12 @@
 
 <!--Code for generate a custom github ribbon. Also part of the code is in the body file -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css"/> 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" type="text/css"/> 
+<style type="text/css">
+.github-fork-ribbon.right-top {
+      max-width: 100%;   /* resize github home ribbon */
+}
+</style>
 
 
 {{ if .Site.Params.extra.highlightjs }}
