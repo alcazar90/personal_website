@@ -21,6 +21,11 @@
   <link href="{{ . }}" rel="feed" type="application/rss+xml" title="{{ .Site.Title }}" />
 {{ end }}
 
+<!--Code for generate a custom github ribbon. Also part of the code is in the body file -->
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css"/> 
+
+
 {{ if .Site.Params.extra.highlightjs }}
 <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/{{ .Site.Params.extra.highlightjsstyle | default "default" }}.min.css">
 -->

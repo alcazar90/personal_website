@@ -40,7 +40,7 @@ keywords = "blog,artificial-intelligence,machine-learning,data-science,computer-
 ## Social Accounts
 [params.social]
 github = "/alcazar90"
-#instagram = "<username>"
+instagram = "go.alcazar"
 #xing = "<username>"
 linkedin = "alcazar90"
 twitter = "/vamos_alcazar"
@@ -49,7 +49,7 @@ email = "alcazar.cristobal90@gmail.com"
 
 ## Extras
 [params.extra]
-copyright = "© 2017. Cristóbal Alcázar. [Some Rights Reserved](http://creativecommons.org/licenses/by/3.0/)." 
+copyright = "© 2017. **Cristóbal Alcázar**. [Some Rights Reserved](http://creativecommons.org/licenses/by/3.0/). <br/> Home Photo by [Scott Walsh](https://unsplash.com/@outsighted) on [Unsplash](https://unsplash.com/)" 
 poweredby = true
 highlightjs = true
 
