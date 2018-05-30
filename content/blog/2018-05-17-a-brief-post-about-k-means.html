@@ -1,0 +1,112 @@
+---
+title: A brief post about k-means
+author: Cristóbal Alcázar
+date: '2018-05-17'
+slug: a-brief-post-about-k-means
+categories: [ML, Python]
+tags: [ML, Supervised-Model]
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+
+
+
+<p>A few weeks ago I read the chapter 4 of book <a href="https://web.stanford.edu/~boyd/vmls/">“Introduction to Applied Linear Algebra”</a> (Boyd, Vandenberghe) called “Clustering” and I found it so clear and simple. Chapter 4 introduce the clustering concept only based on vectors and distance–<em>subjects treated on chapters 1 and 3 respectively</em>–through the canonical example of clustering models k-means.</p>
+<p>In this post I want to make a little review of chapter 4 and implement k-means on python.</p>
+<div id="clustering" class="section level3">
+<h3>Clustering</h3>
+<p>The idea of clustering is to partition a set of vectors into <span class="math inline">\(K\)</span> groups based on a distance measure. An intuitive way to think about it is thinking on a 2D-table where each observation (row) is a vector and we want to assign it to a cluster based on some similarity measure. So the goal is to add a new categorical variable (column) to the table with <span class="math inline">\(K\)</span> possible group values.</p>
+<p>To draw the concept and to use an example of the chapter, imagine that we are in a hospital and we have a table with measures of a feature vector for each patient. A clustering could help to separate patients and get insights based on the groups. Maybe we could then assign labels or give a more elaborate description to the groups given the knowledge that we found.</p>
+<p>To formalize the idea above:</p>
+<ul>
+<li><span class="math inline">\(k\)</span>: a parameter specifying the number of groups that we want to assign.</li>
+<li><span class="math inline">\(c\)</span>: the categorical variable with the group assignation, i.e. a vector with the size of the number of observations.</li>
+<li><span class="math inline">\(G_i, i \in (1,\dots,k)\)</span>: a set of indices that represent vectors assigned to group <span class="math inline">\(i\)</span>.</li>
+<li><span class="math inline">\(z_i, i \in (1,\dots,k)\)</span>: a n-vector corresponding to group <span class="math inline">\(i\)</span> , this vector has the same length that vectors we want to assign a cluster.</li>
+</ul>
+<p>The similarity within a group <span class="math inline">\(i\)</span> is given by the distance between vectors of a group <span class="math inline">\(i\)</span> and the group representative vector <span class="math inline">\(z_i\)</span>. In which all members share the fact that the distance between this group representative (<span class="math inline">\(z_i\)</span>) is the minimal with respect of another group representative’s vectors.</p>
+<p>A simple measure of distance is the euclidean norm defined as:</p>
+<p><span class="math display">\[d(x, y) = ||x - y|| = \sqrt{\sum_{i=1}^{n}(x_i - y_i)^2}\]</span></p>
+<pre class="python"><code>def euclidean_norm(x, y):
+    &quot;&quot;&quot;
+    x: a float numpy 1-d array
+    y: a float numpy 1-d array
+    ---
+    Return the euclidean norm between x and y
+    &quot;&quot;&quot;
+    return np.sqrt(np.sum((x - y) ** 2))</code></pre>
+<p>The clustering objective function (<span class="math inline">\(J^{clust}\)</span>) <strong>measures the quality of choice on cluster assignments</strong>. In the sense that a better cluster assignment of <span class="math inline">\(x_i\)</span> is when the square euclidean norm is lower.</p>
+<p><span class="math display">\[J^{clust} = (||x_1 - z_{c_1}||^2 + \dots + ||x_N - z_{c_N}||^2) / N\]</span>
+Given the nature of the problem, find an optimal solution for <span class="math inline">\(J^{clust}\)</span> is really hard because depends on both group assignation (<span class="math inline">\(c\)</span>) and the election of group representatives (<span class="math inline">\(z\)</span>). Instead we can find a feasible solution for minimize <span class="math inline">\(J^{clust}\)</span>, a suboptimal one (<em>local optimum</em>), solving a sequence of simpler optimization problems in an iterative approach.</p>
+</div>
+<div id="k-means-algorithm" class="section level3">
+<h3><em>k</em>-means algorithm</h3>
+<p><br><br></p>
+<figure>
+<center>
+<img src="https://upload.wikimedia.org/wikipedia/commons/7/71/Serpiente_alquimica.jpg" style="width: 400px;">
+</center>
+<center>
+<i>
+<figcaption>
+Ouroboros
+</figcaption>
+</i>
+</center>
+</figure>
+<p><br><br></p>
+<p>Now the way that the chapter shows how to assign these <span class="math inline">\(k\)</span> groups is through <em>k</em>-means algorithm. The best description for k-means is throught these steps:</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Initialize with a fixed group of representatives</strong> <span class="math inline">\(z_i\)</span> for <span class="math inline">\(i = 1\dots k\)</span> (<em>pick random observations of data as representatives for example</em>)</p></li>
+<li><p>Now we <strong>reduce the problem to just cluster assignations</strong> and also we can see this problem as <span class="math inline">\(N\)</span> subproblems (<em>one for each observation</em>). Just look what group of representatives has the minimal distance with vector <span class="math inline">\(x_i\)</span> and assign to vector <span class="math inline">\(c_i:=z^*\)</span>. <span class="math display">\[||x_i - z_{c_i}|| = \underset{j=1, \dots, k}{\text{min}}\ ||x_i - z_j||\]</span></p></li>
+<li><p>The before step gives us a vector with the group assignation (<span class="math inline">\(c\)</span>) of each observation (<span class="math inline">\(x_i\)</span>). Remember that <span class="math inline">\(c\)</span> has the same length as number of observations that we have in the data. Now based on <span class="math inline">\(c\)</span>, we come <strong>back to the problem of find a set of group representatives</strong> <span class="math inline">\(z\)</span>. This step gives the name of k-means to the algorithm, because now we update the set of group representatives taking the mean of the vectors by cluster assigned in step 2. <span class="math display">\[z_j = \bigg(\frac{1}{|G_j|}\bigg)\underset{i\in G_j}{\sum{x_i}}\]</span></p></li>
+</ol>
+<p>I put the image of <a href="https://en.wikipedia.org/wiki/Ouroboros">Ouroboros</a> above as a graphical analogy, because k-means is self-contain and also iterative, <strong>steps 2 and 3 repeats</strong>. In each iteration a new assignation of clusters are given and then a redefinition of group representatives. But, opposite to the symbolic meaning of Ouroboros, the flow of time is not endless. The process of repetition ends when the algorithm converge to a solution.</p>
+<p>When k-means reach a solution? The algorithm convergence occurs when there isn’t a variation in the group assignation with the previous iteration (<span class="math inline">\(c_t\)</span> is exactly the same that <span class="math inline">\(c_{t-1}\)</span>).</p>
+<p>The implementation of the three previous steps is very straightforward using <code>numpy</code> in python.</p>
+<pre class="python"><code>import numpy as np
+def k_means(df, K, num_iter):
+    &quot;&quot;&quot;
+    df: a numpy 2D numpy array
+    K: number of group representatives
+    num_iter: number of iteration to repeat step 2 and 3
+    ---
+    Return cluster assigned (c), group representatives (z) and cost function of
+    each iteration (J)
+    &quot;&quot;&quot;
+    nrow = df.shape[0]
+    # initialize cluster representatives (STEP 1)
+    z = df[np.random.choice(nrow, K), ]
+    c = np.empty(nrow, dtype = &#39;int64&#39;)
+    J = []
+    iter_counter = 0
+    while True:
+        J_i = 0
+        # now solve the N subproblems of cluster assignation (STEP 2)
+        for j in range(nrow):
+            distance = np.array([euclidean_norm(df[j, ], z_i) for z_i in z])
+            c[j] = np.argmin(distance)
+            J_i += np.min(distance) ** 2
+        J.append(J_i / nrow)       # cost function evolution by iteration
+        # update group representatives, take the mean based on c (STEP 3)
+        check_z = np.array([np.mean(df[c == k, ], axis = 0) for k in range(K)])
+        if np.all(np.equal(check_z, z)):       # check convergence status
+            print(&#39;reach convergence&#39;)
+            break
+        z = check_z
+        iter_counter += 1
+        if num_iter == iter_counter:           # break in an intermediate step
+            print(&#39;stop process in iteration number:&#39;, iter_counter)
+            break
+    return c, z, J</code></pre>
+<p>A good idea to understand k-means is visually and step by step! So I wrote <code>k_means</code> with the argument <em>num_iter</em> that enables to stop the process in a certain iteration and get the results at that point.</p>
+<p>Finally we can play with the algorithm, a good way to start is simulate some data to know <em>apriori</em> the true groups and evaluate the performance of <code>k_means</code> assignation.</p>
+<p><span class="math display">\[\mu_a = (0, 0) \ \mu_b = (17, 17) \\ \sigma_a = \begin{bmatrix}
+   1 &amp; 0  \\
+    0 &amp; 50 \\
+\end{bmatrix}  \ \sigma_b = \begin{bmatrix} 15 &amp; 0 \\
+                                            0  &amp; 12 \end{bmatrix}\]</span></p>
+<p><img src="/blog/2018-05-17-a-brief-post-about-k-means_files/figure-html/unnamed-chunk-5-1.png" width="90%" style="display: block; margin: auto;" /></p>
+</div>
