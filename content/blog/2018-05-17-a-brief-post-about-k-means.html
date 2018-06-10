@@ -8,13 +8,15 @@ tags: [ML, Supervised-Model]
 comments: no
 showcomments: yes
 showpagemeta: yes
+bibliography: int_alg.bib
+link-citations: true
 ---
 
 
 
 
-<p>A few weeks ago I read the chapter 4 of book <a href="https://web.stanford.edu/~boyd/vmls/">“Introduction to Applied Linear Algebra”</a> (Boyd, Vandenberghe) called “Clustering” and I found it so clear and simple. Chapter 4 introduce the clustering concept only based on vectors and distance–<em>subjects treated on chapters 1 and 3 respectively</em>–through the canonical example of clustering models k-means.</p>
-<p>In this post I want to make a little review of chapter 4 and implement k-means on python.</p>
+<p>A few weeks ago I read the chapter 4 of book <a href="https://web.stanford.edu/~boyd/vmls/">“Introduction to Applied Linear Algebra”</a>, <span class="citation">Boyd and Vandenberghe (<a href="#ref-boyd2018introduction">2018</a>)</span>, called “Clustering” and I found it so clear and simple. Chapter 4 introduce the clustering concept only based on vectors and distance–<em>subjects treated on chapters 1 and 3 respectively</em>–through the canonical example of clustering models k-means.</p>
+<p>In this post I want to make a little review of the chapter and implement k-means on python.</p>
 <div id="clustering" class="section level3">
 <h3>Clustering</h3>
 <p>The idea of clustering is to partition a set of vectors into <span class="math inline">\(K\)</span> groups based on a distance measure. An intuitive way to think about it is thinking on a 2D-table where each observation (row) is a vector and we want to assign it to a cluster based on some similarity measure. So the goal is to add a new categorical variable (column) to the table with <span class="math inline">\(K\)</span> possible group values.</p>
@@ -57,9 +59,9 @@ Ouroboros
 </center>
 </figure>
 <p><br><br></p>
-<p>Now the way that the chapter shows how to assign these <span class="math inline">\(k\)</span> groups is through <em>k</em>-means algorithm. The best description for k-means is throught these steps:</p>
+<p>Now the way that the chapter shows how to assign these <span class="math inline">\(k\)</span> groups is through <em>k</em>-means algorithm. The best description for k-means is encapsulated in three steps:</p>
 <ol style="list-style-type: decimal">
-<li><p><strong>Initialize with a fixed group of representatives</strong> <span class="math inline">\(z_i\)</span> for <span class="math inline">\(i = 1\dots k\)</span> (<em>pick random observations of data as representatives for example</em>)</p></li>
+<li><p><strong>Initialize with a set of fixed group of representatives</strong> <span class="math inline">\(z_i\)</span> for <span class="math inline">\(i = 1\dots k\)</span> (<em>pick random observations of data as representatives for example</em>)</p></li>
 <li><p>Now we <strong>reduce the problem to just cluster assignations</strong> and also we can see this problem as <span class="math inline">\(N\)</span> subproblems (<em>one for each observation</em>). Just look what group of representatives has the minimal distance with vector <span class="math inline">\(x_i\)</span> and assign to vector <span class="math inline">\(c_i:=z^*\)</span>. <span class="math display">\[||x_i - z_{c_i}|| = \underset{j=1, \dots, k}{\text{min}}\ ||x_i - z_j||\]</span></p></li>
 <li><p>The before step gives us a vector with the group assignation (<span class="math inline">\(c\)</span>) of each observation (<span class="math inline">\(x_i\)</span>). Remember that <span class="math inline">\(c\)</span> has the same length as number of observations that we have in the data. Now based on <span class="math inline">\(c\)</span>, we come <strong>back to the problem of find a set of group representatives</strong> <span class="math inline">\(z\)</span>. This step gives the name of k-means to the algorithm, because now we update the set of group representatives taking the mean of the vectors by cluster assigned in step 2. <span class="math display">\[z_j = \bigg(\frac{1}{|G_j|}\bigg)\underset{i\in G_j}{\sum{x_i}}\]</span></p></li>
 </ol>
@@ -93,20 +95,34 @@ def k_means(df, K, num_iter):
         # update group representatives, take the mean based on c (STEP 3)
         check_z = np.array([np.mean(df[c == k, ], axis = 0) for k in range(K)])
         if np.all(np.equal(check_z, z)):       # check convergence status
-            print(&#39;reach convergence&#39;)
+            # reach convergence
+            break
+        if num_iter == iter_counter:           
+            # stop process in iteration number -&gt; iter_counter
             break
         z = check_z
         iter_counter += 1
-        if num_iter == iter_counter:           # break in an intermediate step
-            print(&#39;stop process in iteration number:&#39;, iter_counter)
-            break
     return c, z, J</code></pre>
 <p>A good idea to understand k-means is visually and step by step! So I wrote <code>k_means</code> with the argument <em>num_iter</em> that enables to stop the process in a certain iteration and get the results at that point.</p>
-<p>Finally we can play with the algorithm, a good way to start is simulate some data to know <em>apriori</em> the true groups and evaluate the performance of <code>k_means</code> assignation.</p>
-<p><span class="math display">\[\mu_a = (0, 0) \ \mu_b = (17, 17) \\ \sigma_a = \begin{bmatrix}
+<p>We can play with the algorithm and show the evolution of centroid definition and cluster assignation, but before that we need some data. We generate two groups of random data <span class="math inline">\(D\in R^2\)</span> from two bivariate normal distributions with the following parameters:</p>
+<p><span class="math display">\[\mu_0 = (0, 0) \ \mu_1 = (17, 17) \\ \sigma_0 = \begin{bmatrix}
    1 &amp; 0  \\
     0 &amp; 50 \\
-\end{bmatrix}  \ \sigma_b = \begin{bmatrix} 15 &amp; 0 \\
+\end{bmatrix}  \ \sigma_1 = \begin{bmatrix} 15 &amp; 0 \\
                                             0  &amp; 12 \end{bmatrix}\]</span></p>
-<p><img src="/blog/2018-05-17-a-brief-post-about-k-means_files/figure-html/unnamed-chunk-5-1.png" width="90%" style="display: block; margin: auto;" /></p>
+<p>A simple data with 2 features helps us to visualize easily. Aditionally we know <em>a priori</em> that are two underlying groups, these are defined by the two different distributions and, if we take a look to the next plot, the two samples from these distributions are very well separated. Of course this is a very basic setting but the purpose is to ilustrate how <code>k_means</code> works.</p>
+<p><img src="/blog/2018-05-17-a-brief-post-about-k-means_files/figure-html/initial_plot-1.png" width="90%" style="display: block; margin: auto;" /></p>
+<p>So <code>k_means</code> is blind to the colours and his goal is undercover the samples generated from the two underlying distributions based on data. Pictorically the process is as follows:</p>
+<p><img src="img/k-means_process.gif#center" /></p>
+<p>For the cost side, <span class="math inline">\(J\)</span> decay rapidly and converge around a cost value of 36.</p>
+<pre><code>## [1] 194.42629  71.55989  36.85485  36.60745  36.60636</code></pre>
+<p><img src="/blog/2018-05-17-a-brief-post-about-k-means_files/figure-html/cost_plot-1.png" width="90%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2>References</h2>
+<div id="refs" class="references">
+<div id="ref-boyd2018introduction">
+<p>Boyd, Stephen, and Lieven Vandenberghe. 2018. <em>Introduction to Applied Linear Algebra: Vectors, Matrices, and Least Squares</em>. Cambridge University Press.</p>
+</div>
+</div>
 </div>

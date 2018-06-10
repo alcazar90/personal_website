@@ -8,6 +8,8 @@ tags: [ML, Supervised-Model]
 comments: no
 showcomments: yes
 showpagemeta: yes
+bibliography: int_alg.bib
+link-citations: true
 ---
 
 \usepackage{accents}
@@ -19,9 +21,9 @@ knitr::opts_chunk$set(out.width = "90%")
 knitr::knit_engines$set(python = reticulate::eng_python)
 ```
 
-A few weeks ago I read the chapter 4 of book ["Introduction to Applied Linear Algebra"](https://web.stanford.edu/~boyd/vmls/) (Boyd, Vandenberghe) called "Clustering" and I found it so clear and simple. Chapter 4 introduce the clustering concept only based on vectors and distance--*subjects treated on chapters 1 and 3 respectively*--through the canonical example of clustering models k-means.
+A few weeks ago I read the chapter 4 of book ["Introduction to Applied Linear Algebra"](https://web.stanford.edu/~boyd/vmls/), @boyd2018introduction, called "Clustering" and I found it so clear and simple. Chapter 4 introduce the clustering concept only based on vectors and distance--*subjects treated on chapters 1 and 3 respectively*--through the canonical example of clustering models k-means.
 
-In this post I want to make a little review of chapter 4 and implement k-means on python.
+In this post I want to make a little review of the chapter and implement k-means on python.
 
 ### Clustering
 
@@ -70,9 +72,9 @@ url_image <- "https://upload.wikimedia.org/wikipedia/commons/7/71/Serpiente_alqu
 </figure>
 <br><br>
 
-Now the way that the chapter shows how to assign these $k$ groups is through *k*-means algorithm. The best description for k-means is throught these steps:
+Now the way that the chapter shows how to assign these $k$ groups is through *k*-means algorithm. The best description for k-means is encapsulated in three steps:
 
-1. **Initialize with a fixed group of representatives** $z_i$ for $i = 1\dots k$ (*pick random observations of data as representatives for example*)
+1. **Initialize with a set of fixed group of representatives** $z_i$ for $i = 1\dots k$ (*pick random observations of data as representatives for example*)
 
 2. Now we **reduce the problem to just cluster assignations** and also we can see this problem as $N$ subproblems (*one for each observation*). Just look what group of representatives has the minimal distance with vector $x_i$ and assign to vector $c_i:=z^*$. $$||x_i - z_{c_i}|| = \underset{j=1, \dots, k}{\text{min}}\ ||x_i - z_j||$$
 
@@ -114,34 +116,38 @@ def k_means(df, K, num_iter):
         # update group representatives, take the mean based on c (STEP 3)
         check_z = np.array([np.mean(df[c == k, ], axis = 0) for k in range(K)])
         if np.all(np.equal(check_z, z)):       # check convergence status
-            print('reach convergence')
+            # reach convergence
+            break
+        if num_iter == iter_counter:           
+            # stop process in iteration number -> iter_counter
             break
         z = check_z
         iter_counter += 1
-        if num_iter == iter_counter:           # break in an intermediate step
-            print('stop process in iteration number:', iter_counter)
-            break
     return c, z, J
 ```
 
 A good idea to understand k-means is visually and step by step! So I wrote `k_means` with the argument *num_iter* that enables to stop the process in a certain iteration and get the results at that point. 
 
-Finally we can play with the algorithm, a good way to start is simulate some data to know *apriori* the true groups and evaluate the performance of `k_means` assignation.
+We can play with the algorithm and show the evolution of centroid definition and cluster assignation, but before that we need some data. We generate two groups of random data $D\in R^2$ from two bivariate normal distributions with the following parameters:
 
-$$\mu_a = (0, 0) \ \mu_b = (17, 17) \\ \sigma_a = \begin{bmatrix}
+$$\mu_0 = (0, 0) \ \mu_1 = (17, 17) \\ \sigma_0 = \begin{bmatrix}
    1 & 0  \\
     0 & 50 \\
-\end{bmatrix}  \ \sigma_b = \begin{bmatrix} 15 & 0 \\
+\end{bmatrix}  \ \sigma_1 = \begin{bmatrix} 15 & 0 \\
                                             0  & 12 \end{bmatrix}$$
+                                            
+A simple data with 2 features helps us to visualize easily. Aditionally we know *a priori* that are two underlying groups, these are defined by the two different distributions and, if we take a look to the next plot, the two samples from these distributions are very well separated. Of course this is a very basic setting but the purpose is to ilustrate how `k_means` works.
 
-```{python, echo = FALSE}
+```{python simulate_data, echo = FALSE}
 import numpy as np
+
 mu_a = [0, 0]
 cov_a = [[1, 0], [0, 50]]
 mu_b = [17, 17]
 cov_b = [[15, 0], [0, 12]]
-
+np.random.seed(0)
 x1_a, x2_a = np.random.multivariate_normal(mu_a, cov_a, 1500).T
+np.random.seed(0)
 x1_b, x2_b = np.random.multivariate_normal(mu_b, cov_b, 1500).T
 df_a = np.array([x1_a, x2_a, np.zeros(1500)], dtype = 'float64').T
 df_b = np.array([x1_b, x2_b, np.ones(1500)], dtype = 'float64').T
@@ -149,18 +155,189 @@ original = np.vstack((df_a, df_b))
 df = original[:, :2]
 ```
 
-```{r, echo = FALSE}
+```{r initial_plot, echo = FALSE}
 library(ggplot2)
 library(ggthemes)
 simulated_data <- as.data.frame(py$original)
 names(simulated_data) <- c("x1", "x2", "k")
 simulated_data$k <- as.factor(simulated_data$k)
-
-ggplot(simulated_data, aes(x1, x2, colour = k)) +
+#sadsda
+ggplot(simulated_data, aes(x1, x2, colour = k == 0)) +
   geom_point(alpha = .55) +
-  ggthemes::scale_color_ptol("k") +
+  ggthemes::scale_color_ptol("k", labels = c(0, 1)) +
   guides(color = guide_legend(title = "True groups")) +
-  ggtitle("Simulated data from two multivariate normal distributions") +
+  ggtitle("Simulated data from two different bivariate normal distributions") +
   theme_minimal()
 ```
 
+So `k_means` is blind to the colours and his goal is undercover the samples generated from the two underlying distributions based on data. Pictorically the process is as follows:
+ 
+```{python initialize, echo = FALSE}
+np.random.seed(0)
+c, z, J = k_means(df, 2, 0)
+```
+
+```{r iter_0, echo = FALSE}
+z <- as.data.frame(py$z)
+names(z) <- c("c1", "c2")
+p <-  ggplot(simulated_data, aes(x1, x2)) +
+  geom_point(alpha = .65, colour = "black") +
+  theme_minimal() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+p0 <- ggplot(simulated_data, aes(x1, x2)) +
+  geom_point(alpha = .65, colour = "black") +
+  geom_point(data = z, aes(c1, c2), shape = 21 , size = 5, colour = "black", fill = c("steelblue", "red"), stroke = 1.9, alpha = .7) +
+  annotate("text", x = 15, y = -15, label = "Initialize centroids", size = 8) +
+  theme_minimal() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+simulated_data$k <- as.factor(py$c)
+p1 <- ggplot() +
+  geom_point(data = simulated_data, aes(x1, x2, colour = k), alpha = .65, show.legend = FALSE) +
+  geom_point(data = z, aes(c1, c2), shape = 21 , size = 5, colour = "black", fill = c("steelblue", "red"), stroke = 1.9, alpha = .7) +
+  ggthemes::scale_color_ptol("k") +
+  annotate("text", x = 15, y = -10, label = "Iteration 1", size = 8) +
+  annotate("text", x = 15, y = -15, label = "assign cluster", size = 8) +
+  theme_minimal() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+```
+
+
+```{python first_iter, echo = FALSE}
+np.random.seed(0)
+c, z, J = k_means(df, 2, 1)
+```
+
+```{r iter_1, echo = FALSE}
+z <- as.data.frame(py$z)
+names(z) <- c("c1", "c2")
+
+p2 <-  ggplot() +
+  geom_point(data = simulated_data, aes(x1, x2, colour = k), alpha = .65, show.legend = FALSE) +
+  geom_point(data = z, aes(c1, c2), shape = 21 , size = 5, colour = "black", fill = c("steelblue", "red"), stroke = 1.9, alpha = .7) +
+  theme_minimal() +
+  ggthemes::scale_color_ptol("k") +
+  guides(color = guide_legend(title = "Estimated groups")) +
+  annotate("text", x = 15, y = -10, label = "Iteration 1", size = 8) +
+  annotate("text", x = 15, y = -15, label = "update representatives", size = 8) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+  
+simulated_data$k <- as.factor(py$c) 
+p3 <- ggplot() +
+  geom_point(data = simulated_data, aes(x1, x2, colour = k), alpha = .65, show.legend = FALSE) +
+  geom_point(data = z, aes(c1, c2), shape = 21 , size = 5, colour = "black", fill = c("steelblue", "red"), stroke = 1.9, alpha = .7) +
+  theme_minimal() +
+  ggthemes::scale_color_ptol("k") +
+  guides(color = guide_legend(title = "Estimated groups")) +
+  annotate("text", x = 15, y = -10, label = "Iteration 2", size = 8) +
+  annotate("text", x = 15, y = -15, label = "assign cluster", size = 8) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+```
+
+
+```{python second_iter, echo = FALSE}
+np.random.seed(0)
+c, z, J = k_means(df, 2, 2)
+```
+
+```{r iter_2, echo = FALSE}
+z <- as.data.frame(py$z)
+names(z) <- c("c1", "c2")
+
+p4 <- ggplot() +
+  geom_point(data = simulated_data, aes(x1, x2, colour = k), alpha = .65, show.legend = FALSE) +
+  geom_point(data = z, aes(c1, c2), shape = 21 , size = 5, colour = "black", fill = c("steelblue", "red"), stroke = 1.9, alpha = .7) +
+  theme_minimal() +
+  ggthemes::scale_color_ptol("k") +
+  guides(color = guide_legend(title = "Estimated groups")) +
+  annotate("text", x = 15, y = -10, label = "Iteration 2", size = 8) +
+  annotate("text", x = 15, y = -15, label = "update representatives", size = 8) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+  
+simulated_data$k <- as.factor(py$c) 
+p5 <- ggplot() +
+  geom_point(data = simulated_data, aes(x1, x2, colour = k), alpha = .65, show.legend = FALSE) +
+  geom_point(data = z, aes(c1, c2), shape = 21 , size = 5, colour = "black", fill = c("steelblue", "red"), stroke = 1.9, alpha = .7) +
+  theme_minimal() +
+  ggthemes::scale_color_ptol("k") +
+  guides(color = guide_legend(title = "Estimated groups")) +
+  annotate("text", x = 15, y = -10, label = "Iteration 3", size = 8) +
+  annotate("text", x = 15, y = -15, label = "assign cluster", size = 8) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+```
+
+
+```{python third_iter, echo = FALSE}
+np.random.seed(0)
+c, z, J = k_means(df, 2, 3)
+```
+
+```{r iter_3, echo = FALSE}
+z <- as.data.frame(py$z)
+names(z) <- c("c1", "c2")
+
+p6 <- ggplot() +
+  geom_point(data = simulated_data, aes(x1, x2, colour = k), alpha = .65, show.legend = FALSE) +
+  geom_point(data = z, aes(c1, c2), shape = 21 , size = 5, colour = "black", fill = c("steelblue", "red"), stroke = 1.9, alpha = .7) +
+  theme_minimal() +
+  ggthemes::scale_color_ptol("k") +
+  guides(color = guide_legend(title = "Estimated groups")) +
+  annotate("text", x = 15, y = -10, label = "Iteration 3", size = 8) +
+  annotate("text", x = 15, y = -15, label = "update representatives", size = 8) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+  
+simulated_data$k <- as.factor(py$c) 
+p7 <- ggplot() +
+  geom_point(data = simulated_data, aes(x1, x2, colour = k), alpha = .65, show.legend = FALSE) +
+  geom_point(data = z, aes(c1, c2), shape = 21 , size = 5, colour = "black", fill = c("steelblue", "red"), stroke = 1.9, alpha = .7) +
+  theme_minimal() +
+  ggthemes::scale_color_ptol("k") +
+  guides(color = guide_legend(title = "Estimated groups")) +
+  annotate("text", x = 15, y = -10, label = "Iteration 4", size = 8) +
+  annotate("text", x = 15, y = -15, label = "assign cluster", size = 8) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+```
+
+
+```{python forth_iter, echo = FALSE}
+np.random.seed(0)
+c, z, J = k_means(df, 2, 50)
+```
+
+```{r iter_4, echo = FALSE}
+z <- as.data.frame(py$z)
+names(z) <- c("c1", "c2")
+
+p8 <- ggplot() +
+  geom_point(data = simulated_data, aes(x1, x2, colour = k), alpha = .65, show.legend = FALSE) +
+  geom_point(data = z, aes(c1, c2), shape = 21 , size = 5, colour = "black", fill = c("steelblue", "red"), stroke = 1.9, alpha = .7) +
+  theme_minimal() +
+  ggthemes::scale_color_ptol("k") +
+  guides(color = guide_legend(title = "Estimated groups")) +
+  annotate("text", x = 15, y = -10, label = "Iteration 4", size = 8) +
+  annotate("text", x = 15, y = -15, label = "Convergence!", size = 8) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+```
+
+![](img/k-means_process.gif#center)
+
+For the cost side, $J$ decay rapidly and converge around a cost value of 36.
+
+```{r cost_plot, echo = FALSE}
+cost_values <- unlist(py$J)
+cost_values
+cost_data <- data.frame(iteration = 1:length(cost_values), cost_values)
+
+ggplot(data = cost_data, aes(iteration, cost_values)) +
+  geom_point(colour = "steelblue", size = 3) +
+  geom_line(colour = "steelblue") +
+  theme_minimal() +
+  ggtitle("Cost function J per iteration") +
+  xlab("Iteration number (i)") +
+  ylab("J(i)")
+```
+
+
+## References
