@@ -10,6 +10,7 @@ showcomments: yes
 showpagemeta: yes
 ---
 
+<script src="/rmarkdown-libs/kePrint/kePrint.js"></script>
 
 
 <p><img src="img/spreadsheet_shock-min.jpg#center" style="width:60.0%" /></p>
@@ -280,40 +281,40 @@ clean_data &lt;- purrr::map(raw_data, clean_spreadsheet)
 head(clean_data, n = 2)
 ## $`2013_Enero`
 ## # A tibble: 962 x 19
-##    `1`     `2`   `3`      `4`   `5`   `6`   `7`  
-##    &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
-##  1 766752~ K     AD Reta~ Línea 694   40884 U.F. 
-##  2 766752~ K     AD Reta~ 1E    694   40892 U.F. 
-##  3 942720~ 9     AES Gen~ Línea 516   39395 US$  
-##  4 942720~ 9     AES Gen~ 1E    516   39400 U.F. 
-##  5 942720~ 9     AES Gen~ Línea 517   39395 US$  
-##  6 942720~ 9     AES Gen~ 1E    517   39400 U.F. 
-##  7 942720~ 9     AES Gen~ 2E    517   39905 US$  
-##  8 761292~ 3     Agrosup~ Línea 678   40801 U.F. 
-##  9 761292~ 3     Agrosup~ 1E    678   40802 U.F. 
-## 10 761292~ 3     Agrosup~ 1E    678   40802 $    
-## # ... with 952 more rows, and 12 more variables:
-## #   `8` &lt;chr&gt;, `9` &lt;chr&gt;, `10` &lt;chr&gt;, `11` &lt;chr&gt;,
+##    `1`   `2`   `3`   `4`   `5`   `6`   `7`   `8` 
+##    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;ch&gt;
+##  1 7667~ K     AD R~ Línea 694   40884 U.F.  4000
+##  2 7667~ K     AD R~ 1E    694   40892 U.F.  2000
+##  3 9427~ 9     AES ~ Línea 516   39395 US$   200~
+##  4 9427~ 9     AES ~ 1E    516   39400 U.F.  2800
+##  5 9427~ 9     AES ~ Línea 517   39395 US$   400~
+##  6 9427~ 9     AES ~ 1E    517   39400 U.F.  5600
+##  7 9427~ 9     AES ~ 2E    517   39905 US$   196~
+##  8 7612~ 3     Agro~ Línea 678   40801 U.F.  8500
+##  9 7612~ 3     Agro~ 1E    678   40802 U.F.  5000
+## 10 7612~ 3     Agro~ 1E    678   40802 $     100~
+## # ... with 952 more rows, and 11 more variables:
+## #   `9` &lt;chr&gt;, `10` &lt;chr&gt;, `11` &lt;chr&gt;,
 ## #   `12` &lt;chr&gt;, `13` &lt;chr&gt;, `14` &lt;chr&gt;,
 ## #   `15` &lt;chr&gt;, `16` &lt;chr&gt;, `17` &lt;chr&gt;,
 ## #   `18` &lt;chr&gt;, `19` &lt;chr&gt;
 ## 
 ## $`2013_Febrero`
 ## # A tibble: 965 x 19
-##    `1`     `2`   `3`      `4`   `5`   `6`   `7`  
-##    &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
-##  1 766752~ K     AD Reta~ Línea 694   40884 U.F. 
-##  2 766752~ K     AD Reta~ 1E    694   40892 U.F. 
-##  3 942720~ 9     AES Gen~ Línea 516   39395 US$  
-##  4 942720~ 9     AES Gen~ 1E    516   39400 U.F. 
-##  5 942720~ 9     AES Gen~ Línea 517   39395 US$  
-##  6 942720~ 9     AES Gen~ 1E    517   39400 U.F. 
-##  7 942720~ 9     AES Gen~ 2E    517   39905 US$  
-##  8 761292~ 3     Agrosup~ Línea 678   40801 U.F. 
-##  9 761292~ 3     Agrosup~ 1E    678   40802 U.F. 
-## 10 761292~ 3     Agrosup~ 1E    678   40802 $    
-## # ... with 955 more rows, and 12 more variables:
-## #   `8` &lt;chr&gt;, `9` &lt;chr&gt;, `10` &lt;chr&gt;, `11` &lt;chr&gt;,
+##    `1`   `2`   `3`   `4`   `5`   `6`   `7`   `8` 
+##    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;ch&gt;
+##  1 7667~ K     AD R~ Línea 694   40884 U.F.  4000
+##  2 7667~ K     AD R~ 1E    694   40892 U.F.  2000
+##  3 9427~ 9     AES ~ Línea 516   39395 US$   200~
+##  4 9427~ 9     AES ~ 1E    516   39400 U.F.  2800
+##  5 9427~ 9     AES ~ Línea 517   39395 US$   400~
+##  6 9427~ 9     AES ~ 1E    517   39400 U.F.  5600
+##  7 9427~ 9     AES ~ 2E    517   39905 US$   196~
+##  8 7612~ 3     Agro~ Línea 678   40801 U.F.  8500
+##  9 7612~ 3     Agro~ 1E    678   40802 U.F.  5000
+## 10 7612~ 3     Agro~ 1E    678   40802 $     100~
+## # ... with 955 more rows, and 11 more variables:
+## #   `9` &lt;chr&gt;, `10` &lt;chr&gt;, `11` &lt;chr&gt;,
 ## #   `12` &lt;chr&gt;, `13` &lt;chr&gt;, `14` &lt;chr&gt;,
 ## #   `15` &lt;chr&gt;, `16` &lt;chr&gt;, `17` &lt;chr&gt;,
 ## #   `18` &lt;chr&gt;, `19` &lt;chr&gt;</code></pre>
@@ -341,18 +342,18 @@ col_names &lt;- c(&quot;anho&quot;, &quot;mes&quot;, &quot;rut&quot;, &quot;dv&q
 names(data) &lt;- col_names
 data
 ## # A tibble: 33,261 x 21
-##    anho  mes   rut     dv    sociedad   tipo_bono
-##    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;    
-##  1 2013  Enero 766752~ K     AD Retail~ Línea    
-##  2 2013  Enero 766752~ K     AD Retail~ 1E       
-##  3 2013  Enero 942720~ 9     AES Gener~ Línea    
-##  4 2013  Enero 942720~ 9     AES Gener~ 1E       
-##  5 2013  Enero 942720~ 9     AES Gener~ Línea    
-##  6 2013  Enero 942720~ 9     AES Gener~ 1E       
-##  7 2013  Enero 942720~ 9     AES Gener~ 2E       
-##  8 2013  Enero 761292~ 3     Agrosuper~ Línea    
-##  9 2013  Enero 761292~ 3     Agrosuper~ 1E       
-## 10 2013  Enero 761292~ 3     Agrosuper~ 1E       
+##    anho  mes   rut   dv    sociedad tipo_bono
+##    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;    
+##  1 2013  Enero 7667~ K     AD Reta~ Línea    
+##  2 2013  Enero 7667~ K     AD Reta~ 1E       
+##  3 2013  Enero 9427~ 9     AES Gen~ Línea    
+##  4 2013  Enero 9427~ 9     AES Gen~ 1E       
+##  5 2013  Enero 9427~ 9     AES Gen~ Línea    
+##  6 2013  Enero 9427~ 9     AES Gen~ 1E       
+##  7 2013  Enero 9427~ 9     AES Gen~ 2E       
+##  8 2013  Enero 7612~ 3     Agrosup~ Línea    
+##  9 2013  Enero 7612~ 3     Agrosup~ 1E       
+## 10 2013  Enero 7612~ 3     Agrosup~ 1E       
 ## # ... with 33,251 more rows, and 15 more
 ## #   variables: num_inscripccion &lt;chr&gt;,
 ## #   fecha_inscripccion &lt;chr&gt;, unidad &lt;chr&gt;,

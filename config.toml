@@ -26,9 +26,10 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_caches$"]
 ## Site Settings
 [params]
 author = "Cristóbal Alcázar"
-intro = "Analytics (+) Artificial Intelligence"
+intro = "Interested on applied machine learning <br/>and data analytics"
 #description = "Now @Pied Piper. Previously @Hacker Hostel, @Bachmanity and @Aviato. <br/> \"What is F times 5? It's Fleventy-five.\""
-description = "Use **R** and **python**!!"
+#description = "Welcome to my blog! Also I love [reading](https://www.goodreads.com/alkzar90)" 
+description = "Welcome to my blog!"
 authorimage = "little_fox.jpg"
 dateformat = "Jan 2, 2006"
 
@@ -39,6 +40,7 @@ keywords = "blog,artificial-intelligence,machine-learning,data-science,computer-
 
 ## Social Accounts
 [params.social]
+cv = "cv-alcazar-cristobal.pdf"
 github = "/alcazar90"
 instagram = "go.alcazar"
 #xing = "<username>"
@@ -68,7 +70,7 @@ highlightjs = true
     weight = 200
     url = "/about/"
 [[menu.main]]
-    name = "Study Plan"
-    identifier = "Study Plan"
+    name = "Learning Resources"
+    identifier = "Learning Resources"
     weight = 300
-    url = "/study_plan/"
+    url = "/learning_resources/"

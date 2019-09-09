@@ -38,6 +38,13 @@ For a simple tree this function <span class="math inline">\(f\)</span> could tak
 <li><p>If we talking about a <strong>classification tree</strong>, <span class="math inline">\(c_m\)</span> will be the class of the majority in the training observations of the region <span class="math inline">\(R_m\)</span>.</p></li>
 </ul>
 <p>Now we modify a little bit the baseball example of chapter 8 page 304 (ISLR 2015) to put these pieces in order. We focus on the salary of baseball players (<span class="math inline">\(Y\)</span>) but instead of treat this variable as a continuos variable like in the book we discretize in quintiles. We can look how the salary quintiles of baseball player behave with respect years of experience (<span class="math inline">\(X_1\)</span>) and the number of hit that made the player the last year (<span class="math inline">\(X_2\)</span>).</p>
+<pre><code>##                   Hits Years Salary2 Salary
+## -Alan Ashby         81    14   40-60  475.0
+## -Alvin Davis       130     3   40-60  480.0
+## -Andre Dawson      141    11   40-60  500.0
+## -Andres Galarraga   87     2    0-20   91.5
+## -Alfredo Griffin   169    11   60-80  750.0
+## -Al Newman          37     2    0-20   70.0</code></pre>
 <p><img src="/blog/2017-12-26-what-about-tree-models_files/figure-html/unnamed-chunk-2-1.png" width="70%" style="display: block; margin: auto;" /></p>
 <p>We can notice that players which belong to higher quintiles of salary predominant above the 5 years of experience (approximately)</p>
 <p><img src="/blog/2017-12-26-what-about-tree-models_files/figure-html/unnamed-chunk-3-1.png" width="70%" style="display: block; margin: auto;" /></p>

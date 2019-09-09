@@ -9,7 +9,6 @@ comments: no
 showcomments: yes
 showpagemeta: yes
 bibliography: int_alg.bib
-link-citations: true
 ---
 
 \usepackage{accents}
@@ -21,7 +20,7 @@ knitr::opts_chunk$set(out.width = "90%")
 knitr::knit_engines$set(python = reticulate::eng_python)
 ```
 
-A few weeks ago I read the chapter 4 of book ["Introduction to Applied Linear Algebra"](https://web.stanford.edu/~boyd/vmls/), @boyd2018introduction, called "Clustering" and I found it so clear and simple. Chapter 4 introduce the clustering concept only based on vectors and distance--*subjects treated on chapters 1 and 3 respectively*--through the canonical example of clustering models k-means.
+A few weeks ago I read the chapter 4 of book ["Introduction to Applied Linear Algebra"](https://web.stanford.edu/~boyd/vmls/), @boyd2018introduction, called "Clustering" and I found it so clear and simple. Chapter 4 introduce the clustering concept only based on vectors and distance *--subjects treated on chapters 1 and 3 respectively--*through the canonical example of clustering models: k-means.
 
 In this post I want to make a little review of the chapter and implement k-means on python.
 

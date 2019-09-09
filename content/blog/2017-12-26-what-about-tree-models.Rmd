@@ -64,9 +64,11 @@ df$Salary2 <- cut(df$Salary,
                   labels = c("0-20", "20-40", "40-60", "60-80", "80-100"), 
                   include.lowest = TRUE)
 
+head(df[, c("Hits", "Years", "Salary2", "Salary")])
+
 ggplot(df, aes(x = Years, y = Hits)) +
   geom_point(aes(colour = Salary2)) +
-  scale_colour_brewer("Quintile Salary", palette = 5) +
+  scale_colour_viridis_d("Quintile Salary") +
   xlab("Year of Experience") +
   ylab("N°of Hits Last Year") +
   theme_minimal()
@@ -77,7 +79,7 @@ We can notice that players which belong to higher quintiles of salary predominan
 ```{r, echo = FALSE}
 ggplot(df, aes(x = Years, y = Hits)) +
   geom_point(aes(colour = Salary2)) +
-  scale_colour_brewer("Quintil Salario", palette = 5, guide = FALSE) +
+  scale_colour_viridis_d("Quintile Salary", guide = FALSE) +
   geom_vline(xintercept = 5) +
   xlab("Year of Experience") +
   ylab("N°of Hits Last Year") +
@@ -91,7 +93,7 @@ Therefore 3 regions were derived from this "manually" data partition process. Fi
 ```{r, echo = FALSE}
 ggplot(df, aes(x = Years, y = Hits)) +
   geom_point(aes(colour = Salary2)) +
-  scale_colour_brewer("Quintil Salario", palette = 5, guide = FALSE) +
+  scale_colour_viridis_d("Quintil Salario", guide = FALSE) +
   geom_vline(xintercept = 5) +
   geom_segment(aes(x = 5, xend = Inf, y = 100, yend = 100)) +
   annotate("text", x = 2.5, y = 125, label = "R1") +
