@@ -40,7 +40,7 @@ keywords = "blog,artificial-intelligence,machine-learning,data-science,computer-
 
 ## Social Accounts
 [params.social]
-cv = "cv-alcazar-cristobal.pdf"
+cv = "https://github.com/alcazar90/personal_website/raw/master/cv-alcazar-cristobal.pdf"
 github = "/alcazar90"
 instagram = "go.alcazar"
 #xing = "<username>"
