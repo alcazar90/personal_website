@@ -74,4 +74,5 @@ In python, we have the [Altair](https://altair-viz.github.io/) library that give
 ## Others
 
 [Google Tech Dev Guide](https://techdevguide.withgoogle.com/)
+
 [Metacademy](https://metacademy.org/)
