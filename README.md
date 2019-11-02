@@ -1,3 +1,5 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/cc461dd3-e527-458f-8da2-8037e8623765/deploy-status)](https://app.netlify.com/sites/alkzar/deploys)
+
 # Personal Website
 
 ## About
