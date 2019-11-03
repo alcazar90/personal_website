@@ -19,60 +19,79 @@ This section contain a collection of online resources on math, machine learning,
 
 ## Math
 
-The [Linear Algebra](https://ocw.mit.edu/courses/mathematics/18-06-linear-algebra-spring-2010/index.htm) course of the professor Gilbert (MIT).
+The <a href="https://ocw.mit.edu/courses/mathematics/18-06-linear-algebra-spring-2010/index.htm" target="_blank">Linear Algebra</a> course of professor Gilbert Strang (MIT).
 
-An [Applied Numerical Computing](http://www.seas.ucla.edu/~vandenbe/ee133a.html) course with the open access book [Introduction to Applied Linear Algebra by S. Boyd and L. Vandenberghe](https://web.stanford.edu/~boyd/vmls/vmls.pdf).
+An <a href="http://www.seas.ucla.edu/~vandenbe/ee133a.html" target="_blank">Applied Numerical Computing</a>  course with the open access book <a href="https://web.stanford.edu/~boyd/vmls/vmls.pdf" target="_blank">Introduction to Applied Linear Algebra by S. Boyd and L. Vandenberghe</a>.
 
-The [Convex Optimization](https://lagunita.stanford.edu/courses/Engineering/CVX101/Winter2014/info) course of *Stephen Boyd*.
+The <a href="https://lagunita.stanford.edu/courses/Engineering/CVX101/Winter2014/info" target="_blank">Convex Optimization</a> course of *Stephen Boyd*.
 
-A probability course developed and given by the professor Jonh Tsitsiklis (MIT): [Probability - The Science of Uncertainty and Data.](https://www.edx.org/es/course/probability-the-science-of-uncertainty-and-data-2)
-
+A probability course developed and given by the professor Jonh Tsitsiklis (MIT): <a href="https://www.edx.org/es/course/probability-the-science-of-uncertainty-and-data-2" target="_blank">Probability - The Science of Uncertainty and Data</a>.
 
 ## Machine Learning
 
-A collection of interactive machine learning examples in google colab notebooks: [Seedbank](https://research.google.com/seedbank/)
+A collection of interactive machine learning examples in google colab notebooks: <a href="https://research.google.com/seedbank/" target="_blank">Seedbank</a>.
 
-The Bishop's book [Pattern Recognition and Machine Learning.](https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
+The Bishop's book <a href="https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf" target="_blank">Pattern Recognition and Machine Learning</a>.
 
-A book that provides an introduction to statistical learning methods with application in the R programming language: [An introduction to Statistical Learning](http://faculty.marshall.usc.edu/gareth-james/ISL/) and the [MOOC version of the book.](https://lagunita.stanford.edu/courses/HumanitiesSciences/StatLearning/Winter2016/about) For a more advanced material, [The Elements of Statistical Learning](https://web.stanford.edu/~hastie/ElemStatLearn/).
+A book that provides an introduction to statistical learning methods with applications in the R programming language: <a href="http://faculty.marshall.usc.edu/gareth-james/ISL/" target="_blank">An introduction to Statistical Learning</a>. and the <a href="https://lagunita.stanford.edu/courses/HumanitiesSciences/StatLearning/Winter2016/about" target="_blank">MOOC version of the book.</a>. For a more advanced treatment, <a href="https://web.stanford.edu/~hastie/ElemStatLearn/" target="_blank">The Elements of Statistical Learning</a>.
 
-The book [Feature Engineering and Selection: A Practical Approach for Predictive Models](http://www.feat.engineering/) by *Max Kuhn* and *Kjell Jonhson* gives you tools for representing predictors.
+The book <a href="http://www.feat.engineering/" target="_blank">Feature Engineering and Selection: A Practical Approach for Predictive Models</a> by *Max Kuhn* and *Kjell Jonhson* gives you tools for representing predictors.
 
+
+<a href="https://mml-book.com" target="_blank">Mathematics for Machine Learning</a> is a book that provide the math skills to read more advance machine learning books.
 
 ### Neural Networks
 
-[A beginner's Guide to the Mathematics of Neural Networks](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.161.3556&rep=rep1&type=pdf)
+<a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.161.3556&rep=rep1&type=pdf" target="_blank">A beginner's Guide to the Mathematics of Neural Networks</a>
 
-[Neural Networks and Deep Learning (Nielsen Open Access Book)](http://neuralnetworksanddeeplearning.com/)
+<a href="http://neuralnetworksanddeeplearning.com/" target="_blank">Neural Networks and Deep Learning (Nielsen Open Access Book)</a>
+
+<a href="http://cs231n.github.io/" target="_blank">CS231n Convolutional Neural Networks for Visual Recognition (Stanford course site)</a>
 
 ## Computer Science
 
 The MIT introductory course on Computer Science and programming using python via EDX:
 
-- [Introduction to Computer Science and Programming Using Python.](https://www.edx.org/es/course/introduction-computer-science-mitx-6-00-1x-11) 
+- <a href="https://www.edx.org/es/course/introduction-computer-science-mitx-6-00-1x-11" target="_blank">Introduction to Computer Science and Programming Using Python.</a>
 
-- [Introduction to Computational Thinking and Data Science.](https://www.edx.org/es/course/introduction-computational-thinking-data-mitx-6-00-2x-6)
+- <a href="https://www.edx.org/es/course/introduction-computational-thinking-data-mitx-6-00-2x-6" target="_blank">Introduction to Computational Thinking and Data Science.</a>
 
-An open access book about [Problem Solving with Algorithms and Data Structures using Python](https://runestone.academy/runestone/books/published/pythonds/index.html), by Brad Miller and David Ranum.
+An open access book about <a href="https://runestone.academy/runestone/books/published/pythonds/index.html" target="_blank">Problem Solving with Algorithms and Data Structures using Python</a>, by Brad Miller and David Ranum.
 
-The [Stanford Algorithms Specialization](https://www.coursera.org/specializations/algorithms) via coursera, by Tim Roughgarden.
+The <a href="https://www.coursera.org/specializations/algorithms" target="_blank">Stanford Algorithms Specialization</a> via coursera, by Tim Roughgarden.
 
-A toolt for visualize code execution, useful to understand algorithms and tricky code steps: [python-tutor](http://pythontutor.com/).
-
+A tool for visualize code execution, useful to understand algorithms and tricky code steps: <a href="http://pythontutor.com/" target="_blank">python-tutor</a>.
+ 
 ### Data Science tools
 
-[R for Data Science](https://r4ds.had.co.nz/) is a book that explain you more than a bunch of tools to work with data in R. It gives you a mental model to work in data science projects and a package to implement each part of the model.
+<a href="https://r4ds.had.co.nz/" target="_blank">R for Data Science</a> is a book that explain you more than a bunch of tools to work with data in R. It gives you a mental model to work in data science projects and a package to implement each part of the model.
 
-A more understanding of the R language, [Advanced R](https://adv-r.hadley.nz/) by *Hadley Wickham*.
+A more understanding of the R language, <a href="https://adv-r.hadley.nz/" target="_blank">Advanced R</a> by *Hadley Wickham*.
 
-[Fundamental of Data Visualization](https://serialmentor.com/dataviz/), by *Claus Wilke* gives you a precise mix of theory and practical tips about making great visualizations.
+<a href="https://serialmentor.com/dataviz/" target="_blank">Fundamental of Data Visualization</a>, by *Claus Wilke* gives you a precise mix of theory and practical tips about making great visualizations.
 
-The grammar of graphics is a theory developed by Wilkinson that gives you a practical way to describe a plot. Ggplot2 is an R package that implement this theory and you can learn in the [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/) book.
+The grammar of graphics is a theory developed by Wilkinson that gives you a practical way to describe a plot. Ggplot2 is an R package that implement this theory and you can learn in the  <a href="https://ggplot2-book.org/" target="_blank">ggplot2: Elegant Graphics for Data Analysis</a> book (again Wickham).
 
-In python, we have the [Altair](https://altair-viz.github.io/) library that gives you a declarative visualization tool that works based on the grammar of graphics.
+A great resource to learn how to build interactive applications with R and shiny is the <a href="https://mastering-shiny.org/" target="_blank">Mastering Shiny book</a>.
+
+<a href="https://datasciencebox.org/" target="_blank">Data Science in a Box</a> provides content on how to structure a data science course.
+
+In python, we have the <a href="https://altair-viz.github.io/" target="_blank">Altair</a> library that gives you a declarative visualization tool that works based on the grammar of graphics.
 
 ## Others
 
-[Google Tech Dev Guide](https://techdevguide.withgoogle.com/)
+<a href="https://techdevguide.withgoogle.com/" target="_blank">Google Tech Dev Guide</a>
 
-[Metacademy](https://metacademy.org/)
+<a href="https://metacademy.org/" target="_blank">Metacademy</a>
+
+<a href="https://www.redblobgames.com/" target="_blank">Red Blob Games</a>
+
+<a href="https://distill.pub/" target="_blank">Distill: non-traditional research artifacts.</a>
+
+<a href="https://colah.github.io/" target="_blank">Colah's blog</a>
+
+<a href="https://stanfordmlgroup.github.io/" target="_blank">Stanford Machine Learning Group</a>
+
+<a href="https://www.snorkel.org/" target="_blank">Snorkel: the system for programmatically building and managing training data.</a>
+
+<a href="https://happygitwithr.com/" target="_blank">Happy Git and GitHub for the useR (Jenny Bryan).</a>
