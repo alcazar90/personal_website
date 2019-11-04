@@ -95,3 +95,20 @@ In python, we have the <a href="https://altair-viz.github.io/" target="_blank">A
 <a href="https://www.snorkel.org/" target="_blank">Snorkel: the system for programmatically building and managing training data.</a>
 
 <a href="https://happygitwithr.com/" target="_blank">Happy Git and GitHub for the useR (Jenny Bryan).</a>
+
+
+## Tools for thought & Computational thinking
+
+Essays, articles and blog posts about computational thinking and tools for thought!
+
+- <a href="https://numinous.productions/ttft/" target="_blank">How can we develop transformative tools for thought?</a>
+
+- <a href="https://www.cs.cmu.edu/~15110-s13/Wing06-ct.pdf" target="_blank">Computational Thinking</a>
+
+- <a href="https://medium.com/@karpathy/software-2-0-a64152b37c35" target="_blank">Software 2.0</a>
+
+- <a href="https://medium.com/@mbostock/a-better-way-to-code-2b1d2876a3a0" target="_blank">A better way to code</a>
+
+- <a href="https://writings.stephenwolfram.com/2017/11/what-is-a-computational-essay/?source=frontpage-latest-news
+" target="_blank">What Is a Computational Essay?</a>
+
