@@ -26,24 +26,22 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_caches$"]
 ## Site Settings
 [params]
 author = "Cristóbal Alcázar"
-intro = "Interested on applied machine learning <br/>and data analytics"
+intro = "Easy to talk"
 #description = "Now @Pied Piper. Previously @Hacker Hostel, @Bachmanity and @Aviato. <br/> \"What is F times 5? It's Fleventy-five.\""
-#description = "Welcome to my blog! Also I love [reading](https://www.goodreads.com/alkzar90)" 
-description = "Welcome to my blog!"
+description = "hard to write ;)"
 authorimage = "little_fox.jpg"
 dateformat = "Jan 2, 2006"
 
 ## Site Meta Settings
 [params.meta]
-description = "Analytics + Artificial-Intelligence Blog"
-keywords = "blog,artificial-intelligence,machine-learning,data-science,computer-science"
+description = "Personal Blog"
+keywords = "alkzar, alkzar-blog, data-science, computer-science, artificial-intelligence"
 
 ## Social Accounts
 [params.social]
 cv = "https://github.com/alcazar90/personal_website/raw/master/cv-alcazar-cristobal.pdf"
 github = "/alcazar90"
 instagram = "go.alcazar"
-#xing = "<username>"
 linkedin = "alcazar90"
 twitter = "/vamos_alcazar"
 stackoverflow = "/5843243"
@@ -55,17 +53,17 @@ copyright = "© 2017. **Cristóbal Alcázar**. [Some Rights Reserved](http://cre
 poweredby = true
 highlightjs = true
 
-  MathJaxCDN = "//cdn.bootcss.com"
-  MathJaxVersion = "2.7.1"
+MathJaxCDN = "//cdn.bootcss.com"
+MathJaxVersion = "2.7.1"
     
 ## Main Menu
 [[menu.main]]
-    name = "blog"
+    name = "Blog"
     weight = 100
     identifier = "blog"
     url = "/blog/"
 [[menu.main]]
-    name = "about"
+    name = "About"
     identifier = "about"
     weight = 200
     url = "/about/"
