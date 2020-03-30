@@ -2,6 +2,7 @@
 title: A data wrangling case with spreadsheets using R
 author: Cristóbal Alcázar
 date: '2018-01-16'
+draft: true
 slug: a-data-wrangling-case-with-r
 categories: [R, TidyVerse]
 tags: [R, TidyVerse]

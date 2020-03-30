@@ -2,6 +2,7 @@
 title: A data wrangling case with spreadsheets using R
 author: Cristóbal Alcázar
 date: '2018-01-16'
+draft: true
 slug: a-data-wrangling-case-with-r
 categories: [R, TidyVerse]
 tags: [R, TidyVerse]
@@ -29,14 +30,14 @@ showpagemeta: yes
 df &lt;- readxl::read_excel(&quot;./innocent_table.xlsx&quot;)
 df</code></pre>
 <pre><code>## # A tibble: 6 x 6
-##   X1                   X2    X3    X4    X5    X6
-##   &lt;chr&gt;             &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1 Expanded Homicid~    NA    NA    NA    NA    NA
-## 2 Murder Victims       NA    NA    NA    NA    NA
-## 3 by Weapon, 2004-~    NA    NA    NA    NA    NA
-## 4 Weapons            2004  2005  2006  2007  2008
-## 5 Total             14210 14965 15087 14916 14180
-## 6 Total firearms:    9385 10158 10225 10129  9484</code></pre>
+##   X1                    X2    X3    X4    X5    X6
+##   &lt;chr&gt;              &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 Expanded Homicide…    NA    NA    NA    NA    NA
+## 2 Murder Victims        NA    NA    NA    NA    NA
+## 3 by Weapon, 2004-2…    NA    NA    NA    NA    NA
+## 4 Weapons             2004  2005  2006  2007  2008
+## 5 Total              14210 14965 15087 14916 14180
+## 6 Total firearms:     9385 10158 10225 10129  9484</code></pre>
 <p>The important thing here is to describe explicitly the position of each cell-value that belong to the spreadsheet into the R’s data frame structure–<em>in row</em> <span class="math inline">\(i\)</span> <em>and column</em> <span class="math inline">\(j\)</span> <em>you find the cell-value</em> <span class="math inline">\(x_{i,j}\)</span>–and the following function, <strong>written and used by David Robinson in his answer</strong>, reorganize data accordingly.</p>
 <pre class="r"><code>library(dplyr)
 library(tidyr)
@@ -71,7 +72,7 @@ tidy_excel(df)
 ##  8     8      1 Rifles                        
 ##  9     9      1 Shotguns                      
 ## 10    10      1 Other guns                    
-## # ... with 128 more rows</code></pre>
+## # … with 128 more rows</code></pre>
 <p>As you can observe, the cells of the spreadsheet are melted into one column (<em>value</em>) and two new index-variables are created, one by each dimension (<em>row</em> and <em>column</em>), to mapping a cell coordinate of the spreadsheet with his content. This is the reason of the section title part <em>“coordinate-view”</em>.</p>
 <p>A legitimate question now is <strong>why can be useful a coordinate-view? What is the advantage with the original form?</strong></p>
 <blockquote>
@@ -87,19 +88,19 @@ tidy_excel(df)
 <pre class="r"><code># the column names are in the 4 row-index
 df
 ## # A tibble: 23 x 6
-##    X1                  X2    X3    X4    X5    X6
-##    &lt;chr&gt;            &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Expanded Homici~    NA    NA    NA    NA    NA
-##  2 Murder Victims      NA    NA    NA    NA    NA
-##  3 by Weapon, 2004~    NA    NA    NA    NA    NA
-##  4 Weapons           2004  2005  2006  2007  2008
-##  5 Total            14210 14965 15087 14916 14180
-##  6 Total firearms:   9385 10158 10225 10129  9484
-##  7 Handguns          7286  7565  7836  7398  6755
-##  8 Rifles             403   445   438   453   375
-##  9 Shotguns           507   522   490   457   444
-## 10 Other guns         117   138   107   116    79
-## # ... with 13 more rows
+##    X1                   X2    X3    X4    X5    X6
+##    &lt;chr&gt;             &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Expanded Homicid…    NA    NA    NA    NA    NA
+##  2 Murder Victims       NA    NA    NA    NA    NA
+##  3 by Weapon, 2004-…    NA    NA    NA    NA    NA
+##  4 Weapons            2004  2005  2006  2007  2008
+##  5 Total             14210 14965 15087 14916 14180
+##  6 Total firearms:    9385 10158 10225 10129  9484
+##  7 Handguns           7286  7565  7836  7398  6755
+##  8 Rifles              403   445   438   453   375
+##  9 Shotguns            507   522   490   457   444
+## 10 Other guns          117   138   107   116    79
+## # … with 13 more rows
 
 # identify keywords in the column names
 column_names_pattern &lt;- &quot;Weapons|2004|2005|2006|2007|2008&quot;
@@ -211,49 +212,49 @@ names(raw_data) &lt;- list_names
 head(raw_data, n = 2)
 ## $`2013_Enero`
 ## # A tibble: 1,127 x 25
-##    `DETALLE DEUDA ~ X__1  X__2  X__3  X__4  X__5 
+##    `DETALLE DEUDA … ...2  ...3  ...4  ...5  ...6 
 ##    &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
-##  1 BONOS CORPORATI~ &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
-##  2 al 31 de enero ~ &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
-##  3 &lt;NA&gt;             &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
-##  4 &lt;NA&gt;             &lt;NA&gt;  *VAL~ &lt;NA&gt;  &lt;NA&gt;  2280~
-##  5 Rut              &lt;NA&gt;  Soci~ &quot;Tip~ Nº I~ Fech~
-##  6 76675290         K     AD R~ Línea 694   40884
-##  7 76675290         K     AD R~ 1E    694   40892
-##  8 94272000         9     AES ~ Línea 516   39395
-##  9 94272000         9     AES ~ 1E    516   39400
-## 10 94272000         9     AES ~ Línea 517   39395
-## # ... with 1,117 more rows, and 19 more
-## #   variables: X__6 &lt;chr&gt;, X__7 &lt;chr&gt;,
-## #   X__8 &lt;chr&gt;, X__9 &lt;chr&gt;, X__10 &lt;chr&gt;,
-## #   X__11 &lt;chr&gt;, X__12 &lt;chr&gt;, X__13 &lt;chr&gt;,
-## #   X__14 &lt;chr&gt;, X__15 &lt;chr&gt;, X__16 &lt;chr&gt;,
-## #   X__17 &lt;chr&gt;, X__18 &lt;chr&gt;, X__19 &lt;chr&gt;,
-## #   X__20 &lt;chr&gt;, X__21 &lt;chr&gt;, X__22 &lt;chr&gt;,
-## #   X__23 &lt;chr&gt;, X__24 &lt;chr&gt;
+##  1 BONOS CORPORATI… &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt; &lt;NA&gt;  &lt;NA&gt; 
+##  2 al 31 de enero … &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt; &lt;NA&gt;  &lt;NA&gt; 
+##  3 &lt;NA&gt;             &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt; &lt;NA&gt;  &lt;NA&gt; 
+##  4 &lt;NA&gt;             &lt;NA&gt;  *VAL…  &lt;NA&gt; &lt;NA&gt;  2280…
+##  5 Rut              &lt;NA&gt;  Soci… &quot;Tip… Nº I… Fech…
+##  6 76675290         K     AD R… &quot;Lín… 694   40884
+##  7 76675290         K     AD R… &quot;1E&quot;  694   40892
+##  8 94272000         9     AES … &quot;Lín… 516   39395
+##  9 94272000         9     AES … &quot;1E&quot;  516   39400
+## 10 94272000         9     AES … &quot;Lín… 517   39395
+## # … with 1,117 more rows, and 19 more variables:
+## #   ...7 &lt;chr&gt;, ...8 &lt;chr&gt;, ...9 &lt;chr&gt;,
+## #   ...10 &lt;chr&gt;, ...11 &lt;chr&gt;, ...12 &lt;chr&gt;,
+## #   ...13 &lt;chr&gt;, ...14 &lt;chr&gt;, ...15 &lt;chr&gt;,
+## #   ...16 &lt;chr&gt;, ...17 &lt;chr&gt;, ...18 &lt;chr&gt;,
+## #   ...19 &lt;chr&gt;, ...20 &lt;chr&gt;, ...21 &lt;chr&gt;,
+## #   ...22 &lt;chr&gt;, ...23 &lt;chr&gt;, ...24 &lt;chr&gt;,
+## #   ...25 &lt;chr&gt;
 ## 
 ## $`2013_Febrero`
 ## # A tibble: 1,131 x 25
-##    X__1  `DETALLE DEUDA ~ X__2  X__3  X__4  X__5 
+##    ...1  `DETALLE DEUDA … ...3  ...4  ...5  ...6 
 ##    &lt;chr&gt; &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
-##  1 &lt;NA&gt;  BONOS CORPORATI~ &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
-##  2 &lt;NA&gt;  al               41333 &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
-##  3 &lt;NA&gt;  &lt;NA&gt;             &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
-##  4 &lt;NA&gt;  &lt;NA&gt;             *VAL~ &lt;NA&gt;  &lt;NA&gt;  2283~
-##  5 Rut   &lt;NA&gt;             Soci~ &quot;Tip~ Nº I~ Fech~
-##  6 &lt;NA&gt;  &lt;NA&gt;             &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
-##  7 7667~ K                AD R~ Línea 694   40884
-##  8 7667~ K                AD R~ 1E    694   40892
-##  9 9427~ 9                AES ~ Línea 516   39395
-## 10 9427~ 9                AES ~ 1E    516   39400
-## # ... with 1,121 more rows, and 19 more
-## #   variables: X__6 &lt;chr&gt;, X__7 &lt;chr&gt;,
-## #   X__8 &lt;chr&gt;, X__9 &lt;chr&gt;, X__10 &lt;chr&gt;,
-## #   X__11 &lt;chr&gt;, X__12 &lt;chr&gt;, X__13 &lt;chr&gt;,
-## #   X__14 &lt;chr&gt;, X__15 &lt;chr&gt;, X__16 &lt;chr&gt;,
-## #   X__17 &lt;chr&gt;, X__18 &lt;chr&gt;, X__19 &lt;chr&gt;,
-## #   X__20 &lt;chr&gt;, X__21 &lt;chr&gt;, X__22 &lt;chr&gt;,
-## #   X__23 &lt;chr&gt;, X__24 &lt;chr&gt;</code></pre>
+##  1 &lt;NA&gt;  BONOS CORPORATI… &lt;NA&gt;   &lt;NA&gt; &lt;NA&gt;  &lt;NA&gt; 
+##  2 &lt;NA&gt;  al               41333  &lt;NA&gt; &lt;NA&gt;  &lt;NA&gt; 
+##  3 &lt;NA&gt;  &lt;NA&gt;             &lt;NA&gt;   &lt;NA&gt; &lt;NA&gt;  &lt;NA&gt; 
+##  4 &lt;NA&gt;  &lt;NA&gt;             *VAL…  &lt;NA&gt; &lt;NA&gt;  2283…
+##  5 Rut   &lt;NA&gt;             Soci… &quot;Tip… Nº I… Fech…
+##  6 &lt;NA&gt;  &lt;NA&gt;             &lt;NA&gt;   &lt;NA&gt; &lt;NA&gt;  &lt;NA&gt; 
+##  7 7667… K                AD R… &quot;Lín… 694   40884
+##  8 7667… K                AD R… &quot;1E&quot;  694   40892
+##  9 9427… 9                AES … &quot;Lín… 516   39395
+## 10 9427… 9                AES … &quot;1E&quot;  516   39400
+## # … with 1,121 more rows, and 19 more variables:
+## #   ...7 &lt;chr&gt;, ...8 &lt;chr&gt;, ...9 &lt;chr&gt;,
+## #   ...10 &lt;chr&gt;, ...11 &lt;chr&gt;, ...12 &lt;chr&gt;,
+## #   ...13 &lt;chr&gt;, ...14 &lt;chr&gt;, ...15 &lt;chr&gt;,
+## #   ...16 &lt;chr&gt;, ...17 &lt;chr&gt;, ...18 &lt;chr&gt;,
+## #   ...19 &lt;chr&gt;, ...20 &lt;chr&gt;, ...21 &lt;chr&gt;,
+## #   ...22 &lt;chr&gt;, ...23 &lt;chr&gt;, ...24 &lt;chr&gt;,
+## #   ...25 &lt;chr&gt;</code></pre>
 <p>It is necessary to clean <code>raw_data</code> before we collapse it into one dataset. We want to discard rows with meta-information and select all the columns until column <em>“Valor Par (en miles de $)”</em>. So first we need to detect the row that contain the column names of the table in the spreadsheet, then the name of our last column, and finally the last row that contain values (rewrite this part of the paragraph). We can do this by applying regular expressions on coordinate view and encapsulate all this process into the function <code>clean_spreadsheet</code> to apply it simultaneously over each dataframe.</p>
 <pre class="r"><code>clean_spreadsheet &lt;- function(df) {
   tbl &lt;- tidy_excel(df)
@@ -281,19 +282,19 @@ clean_data &lt;- purrr::map(raw_data, clean_spreadsheet)
 head(clean_data, n = 2)
 ## $`2013_Enero`
 ## # A tibble: 962 x 19
-##    `1`   `2`   `3`   `4`   `5`   `6`   `7`   `8` 
-##    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;ch&gt;
-##  1 7667~ K     AD R~ Línea 694   40884 U.F.  4000
-##  2 7667~ K     AD R~ 1E    694   40892 U.F.  2000
-##  3 9427~ 9     AES ~ Línea 516   39395 US$   200~
-##  4 9427~ 9     AES ~ 1E    516   39400 U.F.  2800
-##  5 9427~ 9     AES ~ Línea 517   39395 US$   400~
-##  6 9427~ 9     AES ~ 1E    517   39400 U.F.  5600
-##  7 9427~ 9     AES ~ 2E    517   39905 US$   196~
-##  8 7612~ 3     Agro~ Línea 678   40801 U.F.  8500
-##  9 7612~ 3     Agro~ 1E    678   40802 U.F.  5000
-## 10 7612~ 3     Agro~ 1E    678   40802 $     100~
-## # ... with 952 more rows, and 11 more variables:
+##    `1`   `2`   `3`   `4`   `5`   `6`   `7`   `8`  
+##    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+##  1 7667… K     AD R… Línea 694   40884 U.F.  4000 
+##  2 7667… K     AD R… 1E    694   40892 U.F.  2000 
+##  3 9427… 9     AES … Línea 516   39395 US$   2000…
+##  4 9427… 9     AES … 1E    516   39400 U.F.  2800 
+##  5 9427… 9     AES … Línea 517   39395 US$   4000…
+##  6 9427… 9     AES … 1E    517   39400 U.F.  5600 
+##  7 9427… 9     AES … 2E    517   39905 US$   1960…
+##  8 7612… 3     Agro… Línea 678   40801 U.F.  8500 
+##  9 7612… 3     Agro… 1E    678   40802 U.F.  5000 
+## 10 7612… 3     Agro… 1E    678   40802 $     1000…
+## # … with 952 more rows, and 11 more variables:
 ## #   `9` &lt;chr&gt;, `10` &lt;chr&gt;, `11` &lt;chr&gt;,
 ## #   `12` &lt;chr&gt;, `13` &lt;chr&gt;, `14` &lt;chr&gt;,
 ## #   `15` &lt;chr&gt;, `16` &lt;chr&gt;, `17` &lt;chr&gt;,
@@ -301,19 +302,19 @@ head(clean_data, n = 2)
 ## 
 ## $`2013_Febrero`
 ## # A tibble: 965 x 19
-##    `1`   `2`   `3`   `4`   `5`   `6`   `7`   `8` 
-##    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;ch&gt;
-##  1 7667~ K     AD R~ Línea 694   40884 U.F.  4000
-##  2 7667~ K     AD R~ 1E    694   40892 U.F.  2000
-##  3 9427~ 9     AES ~ Línea 516   39395 US$   200~
-##  4 9427~ 9     AES ~ 1E    516   39400 U.F.  2800
-##  5 9427~ 9     AES ~ Línea 517   39395 US$   400~
-##  6 9427~ 9     AES ~ 1E    517   39400 U.F.  5600
-##  7 9427~ 9     AES ~ 2E    517   39905 US$   196~
-##  8 7612~ 3     Agro~ Línea 678   40801 U.F.  8500
-##  9 7612~ 3     Agro~ 1E    678   40802 U.F.  5000
-## 10 7612~ 3     Agro~ 1E    678   40802 $     100~
-## # ... with 955 more rows, and 11 more variables:
+##    `1`   `2`   `3`   `4`   `5`   `6`   `7`   `8`  
+##    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+##  1 7667… K     AD R… Línea 694   40884 U.F.  4000 
+##  2 7667… K     AD R… 1E    694   40892 U.F.  2000 
+##  3 9427… 9     AES … Línea 516   39395 US$   2000…
+##  4 9427… 9     AES … 1E    516   39400 U.F.  2800 
+##  5 9427… 9     AES … Línea 517   39395 US$   4000…
+##  6 9427… 9     AES … 1E    517   39400 U.F.  5600 
+##  7 9427… 9     AES … 2E    517   39905 US$   1960…
+##  8 7612… 3     Agro… Línea 678   40801 U.F.  8500 
+##  9 7612… 3     Agro… 1E    678   40802 U.F.  5000 
+## 10 7612… 3     Agro… 1E    678   40802 $     1000…
+## # … with 955 more rows, and 11 more variables:
 ## #   `9` &lt;chr&gt;, `10` &lt;chr&gt;, `11` &lt;chr&gt;,
 ## #   `12` &lt;chr&gt;, `13` &lt;chr&gt;, `14` &lt;chr&gt;,
 ## #   `15` &lt;chr&gt;, `16` &lt;chr&gt;, `17` &lt;chr&gt;,
@@ -344,18 +345,18 @@ data
 ## # A tibble: 33,261 x 21
 ##    anho  mes   rut   dv    sociedad tipo_bono
 ##    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;    
-##  1 2013  Enero 7667~ K     AD Reta~ Línea    
-##  2 2013  Enero 7667~ K     AD Reta~ 1E       
-##  3 2013  Enero 9427~ 9     AES Gen~ Línea    
-##  4 2013  Enero 9427~ 9     AES Gen~ 1E       
-##  5 2013  Enero 9427~ 9     AES Gen~ Línea    
-##  6 2013  Enero 9427~ 9     AES Gen~ 1E       
-##  7 2013  Enero 9427~ 9     AES Gen~ 2E       
-##  8 2013  Enero 7612~ 3     Agrosup~ Línea    
-##  9 2013  Enero 7612~ 3     Agrosup~ 1E       
-## 10 2013  Enero 7612~ 3     Agrosup~ 1E       
-## # ... with 33,251 more rows, and 15 more
-## #   variables: num_inscripccion &lt;chr&gt;,
+##  1 2013  Enero 7667… K     AD Reta… Línea    
+##  2 2013  Enero 7667… K     AD Reta… 1E       
+##  3 2013  Enero 9427… 9     AES Gen… Línea    
+##  4 2013  Enero 9427… 9     AES Gen… 1E       
+##  5 2013  Enero 9427… 9     AES Gen… Línea    
+##  6 2013  Enero 9427… 9     AES Gen… 1E       
+##  7 2013  Enero 9427… 9     AES Gen… 2E       
+##  8 2013  Enero 7612… 3     Agrosup… Línea    
+##  9 2013  Enero 7612… 3     Agrosup… 1E       
+## 10 2013  Enero 7612… 3     Agrosup… 1E       
+## # … with 33,251 more rows, and 15 more variables:
+## #   num_inscripccion &lt;chr&gt;,
 ## #   fecha_inscripccion &lt;chr&gt;, unidad &lt;chr&gt;,
 ## #   monto_inscrito_miles &lt;chr&gt;, serie &lt;chr&gt;,
 ## #   tasa_emision &lt;chr&gt;, objetivo_emision1 &lt;chr&gt;,
@@ -382,7 +383,7 @@ data
 ##  8 40801             
 ##  9 40802             
 ## 10 40802             
-## # ... with 33,251 more rows</code></pre>
+## # … with 33,251 more rows</code></pre>
 <p>These numbers doesn’t look as a date but actually it’s how excel stores the dates. David Robinson use the following function to clean these values.</p>
 <pre class="r"><code>convert_excel_date &lt;- function(x) {
   # created by David Robinson
@@ -408,7 +409,7 @@ data %&gt;%
 ##  8 2011-09-15        
 ##  9 2011-09-16        
 ## 10 2011-09-16        
-## # ... with 33,251 more rows</code></pre>
+## # … with 33,251 more rows</code></pre>
 <p>Finally we have a clean dataset ready for you to analyze. You can take a look to a few observations!</p>
 <div style="border: 1px solid #ddd; padding: 5px; overflow-y: scroll; height:200px; overflow-x: scroll; width:100%; ">
 <table class="table table-striped" style="font-size: 14px; margin-left: auto; margin-right: auto;">
