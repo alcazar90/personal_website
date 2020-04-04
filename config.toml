@@ -29,7 +29,8 @@ author = "Cristóbal Alcázar"
 intro = "Easy to talk"
 #description = "Now @Pied Piper. Previously @Hacker Hostel, @Bachmanity and @Aviato. <br/> \"What is F times 5? It's Fleventy-five.\""
 description = "hard to write ;)"
-authorimage = "little_fox.jpg"
+#authorimage = "little_fox.jpg"
+authorimage = "perfil_blog.jpeg"
 dateformat = "Jan 2, 2006"
 
 ## Site Meta Settings
@@ -49,7 +50,8 @@ email = "alcazar.cristobal90@gmail.com"
 
 ## Extras
 [params.extra]
-copyright = "© 2017. **Cristóbal Alcázar**. [Some Rights Reserved](http://creativecommons.org/licenses/by/3.0/). <br/> Home Photo by [Scott Walsh](https://unsplash.com/@outsighted) on [Unsplash](https://unsplash.com/)" 
+copyright = "© 2017. **Cristóbal Alcázar**. [Some Rights Reserved](http://creativecommons.org/licenses/by/3.0/). <br/> Home Photo by Gabi ;)" 
+#copyright = "© 2017. **Cristóbal Alcázar**. [Some Rights Reserved](http://creativecommons.org/licenses/by/3.0/). <br/> Home Photo by [Scott Walsh](https://unsplash.com/@outsighted) on [Unsplash](https://unsplash.com/)" 
 poweredby = true
 highlightjs = true
 
