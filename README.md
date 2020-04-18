@@ -4,13 +4,13 @@
 
 ## About
 
-This repo contain the source file to build a hugo website with the [GOA Theme](https://github.com/shenoybr/hugo-goa) by [@shenoybr](https://github.com/shenoybr).
+This repo contain the source files to build a hugo website with the [GOA Theme](https://github.com/shenoybr/hugo-goa) by [@shenoybr](https://github.com/shenoybr).
 
 ## Check list
 
 - blog (ready to write)
-- about (deploying)
-- study plan (deploying)
+- about (ready)
+- study plan (ready)
 
 ## License
 
