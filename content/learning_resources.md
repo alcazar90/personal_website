@@ -40,13 +40,15 @@ The book <a href="http://www.feat.engineering/" target="_blank">Feature Engineer
 
 <a href="https://mml-book.com" target="_blank">Mathematics for Machine Learning</a> is a book that provide the math skills to read more advance machine learning books.
 
-### Neural Networks
+### Neural Networks & Deep Learning
 
 <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.161.3556&rep=rep1&type=pdf" target="_blank">A beginner's Guide to the Mathematics of Neural Networks</a>
 
 <a href="http://neuralnetworksanddeeplearning.com/" target="_blank">Neural Networks and Deep Learning (Nielsen Open Access Book)</a>
 
 <a href="http://cs231n.github.io/" target="_blank">CS231n Convolutional Neural Networks for Visual Recognition (Stanford course site)</a>
+
+<a href="https://course.fullstackdeeplearning.com/" target="_blank">Full Stack Deep Learning</a>
 
 ## Computer Science
 
