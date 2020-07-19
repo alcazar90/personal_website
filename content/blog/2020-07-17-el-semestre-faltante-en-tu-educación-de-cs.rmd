@@ -19,7 +19,7 @@ Este curso ya lleva dos versiones de vida en el MIT, y es impartido por el grupo
 instructores [Anish](https://www.anishathalye.com/) , [Jon](https://thesquareplanet.com/),
 y [Jose](http://josejg.com/). El objetivo del curso es el descrito en el
 primer párrafo, y puedes saber más acerca de la [motivación detrás del curso acá](https://missing.csail.mit.edu/about/),
-pero en résumen es darte herramientas para que seas más versado utilizando tú 
+pero en resumen es darte herramientas para que seas más versado utilizando tú 
 ecosistema computacional: desde navegar por tú sistema utilizando la consola, 
 usar un editor de texto de manera eficiente, o saber qué es y cómo funciona
 Git.
