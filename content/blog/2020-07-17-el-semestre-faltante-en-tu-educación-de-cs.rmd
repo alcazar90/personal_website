@@ -1,0 +1,47 @@
+---
+title: El semestre faltante en tu educación de CS
+author: Cristóbal Alcázar
+date: '2020-07-17'
+slug: el-semestre-faltante-en-tu-educación-de-cs
+categories: [CS, productitivty]
+tags: []
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+
+> Las clases te enseñan de todo sobre temas avanzados de CS, desde sistemas operativos hasta machine learning, sin embargo, hay un tema crítico que rara vez se trata y a su vez es dejado para que los estudiantes indaguen por sus propios medios: el cómo ser productivos con sus herramientas. Te enseñaremos a dominar la interfaz de línea de comandos, a usar un poderoso editor de texto, a utilizar las características sofisticadas de los sistemas de control de versiones y mucho más!
+
+
+Durante este último tiempo he estado revisando y estudiando el material del curso ["The Missing Semester of Your CS Education"](https://missing.csail.mit.edu/).
+Este curso ya lleva dos versiones de vida en el MIT, y es impartido por el grupo de 
+instructores [Anish](https://www.anishathalye.com/) , [Jon](https://thesquareplanet.com/),
+y [Jose](http://josejg.com/). El objetivo del curso es el descrito en el
+primer párrafo, y puedes saber más acerca de la [motivación detrás del curso acá](https://missing.csail.mit.edu/about/),
+pero en résumen es darte herramientas para que seas más versado utilizando tú 
+ecosistema computacional: desde navegar por tú sistema utilizando la consola, 
+usar un editor de texto de manera eficiente, o saber qué es y cómo funciona
+Git.
+
+En la página web se puede encontrar un video por cada una de las clases, así como
+los apuntes y notas de estas. Al final de las notas hay ejercicios para practicar
+e investigar lo visto en la clase. 
+
+
+# Versión en español
+
+A modo de seguir la clase, y para contribuir en compartir el material
+en español, he estado traduciendo las notas de cada clase. Por ahora, solo hay
+dos notas traducidas completamente, pero a medida que vaya traduciendo las faltantes
+las iré liberando. Se puede acceder al material en español desde el sitio oficial 
+del curso, en la sección _Translations_, o directamente desde el siguiente link:
+https://missing-semester-esp.github.io/.
+
+Cualquier contribución en la traducción es bienvenida, el link del
+proyecto en github [aquí](https://github.com/missing-semester-esp/missing-semester-esp.github.io). 
+Si quieres editar las notas de una clase específica, puedes ir al final de cada
+página, y ahí encontrarás el link "Editar esta página", el que te llevará directamente
+al archivo markdown con el contenido de la clase en el repositorio del proyecto.
+
+
