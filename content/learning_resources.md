@@ -50,6 +50,9 @@ The book <a href="http://www.feat.engineering/" target="_blank">Feature Engineer
 
 <a href="https://course.fullstackdeeplearning.com/" target="_blank">Full Stack Deep Learning</a>
 
+
+<a href="https://atcold.github.io/pytorch-Deep-Learning/" target="_blank">DS-GA 1008: Deep Learning NYU (Yann LeCun & Alfredo Canziani 2020)</a>
+
 ## Computer Science
 
 The MIT introductory course on Computer Science and programming using python via EDX:
@@ -63,6 +66,8 @@ An open access book about <a href="https://runestone.academy/runestone/books/pub
 The <a href="https://www.coursera.org/specializations/algorithms" target="_blank">Stanford Algorithms Specialization</a> via coursera, by Tim Roughgarden.
 
 A tool for visualize code execution, useful to understand algorithms and tricky code steps: <a href="http://pythontutor.com/" target="_blank">python-tutor</a>.
+
+<a href="https://computationalthinking.mit.edu/Fall20/" target="_blank">MIT 18.S191: Introduction to Computational Thinking with Julia (Fall 2020)</a>.
  
 ### Data Science tools
 
