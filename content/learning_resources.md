@@ -68,7 +68,14 @@ The <a href="https://www.coursera.org/specializations/algorithms" target="_blank
 A tool for visualize code execution, useful to understand algorithms and tricky code steps: <a href="http://pythontutor.com/" target="_blank">python-tutor</a>.
 
 <a href="https://computationalthinking.mit.edu/Fall20/" target="_blank">MIT 18.S191: Introduction to Computational Thinking with Julia (Fall 2020)</a>.
- 
+
+https://martin.kleppmann.com/2020/11/18/distributed-systems-and-elliptic-curves.html 
+
+<a href="https://martin.kleppmann.com/2020/11/18/distributed-systems-and-elliptic-curves.html" target="_blank">Designing Data-Intensive Applications (lecture series by Martin Kleppmann)</a>.
+
+<a href="https://github.com/mercari/ml-system-design-pattern" target="_blank">Machine Learning System Design Pattern</a>.
+
+
 ### Data Science tools
 
 <a href="https://r4ds.had.co.nz/" target="_blank">R for Data Science</a> is a book that explain you more than a bunch of tools to work with data in R. It gives you a mental model to work in data science projects and a package to implement each part of the model.
