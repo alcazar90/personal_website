@@ -42,7 +42,7 @@ requerida e instalarlos utilizando `pip install -r requirements.txt`. El comando
 Importante, una vez terminada la instalación debemos desactivar el entorno (`deactivate`) y volver
 activarlo antes de seguir. En mi caso, si continuó sin reiniciar el entorno tengo problemas
 con asociar el kernel al entorno virtual, lo que a su vez significa problemas para cargar los
-paquetes instalados en el paso 4.
+paquetes instalados.
 
 5. Ahora creamos el kernel `ipython kernel install --user --name=<name>`. Importante utilizar el
 mismo nombre del entorno virtual que utilizamos en el paso 1 (buena práctica). Si queremos desintalar algún kernel: `jupyter kernelspec uninstall <name>`.
