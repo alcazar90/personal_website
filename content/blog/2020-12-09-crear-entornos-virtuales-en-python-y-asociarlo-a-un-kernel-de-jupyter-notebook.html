@@ -1,0 +1,57 @@
+---
+title: Crear entornos virtuales en python y asociarlos a un kernel de jupyter notebook
+author: Cristóbal Alcázar
+date: '2020-12-09'
+slug: crear-entornos-virtuales-en-python-y-asociarlo-a-un-kernel-de-jupyter-notebook
+categories: [python, jupyter notebook, workflow, macOS]
+tags: []
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+
+
+<p>En este post se detalla el <em>workflow</em> para crear entornos virtuales de python, instalar paquetes y
+utilizarlos con <em>jupyter notebooks</em>. Mayor información acerca de entornos virtuales en
+la <a href="https://docs.python.org/3/tutorial/venv.html">documentación oficial</a>.</p>
+<p>Las siguientes dos secciones se encuentran resumidas en la secuencia de comandos grabadas a
+continuación:</p>
+<p><img src="img/venvjup.gif#center" /></p>
+<div id="crear-un-entorno-virtual" class="section level3">
+<h3>Crear un entorno virtual</h3>
+<ol style="list-style-type: decimal">
+<li><p>Creamos un directorio para el proyecto y dentro de el iniciamos un entorno virtual con: <code>python3 -m venv &lt;name&gt;</code>.</p></li>
+<li><p>Es posible crear un archivo <code>requirements.txt</code> con los paquetes que instalaremos y usaremos
+dentro del proyecto.</p></li>
+<li><p>Activamos el entorno con <code>source &lt;name&gt;/bin/activate</code>. Los comandos <code>which python</code> y
+<code>which pip</code> se pueden utilizar para constatar bajo cuál entorno estamos actuando.
+Un detalle visual cuando se tiene el entorno activado es que la ruta de trabajo indicada en el
+terminal comienza con <code>(&lt;name&gt;) ~/...</code>. Si es necesario desactivar el entorno, basta utilizar el
+comando <code>deactivate</code> y se dejará también de ver el prefijo especificado en la ruta del terminal.</p></li>
+<li><p>Para instalar paquetes simplemente utilizamos el comando <code>pip install &lt;package_name&gt;</code>. Si
+queremos instalar todos los paquetes especificados en el archivo creado en el paso 2, utilizamos:
+<code>pip install -r requirements.txt</code>. Si utilizamos el comando <code>pip list</code> tendremos un listado de
+todos los paquetes instalados en el entorno virtual. Estos debieran coincidir con los
+paquetes listados en el archivo <code>requirements.txt</code>, además de algún otro paquete adicional
+instalado automáticamente que sea dependencia de alguno de estos.</p></li>
+</ol>
+</div>
+<div id="crear-un-kernel-en-jupyter-notebook" class="section level3">
+<h3>Crear un kernel en jupyter notebook</h3>
+<ol start="5" style="list-style-type: decimal">
+<li><p>Instalamos el paquete para trabajar con jupyter notebooks y crear un kernel:<br />
+<code>pip install ipykernel</code>.
+Importante, una vez terminada la instalación debemos desactivar el entorno (<code>deactivate</code>) y volver
+activarlo antes de seguir. En mi caso, si continuó sin reiniciar el entorno tengo problemas
+con asociar el kernel al entorno virtual, lo que a su vez significa problemas para cargar los
+paquetes instalados en el paso 4.</p></li>
+<li><p>Ahora creamos el kernel <code>ipython kernel install --user --name=&lt;name&gt;</code>. Importante utilizar el
+mismo nombre del entorno virtual que utilizamos en el paso 1 (buena práctica).</p></li>
+<li><p>Se pueden inspeccionar todos los kernel habilitados con el comando: <code>jupyter kernelspec list</code>. Debería aparecer en la lista el nuevo kernel creado en 6.</p></li>
+<li><p>Finalmente podemos utilizar un notebook con <code>jupyter lab</code> o <code>jupyter notebook</code> y veremos que al
+crear un nuevo notebook estará el kernel creado en el paso 6. Si utilizamos esta opción,
+estarán disponibles todos los paquetes instaldos en el ambiente virtual.</p></li>
+<li><p>Si queremos desintalar algún kernel creado con anterioridad: <code>jupyter kernelspec uninstall &lt;name&gt;</code>.</p></li>
+</ol>
+</div>
