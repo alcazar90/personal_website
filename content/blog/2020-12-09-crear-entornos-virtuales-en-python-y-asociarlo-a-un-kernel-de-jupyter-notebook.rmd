@@ -1,0 +1,63 @@
+---
+title: Crear entornos virtuales en python y asociarlos a un kernel de jupyter notebook
+author: Cristóbal Alcázar
+date: '2020-12-09'
+slug: crear-entornos-virtuales-en-python-y-asociarlo-a-un-kernel-de-jupyter-notebook
+categories: [python, jupyter notebook, workflow, macOS]
+tags: []
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+En este post se detalla el *workflow* para crear entornos virtuales de python, instalar paquetes y
+utilizarlos con *jupyter notebooks*. Mayor información acerca de entornos virtuales en
+la [documentación oficial](https://docs.python.org/3/tutorial/venv.html).
+
+Las siguientes dos secciones se encuentran resumidas en la secuencia de comandos grabadas a
+continuación:
+
+![](img/venvjup.gif#center)
+
+### Crear un entorno virtual 
+
+1. Creamos un directorio para el proyecto y dentro de el iniciamos un entorno virtual con: `python3 -m venv <name>`. 
+
+2. Es posible crear un archivo `requirements.txt` con los paquetes que instalaremos y usaremos
+dentro del proyecto. 
+
+3. Activamos el entorno con `source <name>/bin/activate`. Los comandos `which python` y 
+`which pip` se pueden utilizar para constatar bajo cuál entorno estamos actuando. 
+Un detalle visual cuando se tiene el entorno activado es que la ruta de trabajo indicada en el
+terminal comienza con  `(<name>) ~/...`. Si es necesario desactivar el entorno, basta utilizar el
+comando `deactivate` y se dejará también de ver el prefijo especificado en la ruta del terminal.
+
+4. Para instalar paquetes simplemente utilizamos el comando `pip install <package_name>`. Si
+queremos instalar todos los paquetes especificados en el archivo creado en el paso 2, utilizamos: 
+`pip install -r requirements.txt`. Si utilizamos el comando `pip list` tendremos un listado de
+todos los paquetes instalados en el entorno virtual. Estos debieran coincidir con los 
+paquetes listados en el archivo `requirements.txt`, además de algún otro paquete adicional 
+instalado automáticamente que sea dependencia de alguno de estos.
+
+
+### Crear un kernel en jupyter notebook
+
+5. Instalamos el paquete para trabajar con jupyter notebooks y crear un kernel:  
+`pip install ipykernel`. 
+Importante, una vez terminada la instalación debemos desactivar el entorno (`deactivate`) y volver
+activarlo antes de seguir. En mi caso, si continuó sin reiniciar el entorno tengo problemas
+con asociar el kernel al entorno virtual, lo que a su vez significa problemas para cargar los
+paquetes instalados en el paso 4.
+
+6. Ahora creamos el kernel `ipython kernel install --user --name=<name>`. Importante utilizar el
+mismo nombre del entorno virtual que utilizamos en el paso 1 (buena práctica).
+
+7. Se pueden inspeccionar todos los kernel habilitados con el comando: `jupyter kernelspec list`. Debería aparecer en la lista el nuevo kernel creado en 6.
+
+8. Finalmente podemos utilizar un notebook con `jupyter lab` o `jupyter notebook` y veremos que al
+crear un nuevo notebook estará el kernel creado en el paso 6. Si utilizamos esta opción,
+estarán disponibles todos los paquetes instaldos en el ambiente virtual.
+
+9. Si queremos desintalar algún kernel creado con anterioridad: `jupyter kernelspec uninstall <name>`.
+
+
