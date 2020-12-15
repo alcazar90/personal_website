@@ -37,8 +37,9 @@ A book that provides an introduction to statistical learning methods with applic
 
 The book <a href="http://www.feat.engineering/" target="_blank">Feature Engineering and Selection: A Practical Approach for Predictive Models</a> by *Max Kuhn* and *Kjell Jonhson* gives you tools for representing predictors.
 
-
 <a href="https://mml-book.com" target="_blank">Mathematics for Machine Learning</a> is a book that provide the math skills to read more advance machine learning books.
+
+Repository of the book <a href="https://github.com/jermwatt/machine_learning_refined" target="_blank"> Machine Learning Refined: Foundations, Algorithms, and Applications</a> by Jeremy Watt, Reza Borhani, Aggelos K. Katsaggelos.
 
 ### Neural Networks & Deep Learning
 
@@ -69,8 +70,6 @@ A tool for visualize code execution, useful to understand algorithms and tricky 
 
 <a href="https://computationalthinking.mit.edu/Fall20/" target="_blank">MIT 18.S191: Introduction to Computational Thinking with Julia (Fall 2020)</a>.
 
-https://martin.kleppmann.com/2020/11/18/distributed-systems-and-elliptic-curves.html 
-
 <a href="https://martin.kleppmann.com/2020/11/18/distributed-systems-and-elliptic-curves.html" target="_blank">Designing Data-Intensive Applications (lecture series by Martin Kleppmann)</a>.
 
 <a href="https://github.com/mercari/ml-system-design-pattern" target="_blank">Machine Learning System Design Pattern</a>.
@@ -93,6 +92,8 @@ A great resource to learn how to build interactive applications with R and shiny
 In python, we have the <a href="https://altair-viz.github.io/" target="_blank">Altair</a> library that gives you a declarative visualization tool that works based on the grammar of graphics.
 
 ## Others
+
+<a href="https://blog.otoro.net/" target="_blank">David Ha Blog</a>
 
 <a href="https://techdevguide.withgoogle.com/" target="_blank">Google Tech Dev Guide</a>
 
