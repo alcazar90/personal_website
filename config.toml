@@ -20,7 +20,7 @@ enableEmoji = true
 disqusShortname = "alkzar-cl" # Comment out to disable Disqus.
 googleAnalytics = "UA-111580586-1"
 enableRobotsTXT = true
-ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_caches$"]
+ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_caches$", "\\.knit\\.md$", "\\.utf8\\.md$"]
 
 
 ## Site Settings
@@ -36,7 +36,7 @@ dateformat = "Jan 2, 2006"
 ## Site Meta Settings
 [params.meta]
 description = "Personal Blog"
-keywords = "alkzar, alkzar-blog, data-science, computer-science, artificial-intelligence"
+keywords = "alkzar, alkzar-blog, data-science, computer-science"
 
 ## Social Accounts
 [params.social]
@@ -74,3 +74,8 @@ MathJaxVersion = "2.7.1"
     identifier = "Learning Resources"
     weight = 300
     url = "/learning_resources/"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
