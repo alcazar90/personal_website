@@ -10,9 +10,9 @@ showcomments = false
 showpagemeta = false
 +++
 
-*"It's not about information anymore,* ***it's about curation****."* Suzana Ilić.
+*"It's not about information anymore,* ***it's about curation***." Suzana Ilić.
 
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Someone asked me why we&#39;re organizing DL workshops, since there&#39;s a ton of excellent online resources out there. And I think that&#39;s the problem. It&#39;s not about information anymore, it&#39;s about curation. We are drowning in blog posts, tutorials, courses, repos, docs, papers.</p>&mdash; Suzana Ilić (@suzatweet) <a href="https://twitter.com/suzatweet/status/1166347201766780928?ref_src=twsrc%5Etfw">August 27, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<blockquote class="twitter-tweet" data-theme="dark"><p lang="en" dir="ltr">Someone asked me why we&#39;re organizing DL workshops, since there&#39;s a ton of excellent online resources out there. And I think that&#39;s the problem. It&#39;s not about information anymore, it&#39;s about curation. We are drowning in blog posts, tutorials, courses, repos, docs, papers.</p>&mdash; Suzana Ilić (@suzatweet) <a href="https://twitter.com/suzatweet/status/1166347201766780928?ref_src=twsrc%5Etfw">August 27, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 This section contain a collection of online resources on math, machine learning, computer science and data science tools.
 
@@ -40,6 +40,14 @@ The book <a href="http://www.feat.engineering/" target="_blank">Feature Engineer
 <a href="https://mml-book.com" target="_blank">Mathematics for Machine Learning</a> is a book that provide the math skills to read more advance machine learning books.
 
 Repository of the book <a href="https://github.com/jermwatt/machine_learning_refined" target="_blank"> Machine Learning Refined: Foundations, Algorithms, and Applications</a> by Jeremy Watt, Reza Borhani, Aggelos K. Katsaggelos.
+
+<a href="https://mlstory.org" target="_blank"> Patterns, Predictions, and Actions: A story about machine learning (Hardt, Recht 2021)</a>
+
+
+<a href="https://fairmlbook.org" target="_blank"> Fairness and machine learning: Limitations and 
+Opportunities (Barocas, Hardt, Narayanan 2021)</a>
+
+
 
 ### Neural Networks & Deep Learning
 
@@ -126,4 +134,6 @@ Essays, articles and blog posts about computational thinking and tools for thoug
 
 - <a href="https://writings.stephenwolfram.com/2017/11/what-is-a-computational-essay/?source=frontpage-latest-news
 " target="_blank">What Is a Computational Essay?</a>
+
+- <a href="https://www.cambridge.org/core/books/stand-out-of-our-light/3F8D7BA2C0FE3A7126A4D9B73A89415D" target="_blank">Stand out of our light: freedom and resistance in the attention economy (James Williams)</a>
 
