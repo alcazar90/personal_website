@@ -11,39 +11,39 @@ showpagemeta: yes
 ---
 
 Many times we are in presence of two variables which they don't have a
-relationship at all. Let say, $X$ and $Y$, but the way in which we observed both
-variables together could indicated just the opposite, that indeed variables are
-correlated. Maybe also it's possible that we observed a negative correlation
-between variables but actually the correlation between $X$ and $Y$ is positive.
+relationship at all. Let say, $X$ and $Y$, but we observed both
+variables together could indicate just the opposite, that indeed variables are
+correlated. Maybe also we observed a negative correlation
+between variables but, actually, the correlation between $X$ and $Y$ is positive.
 This kind of cases most of the time could be explained by Berkson's paradox.
 
-Lets think in the idea while we observed $X$ and $Y$ without taking much care or
+Let's think about the idea while we observed $X$ and $Y$ without taking much care or
 attention in the way we observed, i.e. without thinking about which size of the
 sample is necessary to draw significant conclusions or consider if different
-groups across the sample are well represented. In our daily lives we are
+groups across the sample are well represented. In our daily lives, we are
 surrounded by plenty of these scenarios in which we are looking through an
-"observational len", a kind of kaleidoscope whose beautiful and crazy patterns
-have effects about how $X$ and $Y$ are related. When the kaleidoscope influence
+"observational lens", a kind of kaleidoscope whose beautiful and crazy patterns
+have effects on how $X$ and $Y$ are related. When the kaleidoscope influences
 the observation itself inducing our belief about the association, we are in 
 presence of a bias called *selection bias*.
 
-Before jump into an example, it's important to understand what I mean by $X$ and
+Before jump into an example, its necessary to understand what I mean by $X$ and
 $Y$ are associated or related. The
 [correlation](https://brilliant.org/wiki/correlation/){target="_blank"} ($\rho$)
-is a metric that measure the grade of a relationship between two variables. In
-general, correlation measure the grade in which two variables are associated
+is a metric that measures the grade of a relationship between two variables. In
+general, a correlation measure the grade in which two variables are associated
 linearly. It's a metric that
-go from -1 to 1, in which -1 means a perfect negative linear relationship: *more*
-$X$ *is associate with less* $Y$*, or viceversa*. A correlation of 1 is just the 
-opposite: *more* $X$ *is associate with more* $Y$ *and viceversa*. Finally, when $X$ 
+goes from -1 to 1, in which -1 means a perfect negative linear relationship: *more*
+$X$ *is associate with less* $Y$*, or vice-versa*. A correlation of 1 is just the 
+opposite: *more* $X$ *is associate with more* $Y$ *and vice-versa*. Finally, when $X$ 
 couldn't be associated with more or less $Y$, we said that the correlation
-between variables is 0, so there aren't a linear relationship involved at all.
+between variables is 0, so there isn't a linear relationship involved at all.
 
 Imagine that you came up with an idea of how niceness and attractiveness are related, our $X=Niceness$ and $Y=Attractiveness$. This relationship was inferred
 by your own dates experiences and from the stories of your fine selection of
-friends. This is the kaleidoscope we referred before, in which we deduce the idea of how attributes are associated just from the information around us without any concern.
-Sorry about the apparently banality of the example, but I promise that it's a
-very good one for illustrate the concept.
+friends. This is the kaleidoscope we referred to before, in which we deduce the idea of how attributes are associated just from the information around us without any concern.
+Sorry about the apparent banality of the example, but I promise that it's a
+very good one to illustrate the concept.
 You can find this example better explained and a lot of other interesting things
 in the book <a href="https://www.goodreads.com/book/show/48889983-calling-bullshit" target="_blank">Calling Bullshit (Bergstrom, West, 2020)</a>
 Ok...let's back to the point. it’s really common to hear from the popular wisdom
@@ -51,32 +51,32 @@ library that handsome people are jerks or people who are enjoyable they're not
 usually attractive at all, but...why it’s so common to hear this?  Who is
 responsible to put in conflict attractiveness and niceness? The truth is that we
 don't have many reasons to believe any relationship between these attributes,
-indeed both variables in reality have a correlation near to 0. But what could it
+indeed both variables, in reality, correlate near to 0. But what could it
 explain this apparent contradiction? Berkson's Paradox!
 
 Below we have an animation of a scatterplot in what we measure each attribute
-from 0 to 100, i.e. for the totally absent to the plentifully of the attribute.
+from 0 to 100, i.e. for the absent to the plentifully of the attribute.
 In the title, you can see the correlation ($\rho$) of the current state.
 
 <center>
 <img src="img/berksonParadox.gif" width="450" height="450" />
 </center>
 
-It's likely and honest to think that in average one restrict the potential
+It's likely and honest to think that on average one restrict the potential
 candidates in which we are interested to get a date. You accept to date with
-someone who is not so good-looking if her or him eloquent and nice behavior 
-compensate the absent of visual gracefulness. Otherwise, you could tolerate an
-idiot in the way in her or him handsomeness diminished its jerkiness fragrance.
-As you can appreciate, from the above animation, your kaleidoscope remove from
-the map the group of candidates who don't meet your minimal criteria, lets call
+someone who is not so good-looking if her or his eloquent and nice behaviour 
+compensate the absence of visual gracefulness. Otherwise, you could tolerate an
+idiot in the way in her or his handsomeness diminished its jerkiness fragrance.
+As you can appreciate, from the above animation, your kaleidoscope removes from
+the map the group of candidates who don't meet your minimal criteria, let's call
 this group "You would not date". 
 
-Unfortunately, there is another group who would used similar arguments to avoid
+Unfortunately, there is another group who would use similar arguments to avoid
 our perfect combination of attractiveness and niceness and which we call "Would
 not date you". This double mechanism of restrictions prevent us from
 "observed the world as it is" and explain how we go from a correlation close
 to $0$ between attractiveness and niceness to a strong negative correlation of 
-$-0.7$. An illusion of the kaleidoscope which gives us the impression of a
+$-0.7$. The illusion of the kaleidoscope gives us the impression of a
 false dichotomy between these two variables.
 
 
@@ -90,7 +90,7 @@ false dichotomy between these two variables.
 
 ### Code
 
-The gif was made by mounting three different plots created with ggplot2 (R) and using
+The gif made by mounting three different plots created with ggplot2 (R) and using
 the tool [Animated Gif Maker](https://ezgif.com/maker).
 
 Here is the code if you want to reproduce the example:
