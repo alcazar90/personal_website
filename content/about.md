@@ -11,7 +11,7 @@ showpagemeta = false
 +++
 
 
-Enthusiast and autodidact about computer science.
+Enthusiast and autodidact about computer science and data science. Student at [@TokyoDS](https://twitter.com/tokyods?s=21)
 
 I like [reading](https://www.goodreads.com/alkzar90) non-fiction and novel books.
 
