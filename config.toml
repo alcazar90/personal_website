@@ -20,7 +20,7 @@ enableEmoji = true
 disqusShortname = "alkzar-cl" # Comment out to disable Disqus.
 googleAnalytics = "UA-111580586-1"
 enableRobotsTXT = true
-ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_caches$", "\\.knit\\.md$", "\\.utf8\\.md$"]
+ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_cache$", "\\.knit\\.md$", "\\.utf8\\.md$"]
 
 
 ## Site Settings
