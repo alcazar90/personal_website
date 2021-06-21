@@ -10,6 +10,14 @@ showcomments: yes
 showpagemeta: yes
 ---
 
+# Comentarios por arreglar
+
+- Eliminar la parte del sorry por la banalidad del ejemplo, le quita autoridad (Etto)
+- Agregar el link abajo del libro también
+- La primera parte se encuentra enredada (Gabi + Linco)
+
+
+
 Many times we are in presence of two variables which they don't have a
 relationship at all. Let say, $X$ and $Y$, but we observed both
 variables together could indicate just the opposite, that indeed variables are
