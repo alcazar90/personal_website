@@ -10,7 +10,7 @@ showcomments = false
 showpagemeta = false
 +++
 
-Passionate about data science and <a href="https://github.com/alcazar90/TidyTuesday" target="_blank">visualization</a> 📈. Student at <a href="https://twitter.com/tokyods?s=21)" target="_blank">@TokyoDS</a> 🗼.
+I am passionate about data science and <a href="https://github.com/alcazar90/TidyTuesday" target="_blank">visualization</a> 📈. Student at <a href="https://twitter.com/tokyods?s=21)" target="_blank">@TokyoDS</a> 🗼.
 
 I like <a href="https://www.goodreads.com/alkzar90" target="_blank">reading</a> non-fiction and novels📚.
 
