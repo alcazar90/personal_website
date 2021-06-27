@@ -10,89 +10,74 @@ showcomments: yes
 showpagemeta: yes
 ---
 
-# Comentarios por arreglar
 
-- Eliminar la parte del sorry por la banalidad del ejemplo, le quita autoridad (Etto)
-- Agregar el link abajo del libro también
-- La primera parte se encuentra enredada (Gabi + Linco)
+It is not difficult to find a relationship between two variables when there is not.
+We may observe a negative correlation between variables, but the actual correlation
+between them is positive, or vice versa. Many times this phenomenon is explained
+by Berkson's paradox.
 
+When we are talking about correlation is simply refers to the measure of the 
+relationship between two variables. A correlation measures the grade in which two 
+variables are associated linearly. It can take a value that goes from -1 to 1, in
+which -1 means a perfect negative linear relationship: more $X$ is associate with
+less $Y$, or vice-versa. Conversely, a correlation equal to 1 means that more $X$ is
+associated with more $Y$. Finally, a 0 correlation coefficient between $X$ and $Y$ is
+interpreted as no relationship at all.
 
+It is essential to acknowledge the differences between what we observed and the
+truth or what it is. In our daily lives, we are surrounded by plenty of scenarios
+in which we don't think about the sample size or if groups are well represented
+within the sample. The thing is that we look at the world through 
+our kaleidoscope, full of patterns, full of colours.
 
-Many times we are in presence of two variables which they don't have a
-relationship at all. Let say, $X$ and $Y$, but we observed both
-variables together could indicate just the opposite, that indeed variables are
-correlated. Maybe also we observed a negative correlation
-between variables but, actually, the correlation between $X$ and $Y$ is positive.
-This kind of cases most of the time could be explained by Berkson's paradox.
+Imagine that you start thinking about the relationship between attractiveness and 
+sympathy...and you begin inferring by your own dates experiences and stories of 
+your fine selection of friends that handsome people are jerks; meanwhile,
+enjoyable people are not so good looking. 
 
-Let's think about the idea while we observed $X$ and $Y$ without taking much care or
-attention in the way we observed, i.e. without thinking about which size of the
-sample is necessary to draw significant conclusions or consider if different
-groups across the sample are well represented. In our daily lives, we are
-surrounded by plenty of these scenarios in which we are looking through an
-"observational lens", a kind of kaleidoscope whose beautiful and crazy patterns
-have effects on how $X$ and $Y$ are related. When the kaleidoscope influences
-the observation itself inducing our belief about the association, we are in 
-presence of a bias called *selection bias*.
+Why it's so common to hear this? Are attractiveness and niceness put in conflict 
+by our creators? It is widespread to hear from the popular wisdom library such a 
+conundrum, but we don't have many reasons to believe any relationship between
+these attributes. Indeed, both variables, in reality, correlate near to 0. But
+what could it explain this apparent contradiction between the observed and the
+"truth"?  Berkson's Paradox!
 
-Before jump into an example, its necessary to understand what I mean by $X$ and
-$Y$ are associated or related. The
-[correlation](https://brilliant.org/wiki/correlation/){target="_blank"} ($\rho$)
-is a metric that measures the grade of a relationship between two variables. In
-general, a correlation measure the grade in which two variables are associated
-linearly. It's a metric that
-goes from -1 to 1, in which -1 means a perfect negative linear relationship: *more*
-$X$ *is associate with less* $Y$*, or vice-versa*. A correlation of 1 is just the 
-opposite: *more* $X$ *is associate with more* $Y$ *and vice-versa*. Finally, when $X$ 
-couldn't be associated with more or less $Y$, we said that the correlation
-between variables is 0, so there isn't a linear relationship involved at all.
+Let's say that $X$ = "Niceness" and $Y$ = "Attractiveness". Then we collect data from
+many people, measuring these attributes, which you can visualize in the below animation.
+Every attribute has a score from 0 to 100; the former means absent and the later
+fullness of the attribute, respectively. Note that in the animation title, you 
+can see the correlation coefficient ($\rho$).
 
-Imagine that you came up with an idea of how niceness and attractiveness are related, our $X=Niceness$ and $Y=Attractiveness$. This relationship was inferred
-by your own dates experiences and from the stories of your fine selection of
-friends. This is the kaleidoscope we referred to before, in which we deduce the idea of how attributes are associated just from the information around us without any concern.
-Sorry about the apparent banality of the example, but I promise that it's a
-very good one to illustrate the concept.
-You can find this example better explained and a lot of other interesting things
-in the book <a href="https://www.goodreads.com/book/show/48889983-calling-bullshit" target="_blank">Calling Bullshit (Bergstrom, West, 2020)</a>
-Ok...let's back to the point. it’s really common to hear from the popular wisdom
-library that handsome people are jerks or people who are enjoyable they're not
-usually attractive at all, but...why it’s so common to hear this?  Who is
-responsible to put in conflict attractiveness and niceness? The truth is that we
-don't have many reasons to believe any relationship between these attributes,
-indeed both variables, in reality, correlate near to 0. But what could it
-explain this apparent contradiction? Berkson's Paradox!
-
-Below we have an animation of a scatterplot in what we measure each attribute
-from 0 to 100, i.e. for the absent to the plentifully of the attribute.
-In the title, you can see the correlation ($\rho$) of the current state.
 
 <center>
 <img src="img/berksonParadox.gif" width="450" height="450" />
 </center>
 
-It's likely and honest to think that on average one restrict the potential
-candidates in which we are interested to get a date. You accept to date with
-someone who is not so good-looking if her or his eloquent and nice behaviour 
-compensate the absence of visual gracefulness. Otherwise, you could tolerate an
-idiot in the way in her or his handsomeness diminished its jerkiness fragrance.
-As you can appreciate, from the above animation, your kaleidoscope removes from
-the map the group of candidates who don't meet your minimal criteria, let's call
-this group "You would not date". 
 
-Unfortunately, there is another group who would use similar arguments to avoid
-our perfect combination of attractiveness and niceness and which we call "Would
-not date you". This double mechanism of restrictions prevent us from
-"observed the world as it is" and explain how we go from a correlation close
-to $0$ between attractiveness and niceness to a strong negative correlation of 
-$-0.7$. The illusion of the kaleidoscope gives us the impression of a
-false dichotomy between these two variables.
+It's likely and honest to think that, on average, one restricts the potential
+candidates in which we are interested in getting a date. You accept to date with
+someone who is not so good-looking if their eloquent and lovely behaviour
+compensates the absence of visual gracefulness. Otherwise, you could tolerate an
+idiot in the way in which their handsomeness diminished its jerkiness fragrance.
+As you can appreciate, from the above animation, your preferences remove from the 
+map the group of candidates who don't meet your minimum criteria. Let's call this 
+group "You would not date".
+
+Now the ugly truth: another group would use similar arguments to avoid our perfect
+combination of attractiveness and niceness, which we call "Would not date you".
+This double mechanism of restrictions prevents us from "observed the world as it
+is" and explain how we go from a correlation close to 0 between attractiveness and
+niceness to a strong negative correlation of −0.7: *the more handsome you are,
+the more jerkiness you spit out*. An illusion of our kaleidoscope that gives us the
+impression of a false dichotomy between $X$ and $Y$.
+
 
 
 
 ### Additional resources
 
 - [Read more about Berkson's paradox](https://brilliant.org/wiki/berksons-paradox/){target="_blank"}
-- Calling Bullshit, The Art of Skepticism in a Data-Driven World, Chapter 6: "Selection Bias" (Bergstrom, West, 2020)
+- This example was mention in the book ["Calling Bullshit, The Art of Skepticism in a Data-Driven World"](https://www.goodreads.com/book/show/48889983-calling-bullshit) and elaborate in ["How Not to Be Wrong: The Power of Mathematical Thinking"](https://www.goodreads.com/book/show/18693884-how-not-to-be-wrong?ac=1&from_search=true&qid=1QgwnLyEqF&rank=1)
 - [Avoiding the Piftalls of Selection Bias (Carl T. Bergstrom, 2021)](https://www.youtube.com/watch?v=eSVg_DqPkNM){target="_blank"}
 
 
