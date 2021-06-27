@@ -17,12 +17,12 @@ between them is positive, or vice versa. Many times this phenomenon is explained
 by Berkson's paradox.
 
 When we are talking about correlation is simply refers to the measure of the 
-relationship between two variables. A correlation measures the grade in which two 
-variables are associated linearly. It can take a value that goes from -1 to 1, in
-which -1 means a perfect negative linear relationship: more $X$ is associate with
-less $Y$, or vice-versa. Conversely, a correlation equal to 1 means that more $X$ is
-associated with more $Y$. Finally, a 0 correlation coefficient between $X$ and $Y$ is
-interpreted as no relationship at all.
+relationship between two variables. A [correlation](https://brilliant.org/wiki/correlation/)
+measures the grade in which two variables are associated linearly. It can take a
+value that goes from -1 to 1, in which -1 means a perfect negative linear
+relationship: more $X$ is associate with less $Y$, or vice-versa. Conversely, a 
+correlation equal to 1 means that more $X$ is associated with more $Y$. Finally, 
+a 0 correlation coefficient between $X$ and $Y$ is interpreted as no relationship at all.
 
 It is essential to acknowledge the differences between what we observed and the
 truth or what it is. In our daily lives, we are surrounded by plenty of scenarios
