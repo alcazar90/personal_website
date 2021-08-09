@@ -60,8 +60,9 @@ Opportunities (Barocas, Hardt, Narayanan 2021)</a>
 
 <a href="https://course.fullstackdeeplearning.com/" target="_blank">Full Stack Deep Learning</a>
 
-
 <a href="https://atcold.github.io/pytorch-Deep-Learning/" target="_blank">DS-GA 1008: Deep Learning NYU (Yann LeCun & Alfredo Canziani 2020)</a>
+
+<a href="https://geometricdeeplearning.com/lectures/" target="_blank">AMMI Geometric Deep Learning Course (Bronstein et al 2021)</a>
 
 ## Computer Science
 
