@@ -121,6 +121,8 @@ In python, we have the <a href="https://altair-viz.github.io/" target="_blank">A
 
 <a href="https://happygitwithr.com/" target="_blank">Happy Git and GitHub for the useR (Jenny Bryan).</a>
 
+<a href="https://rootsofprogress.org" target="_blank">The Roots of Progrees: their mission is to establish a new philosophy of progress for the 21st century.</a>
+
 
 ## Tools for thought & Computational thinking
 
