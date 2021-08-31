@@ -101,6 +101,8 @@ A great resource to learn how to build interactive applications with R and shiny
 
 In python, we have the <a href="https://altair-viz.github.io/" target="_blank">Altair</a> library that gives you a declarative visualization tool that works based on the grammar of graphics.
 
+<a href="https://merely-useful.tech/py-rse/index.html" target="_blank">Research Software Engineering with Python</a> 
+
 ## Others
 
 <a href="https://blog.otoro.net/" target="_blank">David Ha Blog</a>
