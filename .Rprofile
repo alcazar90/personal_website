@@ -6,7 +6,7 @@ if (file.exists("~/.Rprofile")) {
 # ~/.Rprofile
 options(blogdown.author = 'Cristóbal Alcázar', blogdown.subdir = "blog",
         blogdown.ext = ".rmd", servr.daemon = TRUE,
-        blogdown.hugo.version = "0.80.0",
+        blogdown.hugo.version = "0.87.0",
         blogdown.server.timeout = 600)
 
 
