@@ -40,7 +40,7 @@ keywords = "alkzar, alkzar-blog, data-science, python, ggplot2, DataViz, R, Tidy
 
 ## Social Accounts
 [params.social]
-cv = "https://github.com/alcazar90/CRAL-CV/blob/master/examples/cv.pdf"
+cv = "https://alkzar.cl/cv.pdf"
 github = "/alcazar90"
 instagram = "go.alcazar"
 linkedin = "alcazar90"
