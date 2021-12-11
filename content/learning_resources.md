@@ -49,6 +49,7 @@ Repository of the book <a href="https://github.com/jermwatt/machine_learning_ref
 Opportunities (Barocas, Hardt, Narayanan 2021)</a>
 
 
+<a href="https://github.com/probml/pml-book/tree/main/pml1" target="_blank">Probabilistic Machine Learning: An Introduction repository with google colab suplemental material</a>
 
 ### Neural Networks & Deep Learning
 
