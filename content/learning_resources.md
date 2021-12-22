@@ -147,5 +147,7 @@ Essays, articles and blog posts about computational thinking and tools for thoug
 
 - <a href="https://www.cambridge.org/core/books/stand-out-of-our-light/3F8D7BA2C0FE3A7126A4D9B73A89415D" target="_blank">Stand out of our light: freedom and resistance in the attention economy (James Williams)</a>
 
+- <a href="https://www.scattered-thoughts.net/writing/reflections-on-a-decade-of-coding" target="_blank">Reflections on a decade of coding (Jamie Brandon)</a>
+
 ...
 
