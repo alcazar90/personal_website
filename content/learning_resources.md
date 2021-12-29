@@ -29,7 +29,7 @@ The <a href="https://lagunita.stanford.edu/courses/Engineering/CVX101/Winter2014
 A probability course developed and given by the professor Jonh Tsitsiklis (MIT): <a href="https://www.edx.org/es/course/probability-the-science-of-uncertainty-and-data-2" target="_blank">Probability - The Science of Uncertainty and Data</a>.
 
 
-An introductory probability book focused on data science with code examples in MATLAB, Python, Julia, and R: <a href="https://www.edx.org/es/course/probability-the-science-of-uncertainty-and-data-2" target="_blank">Introduction to Probability for Data Science (Stanley H. Chan)</a>.
+An introductory probability book focused on data science with code examples in MATLAB, Python, Julia, and R: <a href="https://probability4datascience.com" target="_blank">Introduction to Probability for Data Science (Stanley H. Chan)</a>.
 
 ## Machine Learning
 
