@@ -24,3 +24,23 @@ Previously I worked in the Macroeconomic Statistics area at the Central Bank of 
 I wrote a chapter about digital literacy and computational thinking for the book *Inteligencia Artificial y Bienestar de las Juventudes en América Latina*. You can read it <a href="https://blogs.harvard.edu/conectadosalsur/2019/12/14/ya-disponible-libro-inteligencia-artificial-y-bienestar-de-las-juventudes-en-america-latina/" target="_blank">here (page 127-135)</a>.
 
 You can read more about me in my <a href="https://alkzar.cl/cv.pdf" target="_blank">CV</a>.
+
+<br>
+
+### Presentations
+
+<!--Agregar entrada con presentacion  -->
+<p>
+"Visualización de Datos con Python 🐍"
+ <br>
+ <i style="font-size:14px;color:#989898;">
+  <a href="https://github.com/alcazar90/WomenInData-Guatemala2021">GitHub</a>
+   /
+  <a href="https://github.com/alcazar90/WomenInData-Guatemala2021">Open in Colab</a>
+   / 
+  <a href="https://alkzar.cl/slides/womenInData-guatemalaChapter-13102021.pdf">Slides</a>
+  /
+  <a href="https://www.youtube.com/watch?v=MEb7BX9jAks">Recording</a>
+   - 11/2021 Women in Data - Guatemala Chapter (Webinar)
+ </i>
+</p>
