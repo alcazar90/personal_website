@@ -34,13 +34,13 @@ You can read more about me in my <a href="https://alkzar.cl/cv.pdf" target="_bla
 "Visualización de Datos con Python 🐍"
  <br>
  <i style="font-size:14px;color:#989898;">
-  <a href="https://github.com/alcazar90/WomenInData-Guatemala2021">GitHub</a>
+  <a href="https://github.com/alcazar90/WomenInData-Guatemala2021" target="_blank">GitHub</a>
    /
-  <a href="https://github.com/alcazar90/WomenInData-Guatemala2021">Open in Colab</a>
+  <a href="https://colab.research.google.com/drive/1o43FTdcj_nKdSJkU_qFshutlYTCi1JwD?usp=sharing" target="_blank">Open in Colab</a>
    / 
-  <a href="https://alkzar.cl/slides/womenInData-guatemalaChapter-13102021.pdf">Slides</a>
+  <a href="https://alkzar.cl/slides/womenInData-guatemalaChapter-13102021.pdf" target="_blank">Slides</a>
   /
-  <a href="https://www.youtube.com/watch?v=MEb7BX9jAks">Recording</a>
+  <a href="https://www.youtube.com/watch?v=MEb7BX9jAks" target="_blank">Recording</a>
    - 11/2021 Women in Data - Guatemala Chapter (Webinar)
  </i>
 </p>
