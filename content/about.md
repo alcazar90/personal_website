@@ -10,7 +10,7 @@ showcomments = false
 showpagemeta = false
 +++
 
-I am passionate about Data science and <a href="https://github.com/alcazar90/TidyTuesday" target="_blank">Data Visualization</a> 📈. Student at <a href="https://twitter.com/tokyods?s=21)" target="_blank">@TokyoDS</a> 🗼.
+I am passionate about Data Science and <a href="https://github.com/alcazar90/TidyTuesday" target="_blank">Data Visualization</a> 📈. Student at <a href="https://twitter.com/tokyods?s=21)" target="_blank">@TokyoDS</a> 🗼.
 
 I like <a href="https://www.goodreads.com/alkzar90" target="_blank">reading</a> non-fiction and novels📚.
 
@@ -23,4 +23,4 @@ Previously I worked in the Macroeconomic Statistics area at the Central Bank of 
 
 I wrote a chapter about digital literacy and computational thinking for the book *Inteligencia Artificial y Bienestar de las Juventudes en América Latina*. You can read it <a href="https://blogs.harvard.edu/conectadosalsur/2019/12/14/ya-disponible-libro-inteligencia-artificial-y-bienestar-de-las-juventudes-en-america-latina/" target="_blank">here (page 127-135)</a>.
 
-You can read more about me in my <a href="https://alkzar/cv.pdf" target="_blank">CV</a>.
+You can read more about me in my <a href="https://alkzar.cl/cv.pdf" target="_blank">CV</a>.
