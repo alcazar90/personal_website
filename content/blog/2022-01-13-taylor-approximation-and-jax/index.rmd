@@ -2,7 +2,7 @@
 title: Taylor Approximation and JAX
 author: Cristóbal Alcázar
 date: '2022-01-13'
-draf: false
+draf: true
 slug: []
 categories: [JAX, AUTODIFF, PYTHON, CALCULUS]
 tags: []
