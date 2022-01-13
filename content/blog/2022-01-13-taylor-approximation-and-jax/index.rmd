@@ -1,0 +1,27 @@
+---
+title: Taylor Approximation and JAX
+author: Cristóbal Alcázar
+date: '2022-01-13'
+draf: false
+slug: []
+categories: [JAX, AUTODIFF, PYTHON, CALCULUS]
+tags: []
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+### insert imge from static flder
+
+<center>
+<img src="/img/Auto_diff_Diagram.png">
+</center>
+
+
+### insert image using relaative path to page bungle
+<center>
+<img src="../content/blog/2022-01-13-taylor-approximation-and-jax/Auto_diff_Diagram.png">
+</center>
+
+### insert imaage from page bundle
+![](images/Auto_diff_Diagram.png)
