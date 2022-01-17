@@ -41,10 +41,11 @@ keywords = "alkzar, alkzar-blog, data-science, python, ggplot2, DataViz, R, Tidy
 ## Social Accounts
 [params.social]
 cv = "https://alkzar.cl/cv.pdf"
-github = "/alcazar90"
-instagram = "go.alcazar"
+github = "alcazar90"
+#instagram = "go.alcazar"
+goodreads = "alkzar90"
 linkedin = "alcazar90"
-twitter = "/vamos_alcazar"
+twitter = "vamos_alcazar"
 stackoverflow = "5843243"
 email = "alcazar.cristobal90@gmail.com"
 

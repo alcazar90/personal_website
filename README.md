@@ -36,6 +36,29 @@ Mathjax is avaiable via `partials/footer.html`:
 ```html
 <script defer src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 ```
+### Font-awesome
+
+Adding a customg icon using font-awesome needs to add a new entry in `partials/social.html`:
+
+```html
+{{ with .Site.Params.social.cv }}
+<a href="{{.}}" aria-label="CV" target="_blank"><i class="fas fa-file-pdf" aria-hidden="true"></i></a>
+{{ end }}
+```
+
+Note that the `.Site.Params.social.cv` is managed by the `config.toml` file:
+
+```toml
+[params.social]
+cv = "https://alkzar.cl/cv.pdf"
+github = "alcazar90"
+...
+```
+
+The font-awesome icon is defined in `class="fas fa-file-pdf`, for others icons
+you can search on [Font Awesome](https://fontawesome.com/v5.15/icons/file-pdf?style=solid).
+
+It requires to be supported by the font-awesome version specified in the `header.html`.
 
 ## License
 
