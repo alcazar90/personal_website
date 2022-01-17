@@ -9,30 +9,24 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/languages/{{.}}.min.js"></script>
   {{ end }}
    
-<script type="text/javascript">
+<script>
 hljs.highlightAll();
 </script>
 {{ end }}
 {{ end }}
 
-<!---
-    <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
-      }
-    });
-    </script>aa
-    <script type="text/javascript"
-      src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-    </script>
----> 
 
-<script defer src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
 {{ template "_internal/google_analytics_async.html" . }}
+<script defer src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="{{ "js/bootstrap.min.js" | absURL }}">
+<script src="/js/main.js"></script>
+
+
+<!---
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script src="/js/main.js"></script>
+--->
+
 </body>
 </html>
