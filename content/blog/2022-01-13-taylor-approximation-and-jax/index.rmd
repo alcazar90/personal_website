@@ -70,7 +70,7 @@ The differentiation is just an application of the chain rule over these intermed
 
 <br>
 <center>
-<img src="/img/autoDidf_internediateVar_diagram.png">
+<img src="/img/taylor-post/autoDidf_internediateVar_diagram.png">
 </center>
 
 Once we have all the derivatives, we start multiplying, but wait...the order matters. In 
