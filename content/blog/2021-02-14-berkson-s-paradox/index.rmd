@@ -48,11 +48,16 @@ Every attribute has a score from 0 to 100; the former means absent and the later
 fullness of the attribute, respectively. Note that in the animation title, you 
 can see the correlation coefficient ($\rho$).
 
+<!--
+<center>
+<img src="img/berksonParadox.gif" width="450" height="450"/>
+</center>
+-->
+
 
 <center>
-<img src="img/berksonParadox.gif" width="450" height="450" />
+<img src="img/berksonParadox.gif"/>
 </center>
-
 
 It's likely and honest to think that, on average, one restricts the potential
 candidates in which we are interested in getting a date. You accept to date with
