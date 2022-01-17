@@ -2,7 +2,7 @@
 title: Taylor Approximation and JAX
 author: Cristóbal Alcázar
 date: '2022-01-13'
-draft: true
+draft: false
 slug: []
 categories: [JAX, AUTODIFF, PYTHON, CALCULUS]
 tags: []
@@ -11,17 +11,70 @@ showcomments: yes
 showpagemeta: yes
 ---
 
-### insert imge from static flder
+### 1. Taylor Approximation Review
 
+lalala
+
+
+### 2. Introducing Automatic Differentiation with JAX 
+
+```r
+library(dplyr)
+lapply(x, 2)
+sum()
+```
+<pre><code class"python">
+import numpy as np
+</code></pre>
+
+```python
+from jax import grad
+from jax import vmap
+
+def tanh(x):
+    return (1.0 - jnp.exp(-x)) / (1.0 + jnp.exp(-x))
+```
 <center>
-<img src="/img/Auto_diff_Diagram.png">
+<img src="/img/taylor-post/tanh.png">
 </center>
 
+2
 
-### insert image using relaative path to page bungle
+```python
+plt.plot(
+     x, tanh(x),
+     x, vmap(grad(tanh))(x),                                # 1st derivative
+     x, vmap(grad(grad(tanh)))(x),                          # 2nd derivative
+     x, vmap(grad(grad(grad(tanh))))(x),                    # 3rd derivative
+     x, vmap(grad(grad(grad(grad(tanh)))))(x),              # 4th derivative
+     x, vmap(grad(grad(grad(grad(grad(tanh))))))(x),        # 5th derivative
+     x, vmap(grad(grad(grad(grad(grad(grad(tanh)))))))(x))  # 6th derivative
+
+plt.axis('off')
+```
+
 <center>
-<img src="../content/blog/2022-01-13-taylor-approximation-and-jax/Auto_diff_Diagram.png">
+<img src="/img/taylor-post/autograd_tanh_example.png">
 </center>
 
-### insert imaage from page bundle
-![](images/Auto_diff_Diagram.png)
+Automatic differentiation computes derivatives transforming numerical functions into a directed
+acyclic graphs (DAG):
+
+- outer lefts nodes represent the input variables
+- middle nodes represent intermediate variables
+- outer right node represent the output node (a scalar)
+- as the name said, there is no cycles in the graph, the data always flow from left to
+the right, it could have branches, but none edge is pointing back
+
+The differentiation is just an application of the chain rule over these intermediate values.
+
+<br>
+<center>
+<img src="/img/autoDidf_internediateVar_diagram.png">
+</center>
+
+Once we have all the derivatives, we start multiplying, but wait...the order matters. In 
+fact, if we start multiplying the square "F" as the diagram above show you, 
+
+
+### 3. Taylor Approximation with two variables

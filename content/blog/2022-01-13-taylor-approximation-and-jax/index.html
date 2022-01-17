@@ -2,7 +2,7 @@
 title: Taylor Approximation and JAX
 author: Cristóbal Alcázar
 date: '2022-01-13'
-draft: true
+draft: false
 slug: []
 categories: [JAX, AUTODIFF, PYTHON, CALCULUS]
 tags: []
@@ -14,19 +14,57 @@ showpagemeta: yes
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
 
 
-<div id="insert-imge-from-static-flder" class="section level3">
-<h3>insert imge from static flder</h3>
-<center>
-<img src="/img/Auto_diff_Diagram.png">
-</center>
+<div id="taylor-approximation-review" class="section level3">
+<h3>1. Taylor Approximation Review</h3>
+<p>lalala</p>
 </div>
-<div id="insert-image-using-relaative-path-to-page-bungle" class="section level3">
-<h3>insert image using relaative path to page bungle</h3>
+<div id="introducing-automatic-differentiation-with-jax" class="section level3">
+<h3>2. Introducing Automatic Differentiation with JAX</h3>
+<pre class="r"><code>library(dplyr)
+lapply(x, 2)
+sum()</code></pre>
+<pre><code class"python">
+import numpy as np
+</code></pre>
+<pre class="python"><code>from jax import grad
+from jax import vmap
+
+def tanh(x):
+    return (1.0 - jnp.exp(-x)) / (1.0 + jnp.exp(-x))</code></pre>
 <center>
-<img src="../content/blog/2022-01-13-taylor-approximation-and-jax/Auto_diff_Diagram.png">
+<img src="/img/taylor-post/tanh.png">
 </center>
+<p>2</p>
+<pre class="python"><code>plt.plot(
+     x, tanh(x),
+     x, vmap(grad(tanh))(x),                                # 1st derivative
+     x, vmap(grad(grad(tanh)))(x),                          # 2nd derivative
+     x, vmap(grad(grad(grad(tanh))))(x),                    # 3rd derivative
+     x, vmap(grad(grad(grad(grad(tanh)))))(x),              # 4th derivative
+     x, vmap(grad(grad(grad(grad(grad(tanh))))))(x),        # 5th derivative
+     x, vmap(grad(grad(grad(grad(grad(grad(tanh)))))))(x))  # 6th derivative
+
+plt.axis(&#39;off&#39;)</code></pre>
+<center>
+<img src="/img/taylor-post/autograd_tanh_example.png">
+</center>
+<p>Automatic differentiation computes derivatives transforming numerical functions into a directed
+acyclic graphs (DAG):</p>
+<ul>
+<li>outer lefts nodes represent the input variables</li>
+<li>middle nodes represent intermediate variables</li>
+<li>outer right node represent the output node (a scalar)</li>
+<li>as the name said, there is no cycles in the graph, the data always flow from left to
+the right, it could have branches, but none edge is pointing back</li>
+</ul>
+<p>The differentiation is just an application of the chain rule over these intermediate values.</p>
+<br>
+<center>
+<img src="/img/autoDidf_internediateVar_diagram.png">
+</center>
+<p>Once we have all the derivatives, we start multiplying, but wait…the order matters. In
+fact, if we start multiplying the square “F” as the diagram above show you,</p>
 </div>
-<div id="insert-imaage-from-page-bundle" class="section level3">
-<h3>insert imaage from page bundle</h3>
-<p><img src="images/Auto_diff_Diagram.png" /></p>
+<div id="taylor-approximation-with-two-variables" class="section level3">
+<h3>3. Taylor Approximation with two variables</h3>
 </div>
