@@ -2,7 +2,7 @@
 title: Taylor Approximation and JAX
 author: Cristóbal Alcázar
 date: '2022-01-13'
-draft: false
+draft: true
 slug: []
 categories: [JAX, AUTODIFF, PYTHON, CALCULUS]
 tags: []
@@ -23,8 +23,7 @@ library(dplyr)
 lapply(x, 2)
 sum()
 ```
-<pre><code class"python">
-import numpy as np
+<pre><code class"pythonb>import numpy as np
 </code></pre>
 
 ```python
