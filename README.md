@@ -60,6 +60,25 @@ you can search on [Font Awesome](https://fontawesome.com/v5.15/icons/file-pdf?st
 
 It requires to be supported by the font-awesome version specified in the `header.html`.
 
+### Add 
+
+Implement the number of minutes to read, ideas in this [post](https://kodify.net/hugo/strings/reading-time-text/).
+Add the following line of code after the data in `partial/content.html` for add the
+feature in each post.
+
+```html
+       / {{ math.Round (div (countwords .Content) 220.0) }} MIN READ
+```
+Then add on `partials/li.html` for display on the list of post, again after
+the date.
+
+```html
+      <p class="meta">
+        {{ if not .Date.IsZero }} {{ .Date.Format .Site.Params.dateformat | upper }} {{end}}
+        - {{ math.Round (div (countwords .Content) 220.0) }} MIN READ 
+```
+
+
 ## License
 
 Licensed under the [MIT](https://opensource.org/licenses/MIT) License. See the [LICENSE](https://raw.githubusercontent.com/shenoybr/hugo-goa-demo/master/LICENSE) file for more details.
