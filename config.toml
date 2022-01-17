@@ -59,7 +59,8 @@ highlightjslanguages = ["python", "r"]
 highlightjsstyle = "mono-blue"
 MathJaxCDN = "//cdn.bootcss.com"
 MathJaxVersion = "2.7.1"
-    
+socialmarkup = true
+      
 ## Main Menu
 [[menu.main]]
     name = "Blog"
