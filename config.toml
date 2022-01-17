@@ -53,7 +53,7 @@ email = "alcazar.cristobal90@gmail.com"
 copyright = "© 2017. **Cristóbal Alcázar 🌵** [Some Rights Reserved](http://creativecommons.org/licenses/by/3.0/). <br/> Home Photo by Gabi ;)" 
 poweredby = true
 highlightjs = true
-highlightjslanguages = ["python", "R"]
+highlightjslanguages = ["python", "r"]
 MathJaxCDN = "//cdn.bootcss.com"
 MathJaxVersion = "2.7.1"
     
