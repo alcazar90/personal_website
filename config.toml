@@ -55,7 +55,8 @@ copyright = "© 2017. **Cristóbal Alcázar 🌵** [Some Rights Reserved](http:/
 poweredby = true
 highlightjs = true
 highlightjslanguages = ["python", "r"]
-highlightjsstyle = "atom-one-light"
+#highlightjsstyle = "atom-one-light"
+highlightjsstyle = "mono-blue"
 MathJaxCDN = "//cdn.bootcss.com"
 MathJaxVersion = "2.7.1"
     
