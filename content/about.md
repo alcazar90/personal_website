@@ -48,6 +48,6 @@ My CV is available <a href="https://alkzar.cl/cv.pdf" target="_blank">here</a>.
   <a href="https://alkzar.cl/slides/womenInData-guatemalaChapter-13102021.pdf" target="_blank">Slides</a>
   /
   <a href="https://www.youtube.com/watch?v=MEb7BX9jAks" target="_blank">Recording</a>
-   - 11/2021 Women in Data - Guatemala Chapter (Webinar)
+   - 10/2021 Women in Data - Guatemala Chapter (Webinar)
  </i>
 </p>
