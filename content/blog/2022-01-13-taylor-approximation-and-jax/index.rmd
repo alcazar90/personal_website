@@ -605,7 +605,7 @@ Now with autodiff...how can we compute the jacobian vector? We can save all the
 hand-coded derivatives using the function `jax.grad`.
 
 ```python
-jax.asarray(jax.jacfwd(g, argnums=(0,1))(1.0, 2.0))
+jax.asarray(jax.grad(g, argnums=(0,1))(1.0, 2.0))
 > DeviceArray([ 6., 14.], dtype=float32
 ```
 There is another way to get the jacobian.

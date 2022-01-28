@@ -441,7 +441,7 @@ approximation at the very close neighbourhood of the point <span class="math inl
 However, the plane fails to approximate the curvatures of <span class="math inline">\(g\)</span>.</p>
 <p>Now with autodiff…how can we compute the jacobian vector? We can save all the
 hand-coded derivatives using the function <code>jax.grad</code>.</p>
-<pre class="python"><code>jax.asarray(jax.jacfwd(g, argnums=(0,1))(1.0, 2.0))
+<pre class="python"><code>jax.asarray(jax.grad(g, argnums=(0,1))(1.0, 2.0))
 &gt; DeviceArray([ 6., 14.], dtype=float32</code></pre>
 <p>There is another way to get the jacobian.</p>
 <pre class="python"><code>jnp.asarray(jax.jacfwd(g, argnums=(0,1))(1.0, 2.0))</code></pre>
