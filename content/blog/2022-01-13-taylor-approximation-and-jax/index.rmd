@@ -20,12 +20,14 @@ showpagemeta: yes
 <img src="/img/taylor-post/portrait.png">
 </center>
 
-**TL;DR:** In this post, we reviewed the concept of Taylor approximation, focusing on
+***TL;DR:*** *In this post, we reviewed the concept of Taylor approximation, focusing on
 differentiating using automatic differentiation techniques implemented in the python
 JAX library. Taylor approximation is a powerful tool for analyzing non-linear systems
 such as neural networks. We will examine two examples distilling from the book
 Mathematics for Machine Learning, chapter 5, and implement code to have the ability
-to reproduce and extend a quadratic approximation for other functions.
+to reproduce and extend a quadratic approximation for other functions.*
+
+<br>
 
 ### 1. Taylor Approximation Review
 
