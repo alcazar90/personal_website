@@ -24,6 +24,12 @@ showpagemeta: yes
 <center>
 <img src="/img/taylor-post/portrait.png">
 </center>
+<p><strong>TL;DR:</strong> In this post, we reviewed the concept of Taylor approximation, focusing on
+differentiating using automatic differentiation techniques implemented in the python
+JAX library. Taylor approximation is a powerful tool for analyzing non-linear systems
+such as neural networks. We will examine two examples distilling from the book
+Mathematics for Machine Learning, chapter 5, and implement code to have the ability
+to reproduce and extend a quadratic approximation for other functions.</p>
 <div id="taylor-approximation-review" class="section level3">
 <h3>1. Taylor Approximation Review</h3>
 <p>Taylor’s series allows us to approximate a function 𝑓 as a polynomial, computed
@@ -32,7 +38,7 @@ that 𝑓 can differentiate, we ended up with a perfect approximation.</p>
 <p><span class="math display">\[T_n(x):=\sum_{k=0}^{n}\frac{f^{(k)}(x_0)}{k!}(x-x_0)^k\]</span></p>
 <p><span class="math display">\[T_1(x):= f(x_0) + f^{(1)}(x_0)(x-x_0)\]</span></p>
 <p>Note: 𝑓(𝑘) is 𝑓 differentiate k times, and 𝑘=0 is 𝑓 itself.</p>
-<p>Let’s code an example; I will replicate figure 5.4 from the <a href="https://mml-book.github.io/book/mml-book.pdf">Mathematics for Machine Learning</a> book.</p>
+<p>Let’s code an example; I will replicate figure 5.4 from the <a href="https://mml-book.github.io/book/mml-book.pdf" target="_blank">Mathematics for Machine Learning</a> book.</p>
 <p>We want to approximate the following function around <span class="math inline">\(x=0\)</span>:
 <br>
 <br>
@@ -123,7 +129,7 @@ manual computations?</p></li>
 </div>
 <div id="introducing-automatic-differentiation-with-jax" class="section level3">
 <h3>2. Introducing Automatic Differentiation with JAX</h3>
-<p><a href="https://jax.readthedocs.io/en/latest/index.html">JAX</a> is a python library that
+<p><a href="https://jax.readthedocs.io/en/latest/index.html" target="_blank">JAX</a> is a python library that
 combines the <code>numpy</code>’s interface, automatic differentiation capabilities, and
 high-performance operations using XLA and GPU operations.</p>
 <p>In this section, we will focus on the fundamentals of JAX to illustrate how to perform
@@ -134,7 +140,7 @@ for compute the gradient (<span class="math inline">\(f&#39;(x)\)</span>)</li>
 <li><code>jax.vmap()</code>: vectorize a <code>jax.grad</code>’s function</li>
 <li><code>jax.jit()</code>: accelerate a function computations using XLA</li>
 </ol>
-<p>Let’s start with an <a href="https://github.com/hips/autograd">example</a> used by the <code>autograd</code>
+<p>Let’s start with an <a href="https://github.com/hips/autograd" target="_blank">example</a> used by the <code>autograd</code>
 library, the predecessor of <code>JAX</code>: differentiate the hyperbolic tangent function.</p>
 <p>The example is very illustrative because it is apparent how
 <code>jax.grad</code> works modifying functions; look at the code!</p>
@@ -213,10 +219,10 @@ plt.axis(&#39;off&#39;)</code></pre>
 <center>
 <img src="/img/taylor-post/tanh_upto_10diff.png">
 </center>
-<p>Computing higher-order derivatives can be computationally expensive. Read the paper <a href="https://openreview.net/pdf?id=SkxEF3FNPH">“Taylor-Mode Automatic Differentiation for Higher-Order Derivatives in JAX”</a>
+<p>Computing higher-order derivatives can be computationally expensive. Read the paper <a href="https://openreview.net/pdf?id=SkxEF3FNPH" target="_blank">“Taylor-Mode Automatic Differentiation for Higher-Order Derivatives in JAX”</a>
 to understand the efficient way to compute higher-order derivatives. More context
 about this problem and the paper’s genesis in this
-<a href="https://github.com/google/jax/issues/520">discussion</a>.</p>
+<a href="https://github.com/google/jax/issues/520" target="_blank">discussion</a>.</p>
 <p><strong>How are the derivatives computed?</strong> <code>JAX</code> allow us to perform automatic differentiation and calculates results transforming numerical functions into a directed acyclic graph (DAG):</p>
 <ul>
 <li>outer lefts nodes represent the input variables</li>
@@ -234,7 +240,7 @@ Suppose we begin multiplying the square “F”, as the diagram above shows you.
 different orders to compute the gradient can get efficient depending on the problem.</p>
 <p><code>jax.make_jaxpr</code> produces the JAX representation of the computation made, and it helps us visualise the diagram described above.</p>
 <p>The intermediate variables are equations (<code>jaxpr.eqns</code>) that receive inputs, could be the function’s input or other intermediate variables, and a set of primitive operations to compute over these to produce outputs.</p>
-<p>You can read more about <code>jax.make_jaxpr</code> in the <a href="https://jax.readthedocs.io/en/latest/notebooks/Writing_custom_interpreters_in_Jax.html">documentation</a></p>
+<p>You can read more about <code>jax.make_jaxpr</code> in the <a href="https://jax.readthedocs.io/en/latest/notebooks/Writing_custom_interpreters_in_Jax.html" target="_blank">documentation</a>.</p>
 <p>For instance, we can inspect how JAX decouples the function <span class="math inline">\(f(x)=x^2 + exp(x)\)</span>
 in intermediate variables.</p>
 <pre class="python"><code>def f(x):
@@ -313,10 +319,10 @@ look at the equation described in (2) that is a primitive adding resulting from 
 differentiation: <span class="math inline">\(\partial/\partial x (x^2)\rightarrow 2x\)</span>.</p>
 <p>Further resources on automatic differentiation and JAX:</p>
 <ol style="list-style-type: decimal">
-<li><a href="https://www.youtube.com/watch?v=wG_nF1awSS">What’s automatic differentiation video</a></li>
-<li><a href="http://matpalm.com/blog/ymxb_pod_slice">JAX’s tutorial by Mat Kelcey</a> showing more about
+<li><a href="https://www.youtube.com/watch?v=wG_nF1awSS" target="_blank">What’s automatic differentiation video</a></li>
+<li><a href="http://matpalm.com/blog/ymxb_pod_slice" target="_blank">JAX’s tutorial by Mat Kelcey</a> showing more about
 parallel computing using JAX</li>
-<li><a href="http://videolectures.net/deeplearning2017_johnson_automatic_differentiation/">Automatic Differentiation, Deep Learning Summer School Montreal 2017 (Matthew Jonhson)</a>; another seminar about the topic <a href="https://www.youtube.com/watch?v=mVf3HJ6gND">JAX seminar</a></li>
+<li><a href="http://videolectures.net/deeplearning2017_johnson_automatic_differentiation/" target="_blank">Automatic Differentiation, Deep Learning Summer School Montreal 2017 (Matthew Jonhson)</a>; another seminar about the topic <a href="https://www.youtube.com/watch?v=mVf3HJ6gND" target="_blank">JAX seminar</a></li>
 </ol>
 </div>
 <div id="taylor-approximation-with-two-variables" class="section level3">
@@ -367,8 +373,8 @@ DeviceArray([[[ 0,  0,  0,  0],
 <code>delta[3]*delta[3]*delta[3]</code> (4x4x4). Instead, the most lower-left element of the
 third 4x4 array is 48 and you obtained it by <code>delta[2]*delta[3]*delta[3]</code> (3x4x4).</p>
 <p>The Einstein Summation implemented in <code>jnp.einsum</code> is a notation that allow you to
-represent a lot of array operations using index notation. Look this <a href="https://www.youtube.com/watch?v=pkVwUVEHmfI">video</a> for a detail explanation and the
-<a href="https://numpy.org/doc/stable/reference/generated/numpy.einsum.html">documentation</a>.</p>
+represent a lot of array operations using index notation. Look this <a href="https://www.youtube.com/watch?v=pkVwUVEHmfI" target="_blank">video</a> for a detail explanation and the
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.einsum.html" target="_blank">documentation</a>.</p>
 <p>Let’s code the example 5.15, deriving at first manually and then use JAX to check
 if we reach similar results.</p>
 <pre class="python"><code>def g(x, y): 
