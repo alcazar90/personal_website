@@ -1,0 +1,179 @@
+---
+title: Directional derivatives and JAX
+author: Cristóbal Alcázar
+date: '2022-02-08'
+draft: false
+slug: []
+categories: [JAX, AUTODIFF, PYTHON, MML, CALCULUS]
+tags: [MML, CALCULUS, JAX]
+comments: yes
+showcomments: yes
+showpagemeta: yes
+---
+
+<a href="https://colab.research.google.com/drive/1VD0QIfC-Q3WgmBPpgfAcF9zMZL_NAa5G?usp=sharing" target="_blank">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
+
+<center>
+<img src="/img/directional-derivative-post/directional_derivatives_setting.png">
+</center>
+
+<br>
+
+Directional derivatives are the conceptual tool to measure the effect on a
+function by changing the input in any direction within the input space. It's
+possible to compute the directional derivatives using the jacobian-vector
+product, implemented by the automatic differentiation JAX library.
+
+Partial derivatives $\partial f/ \partial x_i$ give us the rate of change if
+we slightly modify the *ith element* of the input vector $\bf{x}$ letting the
+rest constant.
+
+<br>
+
+$$
+\frac{\partial f}{\partial x_1} = lim_{h \to 0} \frac{f(x_1 + h, x_2, \dots, x_n) - f({\bf x})}{h}
+\\
+\vdots
+\\
+\frac{\partial f}{\partial x_n} = lim_{h \to 0} \frac{f(x_1, x_2, \dots, x_n + h) - f({\bf x})}{h}
+$$
+
+<br>
+
+The above definition can be more compactly using vector notation.
+
+<br>
+
+$$
+\nabla_{{\bf x}}f = \frac{\partial f}{\partial {\bf x}} = lim_{h \to 0} \frac{f({\bf x} + h{\bf e_i}) - f({\bf x})}{h}
+$$
+<br>
+The $e_i$ vector represents a unit vector in the direction of $i$.
+
+As you can see in the initial diagram, in a 2D input space, there are two
+partial derivatives:
+
+- $\partial f / \partial x$: computing parallel to the x-axis ($e_1$ *typical known as* $\hat{i}$) 
+- $\partial f / \partial y$: computing parallel to the y-axis ($e_2$ *typical known as* $\hat{j}$). 
+
+Computing derivatives using unit vectors such as $e_i$ give us the change of
+$f$ on the direction on $i$, or parallel to the *i-axis*. How can we compute
+the derivative of $f$ given a slight nudge of the inputs in any arbitrary
+direction?
+
+Directional derivatives is a way to compute the rate of change on $f$ in the
+direction of ${\bf v}$.
+
+<br>
+$$
+\nabla_{{\bf v}}f = \frac{\partial f}{\partial {\bf x}} = lim_{h \to 0} \frac{f({\bf x} + h{\bf v}) - f({\bf x})}{h}
+$$
+<br>
+
+Think as ${\bf v}$ as a weighted vector of the *n-directions* of the input
+space. We aren't limited to the changes on $f$ in parallel directions in the input space.
+
+We can compute directional derivatives using the dot product between the 
+jacobian vector ($\nabla f$) and the vector ${\bf v}$. For instance, for a two-dimensional input space, ${\bf v}= (v_1, v_2)$:
+
+$$\nabla f_{v} = \nabla f \cdot {\bf v} = \frac{\partial f}{\partial x_1} v_1 + \frac{\partial f}{\partial x_2}v_2$$
+
+More general:
+
+$$\nabla f_{{\bf v}}(p) = \nabla f(p) \cdot {\bf v} = \sum^{n}_{i=1} \frac{\partial f}{\partial x_i}(p) v_i$$
+
+Let's focus on computing the above using the function `jax.jvp`, which `jvp`
+stands for the *jacobian-vector product*.
+
+The function `jax.jvp` computes the directional derivative and whose arguments are:
+
+1. A differentiable function $f$ for compute the jacobian $\nabla f$
+1. A primal vector ${\bf p}$ to evaluate the jacobian $\nabla f(p)$
+1. A tangent vector ${\bf v}$ which represent the direction in which we 
+want to calculate the derivative.
+
+`jax.jvp` returns a tuple with $(f(p), \nabla f_{v}(p))$
+
+### Example
+
+We compute the directional derivative of $f(x, y)=x^2y$ hand-coding all the 
+necessary elements and then check the results that give `jax.jvp`.
+
+```python
+def fun(x, y): return x**2 * y
+def fun_dx(x, y): return 2*x*y
+def fun_dy(x, y): return x**2
+```
+
+We define the primal vector ${\bf p}$ and the tangent vector ${\bf v}$
+in which we want to compute the directional derivative.
+
+```python
+p = [1., 1.]
+v = [1., 2.]
+```
+Evaluate $f(p)$:
+
+```python
+# *n-list/n-tuple unpack the element e0, e1, ..., en
+fun(*p)
+> 1.0
+```
+
+Compute the directional derivative using the `fun_dx` and `fun_dy`.
+
+```python
+fun_dx(*p) * v[0] + fun_dy(*p) * v[1]
+> 4.0
+```
+Now using `jax.jvp` we obtain the same results: $f({\bf p})$ and $\nabla_{\bf v}f({\bf p})$.
+
+```python
+jax.jvp(fun, p, v)
+> (DeviceArray(1., dtype=float32, weak_type=True),
+   DeviceArray(4., dtype=float32, weak_type=True))
+```
+
+Let's plot the example and compute the directional derivatives for three
+points.
+
+<center>
+<img src="/img/directional-derivative-post/directional_plot.png">
+</center>
+
+Look the directional vectors in the plot, or tangent vector as JAX refers to the
+them, there are of different lengths. It's important to remark that if we want
+the ["slope definition"](https://www.khanacademy.org/math/multivariable-calculus/multivariable-derivatives/partial-derivative-and-gradient-articles/a/directional-derivative-introduction?modal=1) for directional derivatives we
+need to transform ${\bf v}$ in a unit length vector. Remember that partial
+derivatives are computing using unit vectors ($e_i$).
+
+
+$$
+\nabla_{{\bf v}}f = \frac{\partial f}{\partial {\bf x}} = lim_{h \to 0} \frac{f({\bf x} + h{\bf v}) - f({\bf x})}{h||{\bf v}||}
+$$
+
+```python
+primal_a = jnp.array([-5., 3.2])
+primal_b = jnp.array([5., -3.2])
+primal_c = jnp.array([0., 0.])
+va = jnp.array([-7.5, 5.7])
+vb = jnp.array([7.5, -5.7])
+vc = jnp.array([-1.0, -0.7])
+unit_va = va/va.dot(va)**.5
+unit_vb = vb/vb.dot(vb)**.5
+unit_vc = vc/vc.dot(vc)**.5
+# computing with scaling the directionl vectors
+_, slope_a = jax.jvp(fun, primal_a.tolist(), unit_va.tolist())
+_, slope_b = jax.jvp(fun, primal_b.tolist(), unit_vb.tolist())
+_, slope_c = jax.jvp(fun, primal_c.tolist(), unit_vc.tolist())
+slope_a, slope_b, slope_c
+> (DeviceArray(40.60427, dtype=float32, weak_type=True),
+   DeviceArray(-40.60427, dtype=float32, weak_type=True),
+   DeviceArray(-0., dtype=float32, weak_type=True))
+```
+
+- Point A (blue): the directional derivative is 40.6, making sense with the contour lines in front of point A. The surface starter to rise in the direction of $\overrightarrow{v}_a$.
+- Point B (red): the function 𝑓 decrease in the direction pointing out the vector $\overrightarrow{v}_b$, like the directional derivative, 𝑓 changes −40.6 regard slightly input variations across the directional vector. Notice that it has the same magnitude as the slope of point A but goes in the opposite direction; the surface plot shows how the function increases/decreases in the same proportion across its diagonals.
+- Point C (black): the surface is practically flat around the point (0,0). Notice that the directional derivative at $\overrightarrow{v}_c$ is 0. 
