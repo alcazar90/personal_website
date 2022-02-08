@@ -26,7 +26,7 @@ function by changing the input in any direction within the input space. It’s
 possible to compute the directional derivatives using the jacobian-vector
 product, implemented by the automatic differentiation JAX library.</p>
 <p>Partial derivatives <span class="math inline">\(\partial f/ \partial x_i\)</span> give us the rate of change if
-we slightly modify the <em>ith element</em> of the input vector <span class="math inline">\(\bf{x}\)</span> letting the
+we slightly modify the <em>ith element</em> of the input vector <span class="math inline">\(\bf{x}\)</span> by h, letting the
 rest constant.</p>
 <p><br></p>
 <p><span class="math display">\[
@@ -40,10 +40,12 @@ rest constant.</p>
 <p>The above definition can be more compactly using vector notation.</p>
 <p><br></p>
 <p><span class="math display">\[
-\nabla_{{\bf x}}f = \frac{\partial f}{\partial {\bf x}} = lim_{h \to 0} \frac{f({\bf x} + h{\bf e_i}) - f({\bf x})}{h}
+\frac{\partial f}{\partial x_i}({\bf x_0}) = lim_{h \to 0} \frac{f({\bf x_0} + h{\bf e_i}) - f({\bf x_0})}{h}
 \]</span>
-<br>
-The <span class="math inline">\(e_i\)</span> vector represents a unit vector in the direction of <span class="math inline">\(i\)</span>.</p>
+<br></p>
+<p>The <span class="math inline">\(e_i\)</span> vector represents a unit vector in the direction of <span class="math inline">\(i\)</span> with the
+same number of dimensions that <span class="math inline">\({\bf x_0}\)</span>. The only
+element of <span class="math inline">\(e_i\)</span> different from 0 is the <em>ith-element</em> with a value of 1.</p>
 <p>As you can see in the initial diagram, in a 2D input space, there are two
 partial derivatives:</p>
 <ul>
@@ -58,16 +60,16 @@ direction?</p>
 direction of <span class="math inline">\({\bf v}\)</span>.</p>
 <p><br>
 <span class="math display">\[
-\nabla_{{\bf v}}f = \frac{\partial f}{\partial {\bf x}} = lim_{h \to 0} \frac{f({\bf x} + h{\bf v}) - f({\bf x})}{h}
+\nabla_{{\bf v}}f({\bf x_0}) = lim_{h \to 0} \frac{f({\bf x_0} + h{\bf v}) - f({\bf x_0})}{h}
 \]</span>
 <br></p>
 <p>Think as <span class="math inline">\({\bf v}\)</span> as a weighted vector of the <em>n-directions</em> of the input
 space. We aren’t limited to the changes on <span class="math inline">\(f\)</span> in parallel directions in the input space.</p>
 <p>We can compute directional derivatives using the dot product between the
-jacobian vector (<span class="math inline">\(\nabla f\)</span>) and the vector <span class="math inline">\({\bf v}\)</span>. For instance, for a two-dimensional input space, <span class="math inline">\({\bf v}= (v_1, v_2)\)</span>:</p>
-<p><span class="math display">\[\nabla f_{v} = \nabla f \cdot {\bf v} = \frac{\partial f}{\partial x_1} v_1 + \frac{\partial f}{\partial x_2}v_2\]</span></p>
+jacobian vector (<span class="math inline">\(\nabla f\)</span>) and the vector <span class="math inline">\({\bf v}\)</span>. For instance, for a two-dimensional input space, <span class="math inline">\({\bf v}= (v_1, v_2)\)</span>, and any arbitrary point <span class="math inline">\(p\)</span>:</p>
+<p><span class="math display">\[\nabla_{\bf v} f(p) = \nabla f(p) \cdot {\bf v} = \frac{\partial f}{\partial x_1}(p) v_1 + \frac{\partial f}{\partial x_2}(p)v_2\]</span></p>
 <p>More general:</p>
-<p><span class="math display">\[\nabla f_{{\bf v}}(p) = \nabla f(p) \cdot {\bf v} = \sum^{n}_{i=1} \frac{\partial f}{\partial x_i}(p) v_i\]</span></p>
+<p><span class="math display">\[\nabla_{\bf v} f(p) = \nabla f(p) \cdot {\bf v} = \sum^{n}_{i=1} \frac{\partial f}{\partial x_i}(p) v_i\]</span></p>
 <p>Let’s focus on computing the above using the function <code>jax.jvp</code>, which <code>jvp</code>
 stands for the <em>jacobian-vector product</em>.</p>
 <p>The function <code>jax.jvp</code> computes the directional derivative and whose arguments are:</p>

@@ -27,7 +27,7 @@ possible to compute the directional derivatives using the jacobian-vector
 product, implemented by the automatic differentiation JAX library.
 
 Partial derivatives $\partial f/ \partial x_i$ give us the rate of change if
-we slightly modify the *ith element* of the input vector $\bf{x}$ letting the
+we slightly modify the *ith element* of the input vector $\bf{x}$ by h, letting the
 rest constant.
 
 <br>
@@ -47,10 +47,13 @@ The above definition can be more compactly using vector notation.
 <br>
 
 $$
-\nabla_{{\bf x}}f = \frac{\partial f}{\partial {\bf x}} = lim_{h \to 0} \frac{f({\bf x} + h{\bf e_i}) - f({\bf x})}{h}
+\frac{\partial f}{\partial x_i}({\bf x_0}) = lim_{h \to 0} \frac{f({\bf x_0} + h{\bf e_i}) - f({\bf x_0})}{h}
 $$
 <br>
-The $e_i$ vector represents a unit vector in the direction of $i$.
+
+The $e_i$ vector represents a unit vector in the direction of $i$ with the
+same number of dimensions that ${\bf x_0}$. The only
+element of $e_i$ different from 0 is the *ith-element* with a value of 1.
 
 As you can see in the initial diagram, in a 2D input space, there are two
 partial derivatives:
@@ -68,7 +71,7 @@ direction of ${\bf v}$.
 
 <br>
 $$
-\nabla_{{\bf v}}f = \frac{\partial f}{\partial {\bf x}} = lim_{h \to 0} \frac{f({\bf x} + h{\bf v}) - f({\bf x})}{h}
+\nabla_{{\bf v}}f({\bf x_0}) = lim_{h \to 0} \frac{f({\bf x_0} + h{\bf v}) - f({\bf x_0})}{h}
 $$
 <br>
 
@@ -76,13 +79,13 @@ Think as ${\bf v}$ as a weighted vector of the *n-directions* of the input
 space. We aren't limited to the changes on $f$ in parallel directions in the input space.
 
 We can compute directional derivatives using the dot product between the 
-jacobian vector ($\nabla f$) and the vector ${\bf v}$. For instance, for a two-dimensional input space, ${\bf v}= (v_1, v_2)$:
+jacobian vector ($\nabla f$) and the vector ${\bf v}$. For instance, for a two-dimensional input space, ${\bf v}= (v_1, v_2)$, and any arbitrary point $p$:
 
-$$\nabla f_{v} = \nabla f \cdot {\bf v} = \frac{\partial f}{\partial x_1} v_1 + \frac{\partial f}{\partial x_2}v_2$$
+$$\nabla_{\bf v} f(p) = \nabla f(p) \cdot {\bf v} = \frac{\partial f}{\partial x_1}(p) v_1 + \frac{\partial f}{\partial x_2}(p)v_2$$
 
 More general:
 
-$$\nabla f_{{\bf v}}(p) = \nabla f(p) \cdot {\bf v} = \sum^{n}_{i=1} \frac{\partial f}{\partial x_i}(p) v_i$$
+$$\nabla_{\bf v} f(p) = \nabla f(p) \cdot {\bf v} = \sum^{n}_{i=1} \frac{\partial f}{\partial x_i}(p) v_i$$
 
 Let's focus on computing the above using the function `jax.jvp`, which `jvp`
 stands for the *jacobian-vector product*.
