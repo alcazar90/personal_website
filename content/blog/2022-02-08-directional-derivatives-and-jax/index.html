@@ -100,15 +100,17 @@ fun(*p)
 <pre class="python"><code>jax.jvp(fun, p, v)
 &gt; (DeviceArray(1., dtype=float32, weak_type=True),
    DeviceArray(4., dtype=float32, weak_type=True))</code></pre>
-<p>Let’s plot the example and compute the directional derivatives for three
-points.</p>
+<p>A surface plot will show the output space, and a contour plot the input space
+of <span class="math inline">\(f(x,y)=x^2y\)</span>. We will compute the directional derivatives for three points
+and their respective directional vectors.</p>
 <center>
 <img src="/img/directional-derivative-post/directional_plot.png">
 </center>
-<p>Look the directional vectors in the plot, or tangent vector as JAX refers to the
+<p>Look the directional vectors in the plot, or tangent vectors as JAX refers to
 them, there are of different lengths. It’s important to remark that if we want
 the <a href="https://www.khanacademy.org/math/multivariable-calculus/multivariable-derivatives/partial-derivative-and-gradient-articles/a/directional-derivative-introduction?modal=1">“slope definition”</a> for directional derivatives we
-need to transform <span class="math inline">\({\bf v}\)</span> in a unit length vector. Remember that partial
+need to transform <span class="math inline">\({\bf v}\)</span> in a unit length vector (divide the directional
+derivative definition by <span class="math inline">\(||v||\)</span>). Remember that partial
 derivatives are computing using unit vectors (<span class="math inline">\(e_i\)</span>).</p>
 <p><span class="math display">\[
 \nabla_{{\bf v}}f = \frac{\partial f}{\partial {\bf x}} = lim_{h \to 0} \frac{f({\bf x} + h{\bf v}) - f({\bf x})}{h||{\bf v}||}

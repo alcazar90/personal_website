@@ -136,17 +136,19 @@ jax.jvp(fun, p, v)
    DeviceArray(4., dtype=float32, weak_type=True))
 ```
 
-Let's plot the example and compute the directional derivatives for three
-points.
+A surface plot will show the output space, and a contour plot the input space 
+of $f(x,y)=x^2y$. We will compute the directional derivatives for three points
+and their respective directional vectors.
 
 <center>
 <img src="/img/directional-derivative-post/directional_plot.png">
 </center>
 
-Look the directional vectors in the plot, or tangent vector as JAX refers to the
+Look the directional vectors in the plot, or tangent vectors as JAX refers to 
 them, there are of different lengths. It's important to remark that if we want
 the ["slope definition"](https://www.khanacademy.org/math/multivariable-calculus/multivariable-derivatives/partial-derivative-and-gradient-articles/a/directional-derivative-introduction?modal=1) for directional derivatives we
-need to transform ${\bf v}$ in a unit length vector. Remember that partial
+need to transform ${\bf v}$ in a unit length vector (divide the directional
+derivative definition by $||v||$). Remember that partial
 derivatives are computing using unit vectors ($e_i$).
 
 
