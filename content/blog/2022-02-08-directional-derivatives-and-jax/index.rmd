@@ -24,7 +24,7 @@ showpagemeta: yes
 Directional derivatives are the conceptual tool to measure the effect on a
 function by changing the input in any direction within the input space. It's
 possible to compute the directional derivatives using the jacobian-vector
-product, implemented by the automatic differentiation JAX library.
+product, implemented by the automatic differentiation [JAX](https://jax.readthedocs.io/en/latest/#) library.
 
 Partial derivatives $\partial f/ \partial x_i$ give us the rate of change if
 we slightly modify the *ith element* of the input vector $\bf{x}$ by h, letting the
@@ -92,7 +92,7 @@ stands for the *jacobian-vector product*.
 
 The function `jax.jvp` computes the directional derivative and whose arguments are:
 
-1. A differentiable function $f$ for compute the jacobian $\nabla f$
+1. A differentiable function $f$ to compute the jacobian $\nabla f$
 1. A primal vector ${\bf p}$ to evaluate the jacobian $\nabla f(p)$
 1. A tangent vector ${\bf v}$ which represent the direction in which we 
 want to calculate the derivative.
@@ -102,7 +102,7 @@ want to calculate the derivative.
 ### Example
 
 We compute the directional derivative of $f(x, y)=x^2y$ hand-coding all the 
-necessary elements and then check the results that give `jax.jvp`.
+necessary elements and then checking the results given by `jax.jvp`.
 
 ```python
 def fun(x, y): return x**2 * y
@@ -144,7 +144,11 @@ of $f(x,y)=x^2y$. We will compute the directional derivatives for three points
 and their respective directional vectors.
 
 <center>
-<img src="/img/directional-derivative-post/directional_plot.png">
+<img src="/img/directional-derivative-post/directional_plot_surface.png">
+</center>
+
+<center>
+<img src="/img/directional-derivative-post/directional_plot_contour.png">
 </center>
 
 Look the directional vectors in the plot, or tangent vectors as JAX refers to 
@@ -152,7 +156,7 @@ them, there are of different lengths. It's important to remark that if we want
 the ["slope definition"](https://www.khanacademy.org/math/multivariable-calculus/multivariable-derivatives/partial-derivative-and-gradient-articles/a/directional-derivative-introduction?modal=1) for directional derivatives we
 need to transform ${\bf v}$ in a unit length vector (divide the directional
 derivative definition by $||v||$). Remember that partial
-derivatives are computing using unit vectors ($e_i$).
+derivatives are computed using unit vectors ($e_i$).
 
 
 $$
@@ -169,7 +173,7 @@ vc = jnp.array([-1.0, -0.7])
 unit_va = va/va.dot(va)**.5
 unit_vb = vb/vb.dot(vb)**.5
 unit_vc = vc/vc.dot(vc)**.5
-# computing with scaling the directionl vectors
+# Computing making the directional vectors unit length
 _, slope_a = jax.jvp(fun, primal_a.tolist(), unit_va.tolist())
 _, slope_b = jax.jvp(fun, primal_b.tolist(), unit_vb.tolist())
 _, slope_c = jax.jvp(fun, primal_c.tolist(), unit_vc.tolist())
@@ -179,6 +183,8 @@ slope_a, slope_b, slope_c
    DeviceArray(-0., dtype=float32, weak_type=True))
 ```
 
-- Point A (blue): the directional derivative is 40.6, making sense with the contour lines in front of point A. The surface starter to rise in the direction of $\overrightarrow{v}_a$.
-- Point B (red): the function 𝑓 decrease in the direction pointing out the vector $\overrightarrow{v}_b$, like the directional derivative, 𝑓 changes −40.6 regard slightly input variations across the directional vector. Notice that it has the same magnitude as the slope of point A but goes in the opposite direction; the surface plot shows how the function increases/decreases in the same proportion across its diagonals.
-- Point C (black): the surface is practically flat around the point (0,0). Notice that the directional derivative at $\overrightarrow{v}_c$ is 0. 
+We can see some observations from the points and their directional derivatives.
+
+- <span style="color: #4682b4">Point A:</span> the directional derivative is 40.6, makes sense with the contour lines in front of A. The surface start to rise in the direction of $\overrightarrow{v}_a$.
+- <span style="color: #b22222">Point B:</span> the function 𝑓 decreases in the direction pointing out the vector $\overrightarrow{v}_b$, like the directional derivative, 𝑓 changes −40.6 regarding the slight variations in the input across the directional vector. Notice that it has the same magnitude as the slope of point A but goes in the opposite direction; the surface plot shows how the function increases/decreases in the same proportion across its diagonals.
+- <span style="color: #000000">Point C:</span> the surface is practically flat around the point (0,0). Notice that the directional derivative at $\overrightarrow{v}_c$ is 0. 
