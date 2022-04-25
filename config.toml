@@ -32,11 +32,11 @@ description = "...this website is a messy collection of notes, <br> internet res
 
 authorimage = "foto_perfil.jpg"
 dateformat = "Jan 2, 2006"
-images=["foto_perfil.jpg"]
 
 ## Site Meta Settings
 [params.meta]
-description = "Personal Blog"
+description = "Personal website"
+images="foto_perfil.jpg"
 keywords = "alkzar, alkzar-blog, data-science, python, ggplot2, DataViz, R, TidyTuesday, tidyverse"
 
 ## Social Accounts
