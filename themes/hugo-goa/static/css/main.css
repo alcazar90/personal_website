@@ -1,4 +1,4 @@
-@-ms-viewport
+@ms-viewport
 {
     width: device-width;
 }
@@ -16,14 +16,15 @@ a:visited,
 a:link
 {
     text-decoration: none;
-
-    color: 	#2b7bb9;
+    color: #8C1515;
 }
 body
 {
-    font-family: 'Roboto Slab', 'Roboto', 'Lato', sans-serif;
-    font-size: 20px;
-    font-weight: 400;
+    font: 17px/1.55em -apple-system, BlinkMacSystemFont, "Roboto", sans-serif;
+    /* Estilo original */ 
+    /*font-family: 'Roboto Slab', 'Roboto', 'Lato', sans-serif;*/
+    /*font-size: 20px;*/
+    /*font-weight: 400;*/
 
     width: auto;
     height: 100%;
@@ -40,8 +41,13 @@ html
     min-height: 100%;
     margin: 0;
 }
+li
+{
+    text-align: left;
+}
 .author
 {
+    font-family: 'HoeflerText-Regular', serif;
     color: #444;
 }
 .author h1,
@@ -62,7 +68,8 @@ html
 {
     overflow: auto;
 
-    max-width: 680px;
+    /*max-width: 680px;*/
+    max-width: 780px;
     padding: 0 15px;
 }
 .content
@@ -74,9 +81,10 @@ div.content
 {
     font-family: 'Roboto', sans-serif;
     font-size: 16px;
-    font-weight: 300;
+    font-weight: 100;
 
-    color: #777;
+    /*color: #777;*/
+    color: #515151;
 }
 .copyright
 {
@@ -87,7 +95,7 @@ div.content
 .description
 {
     font-family: 'Roboto', sans-serif;
-    font-weight: 2000;
+    font-weight: 200;
     color: #8b8b8b;
 }
 .error
@@ -190,7 +198,8 @@ h3.intro
 
     text-decoration: none;
 
-    color: #966 !important;
+    /*color: #966 !important;*/
+    color: #147054;
 }
 .meta
 {
@@ -228,13 +237,19 @@ section.meta {
 .social,
 .social a
 {
-    color: #526d7a;
+    /* Color de fav-con original del template: *#526d7a;*/
+    font-size: 25px;
+    /*color: #8cae9e;*/
+    color: #8C1515;
+    /*color: #edc775;*/
 }
 .title
 {
-    font-family: 'Roboto Slab', serif;
+    font-family: 'HoeflerText-Regular', serif;
+    /*Fuente original para el titulo a continuacion*/
+    /*font-family: 'Roboto Slab', serif;*/
     font-weight: 400;
-
+    line-height: 1em;
     color: #555;
 }
 header.title
