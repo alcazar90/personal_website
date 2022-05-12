@@ -1,0 +1,37 @@
+---
+title: 'Notes about how I am internalizing VIM key bindings ☕'
+author: Cristóbal Alcázar
+date: '2022-05-11'
+slug: [VIM, CLI]
+categories: [VIM, CLI, WORKFLOW]
+tags: [VIM,WORKFLOW, CLI]
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+![https://xkcd.com/378/](https://imgs.xkcd.com/comics/real_programmers.png)
+
+_Wed, May 5th, 2022_
+
+**To my future self:**
+
+My learning process using VIM key bindings was stuck on move commands; even though
+I realized the power of moving freely and accurately around the editor, I hadn't
+reason to waste my life with key bindings. This post is a never-ending excuse to
+continue developing my VIM workflow. If I am reading this now, I am sure I forgot
+something.
+
+
+### Repeating a `char` or a `seq` of chars `n` times
+
+**Sequence**: `ESC`-`n`-`i`-`char/seq`-`ESC`-`ESC`
+
+* `n`: number of times
+* `i`: insert mode
+* `char/seq`: char or sequence of chars
+
+**Usage:** Create a header for a file or when I need to repeat an arbitrary sequence
+of characters.
+
+<script id="asciicast-J51Zv4rYzqsb2n6RUeM6iSqN4" src="https://asciinema.org/a/J51Zv4rYzqsb2n6RUeM6iSqN4.js" async data-autoplay="true" data-cols="80" data-rows="7" data-loop="1"></script>
