@@ -34,4 +34,4 @@ something.
 **Usage:** Create a header for a file or when I need to repeat an arbitrary sequence
 of characters.
 
-<script id="asciicast-J51Zv4rYzqsb2n6RUeM6iSqN4" src="https://asciinema.org/a/J51Zv4rYzqsb2n6RUeM6iSqN4.js" async data-autoplay="true" data-cols="80" data-rows="7" data-loop="1"></script>
+<script id="asciicast-J51Zv4rYzqsb2n6RUeM6iSqN4" src="https://asciinema.org/a/J51Zv4rYzqsb2n6RUeM6iSqN4.js" async data-autoplay="true" data-cols="80" data-rows="7" data-loop="1" data-speed="1.5"></script>
