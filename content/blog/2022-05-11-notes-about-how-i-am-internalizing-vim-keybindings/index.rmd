@@ -12,7 +12,7 @@ showpagemeta: yes
 
 ![https://xkcd.com/378/](https://imgs.xkcd.com/comics/real_programmers.png)
 
-_Wed, May 5th, 2022_
+_Wed, May 11th, 2022_
 
 **To my future self:**
 
