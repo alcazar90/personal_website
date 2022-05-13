@@ -20,8 +20,8 @@ showpagemeta: yes
 <p><em>Wed, May 11th, 2022</em></p>
 <p><strong>To my future self:</strong></p>
 <p>My learning process using VIM key bindings was stuck on move commands; even though
-I realized the power of moving freely and accurately around the editor, I hadn’t
-reason to waste my life with key bindings. This post is a never-ending excuse to
+I realized the power of moving freely and accurately around the editor, I haven’t
+a reason to waste my life with key bindings. This post is a never-ending excuse to
 continue developing my VIM workflow. If I am reading this now, I am sure I forgot
 something.</p>
 <div id="repeating-a-char-or-a-seq-of-chars-n-times" class="section level3">
@@ -34,5 +34,18 @@ something.</p>
 </ul>
 <p><strong>Usage:</strong> Create a header for a file or when I need to repeat an arbitrary sequence
 of characters.</p>
-<script id="asciicast-J51Zv4rYzqsb2n6RUeM6iSqN4" src="https://asciinema.org/a/J51Zv4rYzqsb2n6RUeM6iSqN4.js" async data-autoplay="true" data-cols="80" data-rows="7" data-loop="1" data-speed="1.5"></script>
+<script id="asciicast-J51Zv4rYzqsb2n6RUeM6iSqN4" src="https://asciinema.org/a/J51Zv4rYzqsb2n6RUeM6iSqN4.js" async data-autoplay="true" data-cols="84" data-rows="7" data-loop="1" data-speed="1.5"></script>
+</div>
+<div id="basic-replacing-in-the-current-line-s-or-in-all-llines-s" class="section level3">
+<h3>Basic replacing in the current line <code>:s</code> or in all llines <code>:%s</code></h3>
+<p><strong>Sequence</strong>: <code>:s/this/for that/g</code> or <code>:%s/this/for that/g</code></p>
+<ul>
+<li><code>:s</code>: is short for “substitute” on the current line</li>
+<li><code>:%s</code>: is short for “substitute” on the whole document</li>
+<li><code>this</code>: is the pattern you want to replace</li>
+<li><code>for that</code>: you want instead</li>
+<li><code>g</code>: is short for “global” and refers to replacing more than the first
+occurrence</li>
+</ul>
+<script id="asciicast-KSRic1uaEZi9SByNEFbYb3YRK" src="https://asciinema.org/a/KSRic1uaEZi9SByNEFbYb3YRK.js" async data-autoplay="true" data-cols="84" data-rows="10" data-loop="1" data-speed="1.5"></script>
 </div>

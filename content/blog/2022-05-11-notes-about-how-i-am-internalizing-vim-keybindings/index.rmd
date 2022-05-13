@@ -12,13 +12,13 @@ showpagemeta: yes
 
 ![https://xkcd.com/378/](https://imgs.xkcd.com/comics/real_programmers.png)
 
-_Wed, May 11th, 2022_
+_Wed, May 12th, 2022_
 
 **To my future self:**
 
 My learning process using VIM key bindings was stuck on move commands; even though
-I realized the power of moving freely and accurately around the editor, I hadn't
-reason to waste my life with key bindings. This post is a never-ending excuse to
+I realized the power of moving freely and accurately around the editor, I haven't
+a reason to waste my life with key bindings. This post is a never-ending excuse to
 continue developing my VIM workflow. If I am reading this now, I am sure I forgot
 something.
 
@@ -34,4 +34,19 @@ something.
 **Usage:** Create a header for a file or when I need to repeat an arbitrary sequence
 of characters.
 
-<script id="asciicast-J51Zv4rYzqsb2n6RUeM6iSqN4" src="https://asciinema.org/a/J51Zv4rYzqsb2n6RUeM6iSqN4.js" async data-autoplay="true" data-cols="80" data-rows="7" data-loop="1" data-speed="1.5"></script>
+<script id="asciicast-J51Zv4rYzqsb2n6RUeM6iSqN4" src="https://asciinema.org/a/J51Zv4rYzqsb2n6RUeM6iSqN4.js" async data-autoplay="true" data-cols="84" data-rows="7" data-loop="1" data-speed="1.5"></script>
+
+### Basic replacing in the current line `:s` or in all llines `:%s`
+
+**Sequence**: `:s/this/for that/g` or `:%s/this/for that/g`
+
+* `:s`: is short for "substitute" on the current line
+* `:%s`: is short for "substitute" on the whole document
+* `this`: is the pattern you want to replace
+* `for that`: you want instead
+* `g`: is short for "global" and refers to replacing more than the first
+occurrence
+
+<script id="asciicast-KSRic1uaEZi9SByNEFbYb3YRK" src="https://asciinema.org/a/KSRic1uaEZi9SByNEFbYb3YRK.js" async data-autoplay="true" data-cols="84" data-rows="10" data-loop="1" data-speed="1.5"></script>
+
+
