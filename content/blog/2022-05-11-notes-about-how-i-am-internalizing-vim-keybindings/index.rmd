@@ -47,6 +47,8 @@ of characters.
 * `g`: is short for "global" and refers to replacing more than the first
 occurrence
 
+**Usage:** guess what!
+
 <script id="asciicast-KSRic1uaEZi9SByNEFbYb3YRK" src="https://asciinema.org/a/KSRic1uaEZi9SByNEFbYb3YRK.js" async data-autoplay="true" data-cols="84" data-rows="10" data-loop="1" data-speed="1.5"></script>
 
 
