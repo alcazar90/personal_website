@@ -1,0 +1,108 @@
+---
+title: How Gauss would compute a Confusion matrix for their classification model
+author: Cristóbal Alcázar
+date: '2022-05-19'
+slug: []
+categories: []
+tags: []
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<figure>
+<center>
+<img src="https://imgs.xkcd.com/comics/what_to_bring.png" alt="xkcd confusion matrix comic">
+<figcaption>
+<a href="https://xkcd.com/1890/" target="_blank">Source: xkcd.com</a>
+</figcaption>
+</center>
+</figure>
+<p><br></p>
+<p>A <a href="https://en.wikipedia.org/wiki/Confusion_matrix" target="_blank">confusion matrix</a>
+is a practical and conceptually simple tool for evaluating a classification model.
+So we need to honour it with a simple way to compute it, like Gauss in the past,
+without the magic of <del><code>from sklearn.metrics import confusion_matrix</code></del> would do
+it with simple linear algebra operations:</p>
+<blockquote>
+<p><em>A confusion matrix is the matrix multiplication by the class’ dimension between
+the true and predicted labels, both encoding as one-hot vectors.</em></p>
+</blockquote>
+<p>If we have the true labels of 4 observations in vector <span class="math inline">\(\boldsymbol y = [1, 0, 2, 1]\)</span>,
+their one-hot encoding will be:</p>
+<p><span class="math display">\[
+\boldsymbol T = 
+\begin{bmatrix}
+0 &amp; 1 &amp; 0\\
+1 &amp; 0 &amp; 0\\
+0 &amp; 0 &amp; 1\\
+0 &amp; 1 &amp; 0
+\end{bmatrix}~\in~[0,1]^{4~x~3}
+\]</span></p>
+<p>Some classification model gives us the predicted label in vector <span class="math inline">\(\hat{\boldsymbol y} = [2, 0, 2, 0]\)</span>,
+by the same logic above, the one-hot encoding will be:</p>
+<p><span class="math display">\[
+\hat{\boldsymbol T} = 
+\begin{bmatrix}
+0 &amp; 0 &amp; 1\\
+1 &amp; 0 &amp; 0\\
+0 &amp; 0 &amp; 1\\
+1 &amp; 0 &amp; 0
+\end{bmatrix}~\in~[0,1]^{4~x~3}
+\]</span>
+We have everything to compute the confusion matrix and, it will be
+<span class="math inline">\(\boldsymbol T^{\top}\hat{\boldsymbol T}~\in~\boldsymbol Z_{0+}^{3x3}\)</span>. So again,</p>
+<blockquote>
+<p><em>A confusion matrix is the matrix multiplication by the class’ dimension between
+the true and predicted labels, both encoding as one-hot vectors.</em></p>
+</blockquote>
+<p><span class="math display">\[
+\boldsymbol T^{\top}\hat{\boldsymbol T} = 
+\begin{bmatrix}
+1 &amp; 0 &amp; 0\\
+1 &amp; 0 &amp; 1\\
+0 &amp; 0 &amp; 1
+\end{bmatrix}~\in~Z_{0+}^{3~x~3} \\
+\]</span></p>
+<p>As you notice, the confusion matrix summarizes the information correctly of
+both vectors.</p>
+<p><span class="math display">\[
+\boldsymbol y = [1,0,2,1] \\
+\hat{\boldsymbol y} = [2,0,2,0]
+\]</span></p>
+<ul>
+<li>The sum of the diagonal elements tells us that two observations were correctly
+classify by the model</li>
+<li>The model correctly classified one observation for class <code>0</code></li>
+<li>The model didn’t assign any label to class <code>1</code>, producing two errors</li>
+<li>The model confuses two class’ <code>1</code>-observations, one with a <code>2</code> and the
+other with a <code>0</code>, look at the second row</li>
+</ul>
+<div id="now-with-import-numpy-as-np" class="section level3">
+<h3>Now with <code>import numpy as np</code></h3>
+<p>Mainly, two steps to get our confusion matrix.</p>
+<p>First, we need a way to transform a vector <span class="math inline">\(\boldsymbol v\)</span> with k-classes in their one-hot-encoding
+version, <code>v_one_hot = one_hot_econding(v)</code>:</p>
+<pre class="python"><code>def one_hot_encoding(v):
+  &#39;&#39;&#39;Return the one-hot encoding vector for k-classes label vector&#39;&#39;&#39;
+  num_classes = np.unique(v).size
+  return np.eye(num_classes)[v]</code></pre>
+<p>Second, compute the confusion matrix, <span class="math inline">\(~\boldsymbol T^{\top}\hat{\boldsymbol T}~\in~\boldsymbol Z_{0+}^{KxK}~\)</span>, for k-classes; there are many ways of doing it with <code>numpy</code> as
+you can see in following code. Below I used the canonical notation for name the
+true labels (<code>y</code>) and the predicted ones (<code>y_pred</code>):</p>
+<pre class="python"><code># 1st option: Using the matrix multiplication &#39;@&#39; operator
+one_hot_encoding(y).T @ one_hot_encoding(y_pred)
+
+# 2nd option: Using np.dot()
+np.dot(one_hot_encoding(y).T, one_hot_encoding(y_pred))
+
+# 3rd option: Using np.matmul()
+np.matmul(one_hot_encoding(y).T, one_hot_encoding(y_pred))</code></pre>
+<p>We are done! Of course, you can always get your confusion matrix from your
+favourite store ;)</p>
+<pre class="python"><code>from sklearn.metrics import confusion_matrix
+confusion_matrix(y, y_pred)</code></pre>
+</div>
