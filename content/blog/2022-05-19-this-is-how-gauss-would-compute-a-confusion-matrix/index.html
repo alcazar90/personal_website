@@ -3,8 +3,8 @@ title: How Gauss would compute a Confusion matrix for their classification model
 author: Cristóbal Alcázar
 date: '2022-05-19'
 slug: []
-categories: []
-tags: []
+categories: [python, ML, numpy, linear-algebra]
+tags: [python, ML, numpy, linear-algebra]
 comments: no
 showcomments: yes
 showpagemeta: yes
@@ -40,7 +40,7 @@ their one-hot encoding will be:</p>
 1 &amp; 0 &amp; 0\\
 0 &amp; 0 &amp; 1\\
 0 &amp; 1 &amp; 0
-\end{bmatrix}~\in~[0,1]^{4~x~3}
+\end{bmatrix}~\in~[0,1]^{4~\times~3}
 \]</span></p>
 <p>Some classification model gives us the predicted label in vector <span class="math inline">\(\hat{\boldsymbol y} = [2, 0, 2, 0]\)</span>,
 by the same logic above, the one-hot encoding will be:</p>
@@ -51,10 +51,10 @@ by the same logic above, the one-hot encoding will be:</p>
 1 &amp; 0 &amp; 0\\
 0 &amp; 0 &amp; 1\\
 1 &amp; 0 &amp; 0
-\end{bmatrix}~\in~[0,1]^{4~x~3}
+\end{bmatrix}~\in~[0,1]^{4~\times~3}
 \]</span>
 We have everything to compute the confusion matrix and, it will be
-<span class="math inline">\(\boldsymbol T^{\top}\hat{\boldsymbol T}~\in~\boldsymbol Z_{0+}^{3x3}\)</span>. So again,</p>
+<span class="math inline">\(\boldsymbol T^{\top}\hat{\boldsymbol T}~\in~\boldsymbol Z_{0+}^{3\times3}\)</span>. So again,</p>
 <blockquote>
 <p><em>A confusion matrix is the matrix multiplication by the class’ dimension between
 the true and predicted labels, both encoding as one-hot vectors.</em></p>
@@ -65,7 +65,7 @@ the true and predicted labels, both encoding as one-hot vectors.</em></p>
 1 &amp; 0 &amp; 0\\
 1 &amp; 0 &amp; 1\\
 0 &amp; 0 &amp; 1
-\end{bmatrix}~\in~Z_{0+}^{3~x~3} \\
+\end{bmatrix}~\in~Z_{0+}^{3~\times~3} \\
 \]</span></p>
 <p>As you notice, the confusion matrix summarizes the information correctly of
 both vectors.</p>
@@ -90,7 +90,7 @@ version, <code>v_one_hot = one_hot_econding(v)</code>:</p>
   &#39;&#39;&#39;Return the one-hot encoding vector for k-classes label vector&#39;&#39;&#39;
   num_classes = np.unique(v).size
   return np.eye(num_classes)[v]</code></pre>
-<p>Second, compute the confusion matrix, <span class="math inline">\(~\boldsymbol T^{\top}\hat{\boldsymbol T}~\in~\boldsymbol Z_{0+}^{KxK}~\)</span>, for k-classes; there are many ways of doing it with <code>numpy</code> as
+<p>Second, compute the confusion matrix, <span class="math inline">\(~\boldsymbol T^{\top}\hat{\boldsymbol T}~\in~\boldsymbol Z_{0+}^{K\times K}~\)</span>, for k-classes; there are many ways of doing it with <code>numpy</code> as
 you can see in following code. Below I used the canonical notation for name the
 true labels (<code>y</code>) and the predicted ones (<code>y_pred</code>):</p>
 <pre class="python"><code># 1st option: Using the matrix multiplication &#39;@&#39; operator

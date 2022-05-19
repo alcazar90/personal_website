@@ -3,8 +3,8 @@ title: How Gauss would compute a Confusion matrix for their classification model
 author: Cristóbal Alcázar
 date: '2022-05-19'
 slug: []
-categories: []
-tags: []
+categories: [python, ML, numpy, linear-algebra]
+tags: [python, ML, numpy, linear-algebra]
 comments: no
 showcomments: yes
 showpagemeta: yes
@@ -38,7 +38,7 @@ $$
 1 & 0 & 0\\
 0 & 0 & 1\\
 0 & 1 & 0
-\end{bmatrix}~\in~[0,1]^{4~x~3}
+\end{bmatrix}~\in~[0,1]^{4~\times~3}
 $$
 
 Some classification model gives us the predicted label in vector $\hat{\boldsymbol y} = [2, 0, 2, 0]$,
@@ -51,10 +51,10 @@ $$
 1 & 0 & 0\\
 0 & 0 & 1\\
 1 & 0 & 0
-\end{bmatrix}~\in~[0,1]^{4~x~3}
+\end{bmatrix}~\in~[0,1]^{4~\times~3}
 $$
 We have everything to compute the confusion matrix and, it will be 
-$\boldsymbol T^{\top}\hat{\boldsymbol T}~\in~\boldsymbol Z_{0+}^{3x3}$. So again,
+$\boldsymbol T^{\top}\hat{\boldsymbol T}~\in~\boldsymbol Z_{0+}^{3\times3}$. So again,
 
 > _A confusion matrix is the matrix multiplication by the class' dimension between
 the true and predicted labels, both encoding as one-hot vectors._
@@ -65,7 +65,7 @@ $$
 1 & 0 & 0\\
 1 & 0 & 1\\
 0 & 0 & 1
-\end{bmatrix}~\in~Z_{0+}^{3~x~3} \\
+\end{bmatrix}~\in~Z_{0+}^{3~\times~3} \\
 $$
 
 As you notice, the confusion matrix summarizes the information correctly of
@@ -97,7 +97,7 @@ def one_hot_encoding(v):
   return np.eye(num_classes)[v]
 ```
 
-Second, compute the confusion matrix, $~\boldsymbol T^{\top}\hat{\boldsymbol T}~\in~\boldsymbol Z_{0+}^{KxK}~$, for k-classes; there are many ways of doing it with `numpy` as
+Second, compute the confusion matrix, $~\boldsymbol T^{\top}\hat{\boldsymbol T}~\in~\boldsymbol Z_{0+}^{K\times K}~$, for k-classes; there are many ways of doing it with `numpy` as
 you can see in following code. Below I used the canonical notation for name the
 true labels (`y`) and the predicted ones (`y_pred`):
 
