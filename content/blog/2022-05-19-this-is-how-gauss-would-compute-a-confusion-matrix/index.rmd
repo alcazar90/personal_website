@@ -39,7 +39,7 @@ $$
 \end{bmatrix}~\in~[0,1]^{4~\times~3}
 $$
 
-Some classification model gives us the predicted label each observation in the vector $\hat{\boldsymbol y} = [2, 0, 2, 0]$,
+Some classification model gives us the predicted label for each observation in the vector $\hat{\boldsymbol y} = [2, 0, 2, 0]$,
 by the same logic above, the one-hot encoding will be:
 
 $$
