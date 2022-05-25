@@ -13,7 +13,7 @@ showpagemeta = false
 I'm broadly interested in Data Science related topics such as machine learning, computer vision, privacy-preserving machine learning, explainable AI, and information visualization. 
 Student at <a href="https://twitter.com/tokyods?s=21)" target="_blank">@TokyoDS</a> (now <a href="https://acalonia.com/acalonia-school" target="_blank">@acalonia_n</a>).
 
-In my free time, I <a href="https://www.goodreads.com/alkzar90" target="_blank">read</a> non-fiction and novels.
+In my free time, I <a href="https://www.goodreads.com/alkzar90" target="_blank">read</a> sci-fi, non-fiction and novels.
 
 I like <a href="https://github.com/alcazar90/TidyTuesday" target="_blank">Data Visualization</a>. I co-created, collaborate, and then taught the course called <a href="https://icei.uchile.cl/noticias/147128/finaliza-con-exito-el-primer-curso-interdisciplinario-con-estudiant" target="_blank">Data Journalism</a> at the University of Chile, which brought
 engineering and journalism students together to use data science tools to create

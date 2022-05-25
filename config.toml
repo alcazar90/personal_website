@@ -28,7 +28,7 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_cache$", "\\.knit\\.md$", "\\.utf8\
 author = "Cristóbal Alcázar"
 intro = "hello there 👋🏽"
 #description = "Now @Pied Piper. Previously @Hacker Hostel, @Bachmanity and @Aviato. <br/> \"What is F times 5? It's Fleventy-five.\""
-description = "...this website is a messy collection of notes, <br> internet resources, and staffs about me...</b>"
+description = "...this website is a messy collection of notes, <br> internet resources, and stuffs about me...</b>"
 
 authorimage = "foto_perfil.jpg"
 dateformat = "Jan 2, 2006"
@@ -37,7 +37,7 @@ dateformat = "Jan 2, 2006"
 [params.meta]
 description = "Personal website"
 images="foto_perfil.jpg"
-keywords = "alkzar, alkzar-blog, data-science, python, ggplot2, DataViz, R, TidyTuesday, tidyverse"
+keywords = "Cristóbal Alcázar, alkzar90, alkzar-blog, data-science, machine learning, python, ggplot2, DataViz, R, TidyTuesday, tidyverse"
 
 ## Social Accounts
 [params.social]
