@@ -74,7 +74,7 @@ $$
 $$
 
 * The sum of the diagonal elements tells us that two observations were correctly
-classify by the model 
+classified by the model 
 * The model correctly classified one observation for class `0`
 * The model didn't assign any label to class `1`, producing two errors
 * The model confuses two class' `1`-observations, one with a `2` and the
@@ -84,7 +84,7 @@ other with a `0`, look at the second row
 
 We need two steps to compute our confusion matrix.
 
-First, we need a way to transform a vector $\boldsymbol v$ with k-classes in their one-hot-encoding
+First, we need a way to transform a vector $\boldsymbol v$ with k-classes into their one-hot-encoding
 version, `v_one_hot = one_hot_econding(v)`:
 
 ```python
@@ -95,7 +95,7 @@ def one_hot_encoding(v):
 ```
 
 Second, compute the confusion matrix, $~\boldsymbol T^{\top}\hat{\boldsymbol T}~\in~\boldsymbol Z_{0+}^{K\times K}~$, for k-classes; there are many ways of doing it with `numpy` as
-you can see in the following code. Below I used the canonical notation for name the
+you can see in the following code. Below I used the canonical notation to name the
 true labels (`y`) and the predicted ones (`y_pred`):
 
 ```python

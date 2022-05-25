@@ -72,7 +72,7 @@ both vectors.</p>
 \]</span></p>
 <ul>
 <li>The sum of the diagonal elements tells us that two observations were correctly
-classify by the model</li>
+classified by the model</li>
 <li>The model correctly classified one observation for class <code>0</code></li>
 <li>The model didn’t assign any label to class <code>1</code>, producing two errors</li>
 <li>The model confuses two class’ <code>1</code>-observations, one with a <code>2</code> and the
@@ -81,14 +81,14 @@ other with a <code>0</code>, look at the second row</li>
 <div id="now-with-import-numpy-as-np" class="section level3">
 <h3>Now with <code>import numpy as np</code></h3>
 <p>We need two steps to compute our confusion matrix.</p>
-<p>First, we need a way to transform a vector <span class="math inline">\(\boldsymbol v\)</span> with k-classes in their one-hot-encoding
+<p>First, we need a way to transform a vector <span class="math inline">\(\boldsymbol v\)</span> with k-classes into their one-hot-encoding
 version, <code>v_one_hot = one_hot_econding(v)</code>:</p>
 <pre class="python"><code>def one_hot_encoding(v):
   &#39;&#39;&#39;Return the one-hot encoding vector for k-classes label vector&#39;&#39;&#39;
   num_classes = np.unique(v).size
   return np.eye(num_classes)[v]</code></pre>
 <p>Second, compute the confusion matrix, <span class="math inline">\(~\boldsymbol T^{\top}\hat{\boldsymbol T}~\in~\boldsymbol Z_{0+}^{K\times K}~\)</span>, for k-classes; there are many ways of doing it with <code>numpy</code> as
-you can see in the following code. Below I used the canonical notation for name the
+you can see in the following code. Below I used the canonical notation to name the
 true labels (<code>y</code>) and the predicted ones (<code>y_pred</code>):</p>
 <pre class="python"><code># 1st option: Using the matrix multiplication &#39;@&#39; operator
 one_hot_encoding(y).T @ one_hot_encoding(y_pred)
