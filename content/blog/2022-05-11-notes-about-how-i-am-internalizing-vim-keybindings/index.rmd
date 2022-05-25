@@ -51,4 +51,18 @@ occurrence
 
 <script id="asciicast-KSRic1uaEZi9SByNEFbYb3YRK" src="https://asciinema.org/a/KSRic1uaEZi9SByNEFbYb3YRK.js" async data-autoplay="true" data-cols="84" data-rows="10" data-loop="1" data-speed="1.5"></script>
 
+### Change upper-to-lower case and viceversa
 
+**Sequence:** `guu` (upper-to-lower) or `gUU` (lower-to-upper) the current line
+
+* `U`: Change lower-to-upper case
+* `u`: Change upper-to-lower case
+* VIM selection + {`u` or `U`}: change the selection given `u` or `U` behavior
+
+<script id="asciicast-XPrdvDChbuUuipvaQvqqBvLP8" src="https://asciinema.org/a/XPrdvDChbuUuipvaQvqqBvLP8.js" async data-autoplay="true" data-cols="84" data-rows="10" data-loop="1" data-speed="1.5"></script>
+
+<br>
+<br>
+<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_That's the way computer talks to each other._
