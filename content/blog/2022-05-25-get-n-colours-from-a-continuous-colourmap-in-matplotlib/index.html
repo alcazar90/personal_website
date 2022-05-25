@@ -13,48 +13,45 @@ showpagemeta: yes
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
 
 
-<p>During this week I spent some time searching about how to discretize a continuous
-colour palette with <code>matplotlib</code> for doing a data visualization in which I need a
-large discrete colour palette (i.e. 20). So, technically the problem is
-<a href="https://stackoverflow.com/a/14779462/5843243" target="_blank">easily searchable
-on the internet</a> but I want to wrap-up shortly the why of the problem.</p>
+<p>During this week, I researched how to discretize a continuous colour palette with matplotlib. I had this problem with doing a data visualization in which I needed a sizeable discrete colour palette (i.e. 20). So, the solution is <a href="https://stackoverflow.com/a/14779462/5843243" target="_blank">easily findable on the web</a> if you’ve dealt with colourmaps in the past. However, I want to wrap up the why of the problem and how to solve it.</p>
 <center>
 <img src="/img/n-colors-from-cmap-matplotlib-post/lr_convergence.png">
 </center>
 <p><br></p>
 <p>The above visualization shows 20 different lines that exhibit a clearly
-convergence rate pattern between the hyperparameter <span class="math inline">\(\eta\)</span> and some performance
-measure by a statistical model such as the log-likelihood.
+convergence rate pattern between the hyperparameter <span class="math inline">\(\eta\)</span> and some
+performance measure such as the log-likelihood.
 How can we map the <span class="math inline">\(\eta\)</span> values to its specific lines? The natural option
 is used colours, but you immediately notice that we have a problem with such large quantity
 of different values for <span class="math inline">\(\eta\)</span>. Ok, it’s not really a problem, you can just
 designed a <code>custom_palette</code> (e.g. <a href="https://github.com/BlakeRMills/MetBrewer">MetBrewer repo</a>)
-and set-up/implement/code as follow:</p>
+and code as follow:</p>
 <pre class="python"><code>from cycler import cycler
 import matplotlib as mpl
 
 custom_palette = [&#39;#hexcode_1&#39;, ..., &#39;#hexcode_20&#39;]
 custom_cycler = (cycler(color=custom_palette))
 plt.rc(&#39;axes&#39;, prop_cycle=custom_cycler)</code></pre>
-<p>A short note about the <a href="https://matplotlib.org/cycler/">Cycler</a>, is just a convenient
-way that <code>matplotlib</code> provides to iterate for different style options such as colours,
-line styles, and others.</p>
-<p>But wait…, there is a constraint here, we want to exhibit a pattern trough
-the colours–<em>as we increase the value of <span class="math inline">\(\eta\)</span> the log-likelihood convergence
-rate increase as well</em>–so we need this notion of gradient. If you notice, the
-values of <span class="math inline">\(\eta\)</span> are jumping in regular steps of 0.005, and this could be annoying
-for picking a colours’ sequence because we need to be accountable for the regularity
-between any consecutive colours.</p>
+<p>If you didn’t know what <a href="https://matplotlib.org/cycler/">Cycler</a> is, it is just a
+convenient way that <code>matplotlib</code> provides to iterate for different style options
+such as colours, line styles, and others.</p>
+<p>But wait…, there is a constraint here; we want to exhibit a pattern through
+the colours–<em>as we increase the magnitude of <span class="math inline">\(\eta\)</span> the log-likelihood
+convergence rate increase as well</em>–so we need this notion of a gradient. Look
+at the <span class="math inline">\(\eta\)</span> values; there are jumping in regular steps of 0.005. That
+could be annoying for picking a colour’s sequence because we would have to
+be accountable for the regularity between any consecutive colours.</p>
 <p>So, a <a href="https://matplotlib.org/3.5.0/tutorials/colors/colormaps.html">continuous colormap</a> (<code>CMAP</code>) solve the previous issue, just we need a way
 to discretize and pick <code>N=20</code> colours.</p>
 <pre class="python"><code>cmap = plt.get_cmap(CMAP, N)
 custom_palette = [mpl.colors.rgb2hex(cmap(i)) for i in range(cmap.N)]</code></pre>
 <p>Can we do better? Yes! It is possible to decouple the precision from the colour mapping
-to each of the 20-labels by highlighting some particular lines (e.g. best, worst)
-using annotations. Then use a colorbar to communicatte the <span class="math inline">\(\eta\)</span>’s effect on the
-convergence rate as its value increases, so the visualization will be way more cleaner
-than above visualization with two columns of labels.</p>
-<p>Finally the <a href="https://stackoverflow.com/a/70192912/5843243" target="_blank">trick</a> is creating a <code>ScalerMappable</code> given two elements:</p>
+to each of the 20-labels by highlighting particular lines (e.g. best, worst)
+using annotations. Then use a colourbar to communicate the <span class="math inline">\(\eta\)</span>’s effect on the
+convergence rate as its value increases. The visualization will be way cleaner
+than the above visualization with two columns of labels.</p>
+<p>The <a href="https://stackoverflow.com/a/70192912/5843243" target="_blank">trick</a>
+is done by <code>ScalerMappable</code> and requires passing two elements:</p>
 <ol style="list-style-type: decimal">
 <li>A <code>cmap</code> that can we recover from our custom_palette <code>ListedColormap(custom_palette)</code>
 or using directly the original (‘RdBu’ in this case)</li>
