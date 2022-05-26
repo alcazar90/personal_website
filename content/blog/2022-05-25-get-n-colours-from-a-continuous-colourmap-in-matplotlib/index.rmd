@@ -82,6 +82,8 @@ cbar.ax.tick_params(labelsize=7)
 
 <center>
 <img src="/img/n-colors-from-cmap-matplotlib-post/lr_convergence2.png">
+<br>
+<img src="/img/n-colors-from-cmap-matplotlib-post/dual_lr_convergence_curves.png">
 </center>
 
 <br>
