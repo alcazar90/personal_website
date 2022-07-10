@@ -70,6 +70,8 @@ Opportunities (Barocas, Hardt, Narayanan 2021)</a>
 
 <a href="https://deepmind.com/learning-resources/reinforcement-learning-series-2021" target="_blank">Reinforcement Learning Deepmind x UCL (2021 lecture series)</a>
 
+<a href="https://ali-design.github.io/deepcreativity/" target="_blank">MIT 6.S192: Deep Learning for Art, Aesthetics, and Creativity</a>
+
 ## Computer Science
 
 The MIT introductory course on Computer Science and programming using python via EDX:
