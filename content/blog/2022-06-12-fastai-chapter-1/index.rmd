@@ -1,5 +1,5 @@
 ---
-title: Deep Learning for Coders - capítulo 1
+title: Deep Learning for Coders - notas capítulo 1
 author: Cristóbal Alcázar
 date: '2022-07-09'
 slug: []
@@ -187,12 +187,12 @@ _software 2.0_ sería usar un programa para escribir otro programa.
 
 ## ¿Qué es una red neuronal?
 
-Una neurona es un producto punto entre un _input_ y un _set_ de parámetros más
-un coeficiente que se llama _bias_. Al resultado de esta operación se le aplica
-una función de activación, por lo que una neurona queda espeficada como:
+Una neurona es un producto punto entre un _input_ ($\boldsymbol x$) y un _set_ de parámetros ($\boldsymbol w$) más
+un coeficiente que se llama _bias_ ($\boldsymbol b$). Al resultado de esta operación se le aplica
+una función de activación ($\sigma(\cdot)$), por lo que una neurona queda espeficada como:
 
 $$
-o^{(1)} = f(\boldsymbol w^{\top}\boldsymbol x + \boldsymbol b)
+\hat{y}^{(1)} = \sigma(\boldsymbol w^{\top}\boldsymbol x + \boldsymbol b)
 $$
 
 Si tenemos una red neuronal, organizamos conjuntos de neuronas capa por capa, por
@@ -201,15 +201,17 @@ concatenamos la información de dos neuronas, sería algo como:
 
 \begin{equation}
 \begin{split}
-o^{(2)} &= f(\boldsymbol w^{\top}f(\boldsymbol w^{\top}\boldsymbol x + \boldsymbol b) + \boldsymbol b) \\
-&= f(\boldsymbol w^{\top}o^{(1)} + \boldsymbol b)
+\hat{y}^{(2)} &= \sigma(\boldsymbol w^{\top}\sigma(\boldsymbol w^{\top}\boldsymbol x + \boldsymbol b) + \boldsymbol b) \\
+&= \sigma(\boldsymbol w^{\top}\hat{y}^{(1)} + \boldsymbol b)
 \end{split}
 \end{equation}
 
 Se le suele llamar _hidden layers_ a las capas internas (i.e. diferentes al
 input y output del modelo) dado que su resultado no se observa de forma
 directa. Es posible continuar este encadenado de funciones para ir construyendo
-modelos con más capas.
+modelos con más capas. Sin embargo, analizando la expresión
+anterior, una red neuronal perfectamente se podría entender
+como un _stack_ de regresiones logisticas.
 
 Un punto importante es que una red neuronal no concatena un conjunto de neuronas 
 como una simple cadena, o  _linked list_, sino que por cada capa tenemos varias

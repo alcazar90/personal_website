@@ -1,5 +1,5 @@
 ---
-title: Deep Learning for Coders - capítulo 1
+title: Deep Learning for Coders - notas capítulo 1
 author: Cristóbal Alcázar
 date: '2022-07-09'
 slug: []
@@ -189,25 +189,27 @@ para adaptarlos a nuevas tareas. Esto bajo el parádigma
 </div>
 <div id="qué-es-una-red-neuronal" class="section level2">
 <h2>¿Qué es una red neuronal?</h2>
-<p>Una neurona es un producto punto entre un <em>input</em> y un <em>set</em> de parámetros más
-un coeficiente que se llama <em>bias</em>. Al resultado de esta operación se le aplica
-una función de activación, por lo que una neurona queda espeficada como:</p>
+<p>Una neurona es un producto punto entre un <em>input</em> (<span class="math inline">\(\boldsymbol x\)</span>) y un <em>set</em> de parámetros (<span class="math inline">\(\boldsymbol w\)</span>) más
+un coeficiente que se llama <em>bias</em> (<span class="math inline">\(\boldsymbol b\)</span>). Al resultado de esta operación se le aplica
+una función de activación (<span class="math inline">\(\sigma(\cdot)\)</span>), por lo que una neurona queda espeficada como:</p>
 <p><span class="math display">\[
-o^{(1)} = f(\boldsymbol w^{\top}\boldsymbol x + \boldsymbol b)
+\hat{y}^{(1)} = \sigma(\boldsymbol w^{\top}\boldsymbol x + \boldsymbol b)
 \]</span></p>
 <p>Si tenemos una red neuronal, organizamos conjuntos de neuronas capa por capa, por
 lo que la información <em>input</em>-<em>output</em> de esta va fluyendo por la red. Si
 concatenamos la información de dos neuronas, sería algo como:</p>
 <p><span class="math display">\[\begin{equation}
 \begin{split}
-o^{(2)} &amp;= f(\boldsymbol w^{\top}f(\boldsymbol w^{\top}\boldsymbol x + \boldsymbol b) + \boldsymbol b) \\
-&amp;= f(\boldsymbol w^{\top}o^{(1)} + \boldsymbol b)
+\hat{y}^{(2)} &amp;= \sigma(\boldsymbol w^{\top}\sigma(\boldsymbol w^{\top}\boldsymbol x + \boldsymbol b) + \boldsymbol b) \\
+&amp;= \sigma(\boldsymbol w^{\top}\hat{y}^{(1)} + \boldsymbol b)
 \end{split}
 \end{equation}\]</span></p>
 <p>Se le suele llamar <em>hidden layers</em> a las capas internas (i.e. diferentes al
 input y output del modelo) dado que su resultado no se observa de forma
 directa. Es posible continuar este encadenado de funciones para ir construyendo
-modelos con más capas.</p>
+modelos con más capas. Sin embargo, analizando la expresión
+anterior, una red neuronal perfectamente se podría entender
+como un <em>stack</em> de regresiones logisticas.</p>
 <p>Un punto importante es que una red neuronal no concatena un conjunto de neuronas
 como una simple cadena, o <em>linked list</em>, sino que por cada capa tenemos varias
 neuronas. Los pesos (o parámetros) de estas conexiones ya no serían el vector
