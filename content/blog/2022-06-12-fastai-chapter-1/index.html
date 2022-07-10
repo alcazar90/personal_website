@@ -1,0 +1,761 @@
+---
+title: Deep Learning for Coders - capítulo 1
+author: Cristóbal Alcázar
+date: '2022-07-09'
+slug: []
+categories: []
+tags: []
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>Primer <em>post</em> de una serie de públicaciones sobre la lectura y
+resolución del libro <a href="https://course.fast.ai"><em>Deep Learning for Coders with fasti &amp; PyTorch</em></a> de
+Jeremy Howard &amp; Sylvain Gugger. Resumen y notas sobre el capítulo 📝, pero
+también referencias a material adicional que complementan su lectura.
+Además se encuentran mis respuestas al cuestionario y preguntas de
+investigación propuestas al final del capítulo.</p>
+<div id="breve-historia-redes-neuronales" class="section level2">
+<h2>Breve historia redes neuronales</h2>
+<p>Se define <em>Deep Learning</em> a muy alto nivel como una técnica
+computacional para realizar predicciones en base datos usando redes neuronales
+compuestas de multiples capas. Cada una de estas capas recibe un <em>input</em> y entrega
+un <em>output</em>, así refinando los resultados a medida que la información avanza en la
+red. Hay un proceso de entrenamiento guiado por algún algoritmo que busca mínimizar el
+error (e.g. SGD, Adagrad, Adam) de las predicciones generadas por el modelo
+y el verdadero valor entregado por los datos. Estas redes neuronales profundas se
+utilizan en varios campos de investigación como <em>Natural Language Processing (NLP)</em>,
+<em>Computer Vision</em>, <em>Image Generation, Robotics</em>, <em>Recommendation Systems</em>, entre otros.</p>
+<p>Luego el capítulo construye una breve línea de tiempo sobre los modelos de redes
+neuronales.</p>
+<ul>
+<li>1943: Warren McCulloh y Walter Pitts desarrollan el modelo matemático
+de una neurona artificial en el paper <a href="https://www.cs.cmu.edu/~./epxing/Class/10715/reading/McCulloch.and.Pitts.pdf"><em>A logical Calculus of the Ideas
+Immanent in Nervous Activity</em></a>.</li>
+<li>1957: Frank Rossenblat implementa el primer modelo de neurona artificial
+llamado <em>Perceptron</em> con la capacidad de “aprender”.</li>
+<li>1969: Marvin Minsky y Seymour Papert publican el libro <a href="https://mitpress.mit.edu/books/perceptrons-expanded-edition">Perceptron</a> sobre
+el trabajo de Rossenblat. Demuestran que una capa de estas neuronas es incapaz
+de aprender funciones simples como XOR. Sin embargo, en el mismo libro, demuestran como subsanar este problema añadiendo
+más capas de neuronas (aka <em>multilayer perceptron</em>).</li>
+<li>1970-1985: Disminución importante en investigaciones sobre redes neuronales,
+con la excepción de un grupo acotado de investigadores. En el último episodio de la
+temporada 2 del <em>podcast</em> <a href="https://open.spotify.com/episode/3GpQhNqRdYgVz1X8vswpB9?si=16bb0e19cbab4116"><em>The Robot Brains Podcast</em></a>,
+entrevistan a Geoffrey Hinton, y cuenta una anéctoda sobre la presentación de una
+investigación que realizaba en 1973 que utilizaba redes neuronales. Luego de
+la presentación, y con una audiencia bastante escéptica, una de las pregunta
+que recibió Hinton fue porqué usaba esos métodos, cuando Minsky y Papert
+“habían dicho” que no servían (supuestamente en el libro <em>Perceptron</em>).</li>
+<li>1986: Se pública el libro <em>Parallel Distributed Processing</em> (PDP)
+de varios tomos por David Rumelhart, James McClelland, y Cia. Basandose y profundizandose en los trabajos previos de Rossenblat + Minksky el libro formaliza aún más la teoría y aspectos
+de implementación.</li>
+<li>2012: El grupo de Geoffrey Hington gana la competencia Imagenet disminuyendo
+de forma drástica el error del modelo versus la solución del resto de los
+participantes y de las certamenes anteriores.</li>
+</ul>
+<p>Hay muchos más detalles y contribuciones en la historia de la Inteligencia Artificial
+y el uso de redes neuronales, Jürgen Schmidhuber ahonda en esto, ofreciendo
+una serie de detalles y referencias interesantes en el siguiente video
+estrenado en la conferencia AIJ a finales del año 2020.</p>
+<center>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/pGftUCTqaGg?start=505" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+</iframe>
+</center>
+</div>
+<div id="qué-es-machine-learning" class="section level2">
+<h2>¿Qué es Machine Learning?</h2>
+<p>El capítulo cita y comenta el ensayo <a href="https://journals.sagepub.com/doi/abs/10.1177/000271626234000103"><em>Artificial Intelligence: A Frontier of Automation</em></a>
+de Arthur L. Samuel (1962), quien acuñó el término <em>machine learning</em> y fue
+director de investigación en comunicaciones de IBM. El ensayo comienza
+dismitificando las consideraciones antropomórficas y afirmaciones
+grandilocuentes sobre el campo de la Inteligencia Artificial, y a la vez legitimando
+su validez e impacto como disciplina en la resolución de problemas espécificos como
+traducir automáticamente del ruso al inglés, capacidad de reconocer dígitos escritos
+a mano, o texto escrito de puño y letra, además de la resolución de juegos de mesa
+que permiten explorar el diseño de agentes con capacidad de búsqueda e inferencia. El ensayo también acota
+el <em>scope</em> en que opera la Inteligencia Artificial respecto
+al rol del computador, descartando lo que no es. Arthur plantea
+la analogía de que lo que distingue a un buen trabajador
+de uno no tan bueno, la capacidad del primero de investigar
+y aprender el cómo realizar la tarea, mientras el segundo
+debe ser guiado paso a paso en la resolución de esta. Esto
+significa que más allá de la complejidad del <em>software</em>–como
+cálcular el estrés producido por el viento sobre las alas de una avión–
+estaríamos frente a instrucciones detalladas previamente por un programador,
+y por lo tanto, sería una inteligencia empaquetada y entregada a la máquina.</p>
+<blockquote>
+<p>“<em>Programming a computer for such computations is, at best, a difficult task, not
+primarily because of any inherent complexity in the computer itself but, rather,
+because of the need to spell out every minute step of the process in the most
+exasperating detail. Computers, as any programmer will tell you, are giants morons,
+not giants brains</em>” (Samuel, pag. 13)</p>
+</blockquote>
+<p>El objetivo, y la idea de inteligencia artificial de Arthur, era especificar
+la tarea a la máquina y que esta pudiera encontrar por su cuenta la solución.
+Arthur formula ciertos requerimientos críticos para que una
+máquina tenga la capacidad de búscar soluciones, y lo hace
+dando el ejemplo de programar a un computador para que juegue
+damas. En esencia, una vez que uno tiene la representación
+de un tablero en el computador y las reglas que gobiernan el juego, este
+puede tomar acciones para generar movimientos y explorar las consecuencias
+de distintos estados del tablero. Sin embargo, veremos que la tarea de ir explorando
+las posibles secuencias de combinaciones hacía adelante
+es un camino sin fin, <a href="https://www.deepmind.com/research/highlighted-research/alphago">pensemos en las <span class="math inline">\(10^{170}\)</span> configuraciones de
+tablero que representa el juego Go</a> y que
+superan el número de átomos en el universo, un
+cometido imposible incluso para un computador. No se debe plantear la búsqueda
+en términos de objetivos secundarios (i.e. ir por un caballo, o dar este movimiento)
+sino de alguna otra forma.</p>
+<blockquote>
+<p><em>It is here that we encounter the idea of machine learning. Suppose we arrange for
+some automatic means of testing the effectiveness of any current weight assignment in terms of actual performance and provide a mechanism for altering the weight assignment
+so as to maximize the performance. We need not go into the details of such a
+procedure to see that it could be made entirely automatic and to see that a
+machine so programed would “learn” from its experience</em> (Samuel, pag. 17)</p>
+</blockquote>
+<center>
+<img src="/img/fastai-chapter-1/Samuels_Diagram.png">
+</center>
+<p>El diagrama contiene los conceptos a los que se refiere Arthur, una máquina
+dotada con un mécanismo de <em>feedback</em> automático, la experiencia se produce
+a través de comparar las etiquetas y predicciones basadas en características
+de los datos. Y luego la capacidad de asignar los pesos del programa para
+cambiar el estado del programa y guiar la búsqueda de soluciones en dirección a máximizar el desempeño (i.e. tableros ganadores).
+Utilizando este paradigma Arthur creo un programa para jugar damas que termino
+superando a uno de los campeones estatales en EEUU.</p>
+<p>Una lectura complementaria que me recordó el ensayo, e interesante
+como mirada actualizada, es un <em>post</em> de Andrej Karpathy
+que nombra a la descripcción realizada por Arthur de la máquina
+averiguando las instrucciones como <a href="https://karpathy.medium.com/software-2-0-a64152b37c35"><em>software 2.0</em></a>. Eso sí, con la expección de que Karpathy limita el
+paradigma exclusivamente a redes neuronales.</p>
+<blockquote>
+<p><em>“Neural networks are not just another classifier, they represent
+the beginning of a fundamental shift in how we develop software.
+They are Software 2.0”</em> (Karpathy)</p>
+</blockquote>
+<p>Karpathy se basa en la comparación de la forma tradicional de
+escribir programas, o <em>software 1.0</em>, en donde se diseña el set
+de instrucciones para desarrollar una solución, y donde cada
+línea escrita por el programador es producto de decisiones
+que darán forma a un punto dentro del espacio
+de posibles programas. Respecto a una red neuronal, o <em>software
+2.0</em>, al cuál se le especifica un objetivo, a
+través de pares de <em>input</em> y <em>output</em>, además de un esqueleto de código que será la arquitectura del modelo y definirá el “espacio
+del programa” con los posibles detalles a modificar. La red
+neuronal a través de un proceso de ajuste de parámetros (i.e.
+<em>weight assignment</em> en palabras de Arthur), guíado por su
+mécanismo de evaluación (i.e. loss), explorará diferentes
+configuraciones dentro del espacio y se quedará con la
+solución–encapsulada en los valores de sus parámetros–que mejor
+satisfagá el criterio de evaluación. El diagrama a continuación
+aparece en el <em>post</em> y es una manera de ilustrar lo anterior:</p>
+<div class="figure">
+<img src="https://miro.medium.com/max/1400/1*5NG3U8MsaTqmQpjkr_-UOw.png" alt="" />
+<p class="caption">Fuente: Software 2.0- Andrej Karpathy</p>
+</div>
+<blockquote>
+<p><em>“To make the analogy explicit, in Software 1.0, human-engineered source code (e.g. some .cpp files) is compiled into a binary that does useful work. In Software 2.0 most often the source code comprises 1) the dataset that defines the desirable behavior and 2) the neural net architecture that gives the rough skeleton of the code, but with many details (the weights) to be filled in. The process of training the neural network compiles the dataset into the binary — the final neural network.”</em> (Karpathy)</p>
+</blockquote>
+<p>Otro tema interesante tratado por Karpathy es que sí entendemos
+las redes neuronales no como un simple clasificador, sino como
+una nueva formar de pensar el desarrollo de programas, es posible
+observar de mejor manera patrones y tendencias que faciliten la
+creación de <em>software 2.0</em>. Igual como se utilizan un conjunto de
+herramientas para apoyar la creación de <em>software 1.0</em> (i.e. IDE, versionamiento, <em>package
+managers</em>). Karpathy escribe que será natural disponer de un
+<em>stack</em> para la creación de <em>software 2.0</em>. Lo interesante es que desde la publicación del <em>post</em> el año 2017 hasta la
+fecha, han proliferado una serie de herramientas que constituyen
+parte del <em>stack</em> que Karpathy vislumbró. Por ejemplo, se nombra:</p>
+<ul>
+<li>El equivalente a un repositorio para albergar código de <em>software 1.0</em> como GitHub -&gt; En la actualidad contamos con el <a href="https://huggingface.co/datasets"><em>hub</em> de <em>datasets</em> de HuggingFace</a>, una
+implementación de lo que Karpathy describe <em>“in this case repositories are datasets and commits are made up of additions and edits of the labels.”</em>.</li>
+<li>Etiquetar o re-etiquetar <em>inputs</em> para definir
+el objetivo del programa. Proyectos como <a href="https://huggingface.co/datasets">Snorkel</a>
+se han creado con un enfoque centrado en los datos (<em>weak supervision</em>),
+donde para un conjunto de datos sin etiqueta, o sin una calidad de etiquetado
+garantizado, es posible utilizar heuristicas en base a juicio
+experto para etiquetar de forma programática (i.e. <em>labeling function</em>) los datos.</li>
+<li>Algo similar a <em>package managers</em> (e.g. pip, conda) pero con
+<em>checkpoints</em> de modelos ya entrenados. De nuevo, <a href="https://huggingface.co/models"><em>hub</em> de
+modelos de HuggingFace</a> que
+permite fácilmente importar modelos y usar <em>transfer learning</em>
+para adaptarlos a nuevas tareas. Esto bajo el parádigma
+<em>software 2.0</em> sería usar un programa para escribir otro programa.</li>
+</ul>
+</div>
+<div id="qué-es-una-red-neuronal" class="section level2">
+<h2>¿Qué es una red neuronal?</h2>
+<p>Una neurona es un producto punto entre un <em>input</em> y un <em>set</em> de parámetros más
+un coeficiente que se llama <em>bias</em>. Al resultado de esta operación se le aplica
+una función de activación, por lo que una neurona queda espeficada como:</p>
+<p><span class="math display">\[
+o^{(1)} = f(\boldsymbol w^{\top}\boldsymbol x + \boldsymbol b)
+\]</span></p>
+<p>Si tenemos una red neuronal, organizamos conjuntos de neuronas capa por capa, por
+lo que la información <em>input</em>-<em>output</em> de esta va fluyendo por la red. Si
+concatenamos la información de dos neuronas, sería algo como:</p>
+<p><span class="math display">\[\begin{equation}
+\begin{split}
+o^{(2)} &amp;= f(\boldsymbol w^{\top}f(\boldsymbol w^{\top}\boldsymbol x + \boldsymbol b) + \boldsymbol b) \\
+&amp;= f(\boldsymbol w^{\top}o^{(1)} + \boldsymbol b)
+\end{split}
+\end{equation}\]</span></p>
+<p>Se le suele llamar <em>hidden layers</em> a las capas internas (i.e. diferentes al
+input y output del modelo) dado que su resultado no se observa de forma
+directa. Es posible continuar este encadenado de funciones para ir construyendo
+modelos con más capas.</p>
+<p>Un punto importante es que una red neuronal no concatena un conjunto de neuronas
+como una simple cadena, o <em>linked list</em>, sino que por cada capa tenemos varias
+neuronas. Los pesos (o parámetros) de estas conexiones ya no serían el vector
+<span class="math inline">\(\boldsymbol w\)</span> sino estarían codificados en una matriz o tensor <span class="math inline">\(\boldsymbol W\)</span>.</p>
+<p>La función de activación tiene dos roles:</p>
+<ol style="list-style-type: decimal">
+<li>Las funciones de activación nos permiten tener multitples pendientes para
+distintos valores, algo que una función lineal por definición no permite.</li>
+<li>La función de la última capa concentra los <em>outputs</em> de la
+operación lineal en un rango de valores determinado y requerido según el problema
+que estamos resolviendo.</li>
+</ol>
+</div>
+<div id="redes-neuronales-y-aprendizaje-de-características" class="section level2">
+<h2>Redes neuronales y aprendizaje de características</h2>
+<blockquote>
+<p><em>“Attemp have been made to mechanize both of these steps (creation of concepts &amp; weight assignment), but,
+to date, very little progress has been made with
+respect to the concept-formation step, and most of the workers
+have been content to supply man-generated concepts (features)
+and to develop machine procedures for assigning weights to these
+concepts”</em> (Samuel, pag. 17)</p>
+</blockquote>
+<p>Una de las ventajas de las redes neuronales, y de porqué
+Karpathy se refiere solo a redes neuronales cuando habla
+de <em>software 2.0</em>, es la capacidad de aprender representaciones de
+los datos. Modelos estadísticos más
+tradicionales se enfocan solo en el paso de la asginación de
+pesos, o <em>fitting</em>, relegando la representación de los datos
+como un paso previo para que el modelo pueda insumir los
+conceptos que habla Arthur. Por lo tanto el modelo no tiene
+capacidad o no se encuentra en su diseño aprender
+características/<em>features</em> de los datos.
+En cambio, las redes neuronales con múltiples capas tienen la
+capacidad de incorporar dentro del ajuste de parámetros el
+aprendizaje de la representación de los datos, el paso de “creación de conceptos”
+al cual se refiere Arthur en su ensayo.
+Lo que es de gran utilidad para lidiar con datos no estructurados como imagenes o
+texto, cuya representación la mayoría de las veces no es trivial
+de construir, o en otras palabras, su <em>feature engineering</em> es
+prohibitivo. Diferencias interesantes entre <em>deep learning</em> y
+estadística más tradicional en el <em>post</em> <a href="https://windowsontheory.org/2022/06/20/the-uneasy-relationship-between-deep-learning-and-classical-statistics/"><em>“The uneasy relationship between deep learning and classical statistics”</em></a>.</p>
+<p>En el capítulo se cita y comenta el <em>paper</em> <a href="https://arxiv.org/abs/1311.2901">Visualizing and Understanding Convolutional Networks (Zeiler, Ferguson 2013)</a>
+para ejemplificar lo anterior. Creo presentar este artículo es de gran utilidad
+porque (i) demuestra que estos modelos no son cajas negras impenetrables y
+(ii) es una demostración súper visual de la creación de concepto por parte
+de redes neuronales. Además de mostrar la expresibilidad de las capas más
+profundas en aprender conceptos de mayor jerarquía en base a conceptos
+más primitivos. Los resultados de este estudio permitieron al grupo de
+investigación entender mejor el modelo Alexnet que ganó la competencia Imagenet
+el 2012, para luego realizar modificaciones en la arquitectura del modelo, y ganar
+el certamen el año siguiente. Acá el <em>abstract</em> del <em>paper</em>:</p>
+<blockquote>
+<p><strong>Abstract</strong>:
+<em>Large Convolutional Network models have recently demonstrated impressive classification performance on the ImageNet benchmark (Krizhevsky et al., 2012). However there is no clear understanding of why they perform so well, or how they might be im- proved. In this paper we address both issues. We introduce a novel visualization technique that gives insight into the function of inter- mediate feature layers and the operation of the classifier. Used in a diagnostic role, these visualizations allow us to find model architec- tures that outperform Krizhevsky et al. on the ImageNet classification benchmark. We also perform an ablation study to discover the performance contribution from different model layers. We show our ImageNet model generalizes well to other datasets: when the softmax classifier is retrained, it convincingly beats the current state-of-the-art results on Caltech-101 and Caltech-256 datasets.</em></p>
+</blockquote>
+</div>
+<div id="entrenar-modelos-con-fastai-y-transfer-learning" class="section level2">
+<h2>Entrenar modelos con <code>fastai</code> y <em>transfer learning</em></h2>
+<p>Este es un libro práctico y ya dentro del primer capítulo se
+realiza una breve demostración de como implementar un modelo de
+clasificación. El objetivo es identificar gatos
+y perros en imagenes usando la librería fastAI y el Oxford Pet <em>dataset</em>.
+Si bien la tarea es simple, lo que encontré más interesante no es
+el desempeño del modelo, sino la introducción de la técnica
+utilizada para resolver el problema, <em>transfer learning</em>, que esta
+en el <em>core</em> de a API. Esta técnica se basa en utilizar un modelo pre-entrenado,
+que ya tuvo un proceso de ajuste de parámetros, para adaptarlo a una nueva tarea.
+La ventaja es que ya desde el inicio contamos con capacidad instalada por el modelo
+anterior, lo que en algunos casos nos permite transferirla a nuestro nuevo modelo,
+y obtener buenos resultados sin la necesidad de contar con demasiados datos.</p>
+<p>Al <strong>cargar los datos</strong> se hace hincapíe en el objeto <code>path</code> de python.
+Se utiliza un <em>dataloader</em> que es una abstracción utilizada por PyTorch para
+gestionar el <em>dataset</em> (i.e. minibatches, etiquetas, etc).</p>
+<pre class="python"><code>from fastai.vision.all import *
+path = untar_data(URLs.PETS)/&#39;images&#39;
+
+def is_cat(x): return x[0].isupper()
+dls = ImageDataLoaders.from_name_func(
+  path, get_image_files(path), valid_pct=0.2, seed=42,
+  label_func=is_cat, item_tfms=Resize(224)
+)</code></pre>
+<p><code>ImageDataLoadeers.from_name_func()</code> es una de las funciones constructoras
+para inicializar el <em>dataloader</em>. Esta función en particular permite crear un <em>dataloader</em>
+directamente de las imagenes que se encuentran en un directorio, y cuyos nombres
+contienen la estructura con las etiquetas del <em>dataset</em>. Por lo tanto,
+se recibe una función para extraer las imagenes (<code>get_image_files</code>), se especifica el
+porcentaje del conjunto de validación (<code>valid_pct</code>), además de la función para
+extraer las etiquetas (<code>label_func</code>) y el argumento <code>item_tfms</code> que nos
+permite aplicar transformaciones a las imagenes del <em>dataset</em> como ajustar
+su tamaño, recortarlas, entre otras.</p>
+<p>Una vez que inicializams el <em>dataloader</em> podemos <strong>entrenar el modelo</strong>. El objeto
+<code>learner</code> en la librería <code>fastai</code> controla el proceso de aprendizaje e insume
+todos los elementos necesarios (i.e. modelo, data, optimizador, etc). Existen
+<code>learner</code>s específicos para arquitecturas conocidas como <code>cnn_learner</code> que es
+para redes con arquitecturas con capas convolucionales. Se observa que uno de los
+argumentos es <code>resnet34</code> (34 por el número de capas), acá estamos especificando que
+utilizaremos este modelo pre-entrenado para adaptarlo a nuestro problema. <strong>Cuando
+se utiliza <em>transfer learning</em> no se ajustan los parámetros desde 0</strong>,
+sino que aplicamos <code>fine_tune(num_iter)</code> para (i) ajustar los parámetros de la
+cabeza del modelo, capa encargada de adaptar el modelo al nuevo problema, y (ii)
+ajustar los parámetros por cada época especificada pero ajustando con
+mayor velocidad los parámetros de las últimas que los de las primeras, dado
+que ya fueron entrenados.</p>
+<pre class="python"><code>learn = cnn_learner(dls, restnet34, metrics=error_rate)
+learn.fine_tune(1)</code></pre>
+<p>Una vez que los parámetros fueron ajustados podemos utilizar el modelo como
+cualquier programa, el cual recibe un <em>input</em> y entrega un <em>output</em>, este modo
+se conoce como <strong>fase de inferencia</strong>. Finalmente, y dado que el programa creado
+en este capítulo fue diseñado para resolver un problema de percepcción visual
+que responde a la <em>query</em> ¿la imagen contiene un gato o un perro?. Podríamos
+integrarlo dentro de otro <em>software</em> que, por ejemplo, permita entrar
+a nuestro gato abriendole la puerta del patio pero que no haga lo mismo con el
+perro de algún vecino.</p>
+<pre class="python"><code>img = PILImage.create(uploader.data[0])
+is_cat, _, probs = learn.predict(img)
+print(f&quot;Es un gato?: {is_cat}.&quot;)
+print(f&quot;Probabilidad de que sea un gato: {probs[1].item():.6f}&quot;)</code></pre>
+<p>La librería es de alto nivel y tiene abstracciones de la mayoría de los
+componentes de entrenar un modelo. Destacable la abstracción en el núcleo
+de la API sobre utilizar <em>transfer learning</em>.</p>
+</div>
+<div id="cuestionario" class="section level2">
+<h2>Cuestionario</h2>
+<ol style="list-style-type: decimal">
+<li><p>Do you need these for deep learning?</p>
+<ul>
+<li>Lots of math T/<strong>F</strong></li>
+<li>Lots of data T/<strong>F</strong></li>
+<li>Lots of expensive computers T/<strong>F</strong></li>
+<li>A PhD T/<strong>F</strong></li>
+</ul></li>
+<li><p>Name five areas where deep learning is now the best tool in the world.</p>
+<ul>
+<li><strong>R:</strong> Natural Language Processing, Computer Vision, Recommendation Systems, Image Generation, Text Generation.</li>
+</ul></li>
+<li><p>What was the name of the first device that was based on the principle of the artificial neuron?</p>
+<ul>
+<li><strong>R:</strong> Mark I Perceptron, desarrollado por Frank Rossenblat. Una foto
+de la pequeña máquina se puede ver <a href="https://americanhistory.si.edu/collections/search/object/nmah_334414">acá</a>.</li>
+</ul></li>
+<li><p>Based on the book of the same name, what are the requirements for parallel distributed processing (PDP)?</p>
+<blockquote>
+<blockquote>
+<ul>
+<li>Un conjunto de unidades de procesamiento</li>
+<li>Un estado de activación</li>
+<li>Una función de <em>output</em> para cada unidad</li>
+<li>Un patrón de conectividad entre las unidades</li>
+<li>Una regla de propagación para propagar patrones de actividad a
+través de la red de connectividad</li>
+<li>Una regla de activación para combinar los <em>inputs</em> incidiendo en una
+unidad con el estado actual de esa unidad para producir un <em>output</em></li>
+<li>Una regla de aprendizaje donde los patrones de conectividad sean
+modificados por la experiencia (data)</li>
+<li>Un ambiente donde el sistema opere</li>
+</ul>
+</blockquote>
+</blockquote></li>
+<li><p>What were the two theoretical misunderstandings that held back the field
+of neural networks?</p>
+<ul>
+<li><strong>R:</strong> El primer malentendido que tuvieron las redes neuronales fue
+por el trabajo realizado por Marvin Minsky y Seymour Papert en su libro
+titulado <em>Perceptron</em>, donde demostraron que el Percepton no era capaz de
+aprender funciones matematícas elementales como la función exclusive or.
+Sin embargo, en el mismo libro demuestran que agregando una capa adicional
+al <em>Perceptron</em>, el modelo tenía la flexibilidad de aprender cualquier función.
+Otro malentendido es que estos modelos son cajas negras impenetrables. Si
+bien presentan desafios a la hora de su interpretación, en el capítulo se da
+como ejemplo el trabajo <em>Visualizing and Understanding Convolutional Networks</em>
+(Zeiler, Fergus 2013) para dismitificar que las redes neuronales son modelos
+inescrutalbles. Este <em>paper</em> investigó los parámetros de la red en cada capa e
+identificó los <em>features</em> que el modelo aprendió una vez ajustado. Utilizando
+esta información los autores mejoraron la arquitectura AlexNet y ganaron el
+siguiente certamen de Imagenet el año 2013.</li>
+</ul></li>
+<li><p>What is a GPU?</p>
+<ul>
+<li><strong>R:</strong> Graphical Processing Unit (GPU). Esta pieza de <em>hardware</em> es útil
+para computar múltiples operaciones en paralelo. Dado que entrenar
+redes neuronales implica realizar muchas multiplicaciones y sumas, las
+GPU han probado ser exitosas para entrenar estos modelos.</li>
+</ul></li>
+<li><p>Open a notebook and execute a cell containing: 1+1 What happens?</p>
+<ul>
+<li><strong>R:</strong> Devuelve el resultado de 2.</li>
+</ul></li>
+<li><p>Follow through each cell of the stripped version of the notebook for this
+chapter. Before executing each cell, guess what will happen.</p>
+<ul>
+<li><strong>R:</strong> Done.</li>
+</ul></li>
+<li><p>Complete the Jupyter Notebook online appendix (<a href="https://oreil.ly/9uPZe" class="uri">https://oreil.ly/9uPZe</a>)</p>
+<ul>
+<li><strong>R:</strong> Done.</li>
+</ul></li>
+<li><p>Why is it hard to use a traditional computer program to recognize images in a photo?</p>
+<ul>
+<li><strong>R:</strong> El desarrollo de un programa tradicional implica escribir las
+instrucciones a la máquina de manera detallada. En palabras de Arthur
+Samuel <em>“Programming a computer for such computations is, at best a
+difficult task, …because of the <strong>need to spell out every minute step
+of the process in the most exasperating detail</strong>”</em>. En tareas de percepcción,
+como reconocer objetos en una imagen, los humanos lo hacemos con facilidad
+pero a nivel subconsciente. Por lo tanto, abstraer y crear estas instrucciones requiere
+de un gran esfuerzo (<em>feature engineering</em>) y heuristicas para resolver
+el problema. Además varían según el contexto particular (radiografia, números)
+no siendo generalizables.</li>
+</ul></li>
+<li><p>What did Samuel mean by “weight assignment”?</p>
+<ul>
+<li><strong>R:</strong> Asignar valores a los parámetros del modelo. El proceso
+de entrenamiento de una red neuronal es simplemente un proceso
+de estimación o ajuste de los parámetros.</li>
+</ul></li>
+<li><p>What term do we normally use in deep learning for what Samuel called
+“weights”?</p>
+<ul>
+<li><strong>R:</strong> El término más utilizado en la actualidad es el de parámetros (i.e.
+especificado en la mayoría de los <em>frameworks</em> actuales).</li>
+</ul></li>
+<li><p>Draw a picture that summarizes Samuel’s view of a machine learning model.</p></li>
+</ol>
+<center>
+<img src="/img/fastai-chapter-1/Samuels_Diagram.png">
+</center>
+<ol start="14" style="list-style-type: decimal">
+<li><p>Why is it hard to understand why a deep learning model makes a particular
+prediction?</p>
+<ul>
+<li><strong>R:</strong> Todo modelo estadístico enfrenta dificultades para comprender
+las predicciones a medida que la complejidad del modelo aumenta (i.e. más
+parámetros y capas) y cuando los datos sobre los que el modelo se encuentra
+operando difieren de manera importante respecto con los que fue entrenado (i.e. <em>distribution shift</em>).
+Sobretodo vimos que una de las ventajas de las redes neuronales es su capacidad
+modular de crecer incorporando capas y diferentes arquitecturas, pero esto
+tambien dificulta la interpretabilidad de las predicciones. Siempre se debe
+ser cauto con la interpretabilidad y afirmaciones sobre las capacidades
+de un modelo, y aplicar varios métodos para inspeccionar y ver el funcionamiento
+interno de los parámetros.</li>
+</ul></li>
+<li><p>What is the name of the theorem that shows that a neural network can solve
+any mathematical problem to any level of accuracy?</p>
+<ul>
+<li><strong>R:</strong> El nombre del teorema es <em>Universal Approximation Theorem</em>. El
+siguiente video de Michael Nielsen es una explicación visual sobre este teorema:</li>
+</ul>
+<p><right>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Ijqkc7OLenI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</right></p></li>
+<li><p>What do you need in order to train a model?</p>
+<ul>
+<li><strong>R:</strong> Del diagrama de más arriba podemos inferir que para entrenar
+un modelo necesitamos datos (elipses azules), y por esto se entiende
+el input (e.g. imagen, texto, características tabularizadas) y etiquetas
+de buena calidad, sin esto último el mécanismo de <em>feedback</em>, compuesto
+por la función de costo (elipse morada) y la regla de actualización, no puede
+guiar el ajuste de los parámetros (elipse café). Se requiere una forma funcional
+del modelo (aka arquitectura) para realizar las predicciones (elipses rosadas) en base a
+los <em>inputs</em>, las cuáles el mécanismo de ajuste contrastará respecto a las etiquetas.
+Una vez que el modelo fue entrenado, tenemos un programa que recibe <em>inputs</em> y entrega <em>outputs</em>,
+el cual puede utilizarse como componente dentro de cualquier <em>software</em>.</li>
+</ul></li>
+<li><p>How could a feedback loop impact the rollout of a predictive policing model?</p>
+<ul>
+<li><strong>R:</strong> El modelo se ajusta a partir de datos. Si el modelo indica predicciones
+para que las policias se focalicen en cierto sector geográfico, con mayor
+probabilidad aumentaran los arrestos e incidentes registrados en esa zona
+debido a la focalización de actividades de patrullaje policial.
+En consecuencia, habrá un mayor número de información adicional de esa zona
+cuando se incorporé nueva información al modelo. Al volver ajustar el modelo,
+los ajustes de parámetros reforzaran la relación de criminalidad en ese sector,
+aumentando el número de predicciones y respaldando las acciones policiales
+definidas. Y así obtenemos un <em>positive feedback loop</em>, mientras más usamos el
+modelo mayores sesgos producimos en los datos.</li>
+</ul></li>
+<li><p>Do we always have to use 224x224 pixel images with the cat recognition
+model?</p>
+<ul>
+<li><strong>R:</strong> La dimensión de 224x224 responde a razones historicas cuando
+se diseño una arquitectura en particular. Es posible aumentar la resolución
+de la imagen y asi el modelo capturará mayor información, pero a un costo
+computacional mayor. De manera contraria, menor resolución implica
+una disminución en el desempeño del modelo, pero mayor eficiencia
+computacional. Otra razón historica a la hora de entrenar redes
+neuronales son que el tamaño de los <em>batch</em> aumenta en potencias de 2,
+ver <a href="https://sebastianraschka.com/blog/2022/batch-size-2.html"><em>No, We Don’t Have to Choose Batch Sizes As Powers of 2</em></a> (Sebastian Rashcka). Además de
+la influencia de los <em>random seeds</em> para entrenar modelos, <a href="https://arxiv.org/abs/2109.08203"><em>“Torch.manual_seed(3407) is all you need: On the influence of random seed in
+deep learning architectures for computer vision”</em></a> (David Picard).</li>
+</ul></li>
+<li><p>What is the difference between classification and regression?</p>
+<ul>
+<li><strong>R:</strong> La diferencia entre los problemas de clasificación y regresión
+tiene que ver simplemente con el tipo de variable de respuesta que estamos
+modelando. Si es una variable discreta (i.e. perro, gato, nivel socioeconomico)
+es un problema de clasificación. En cambio, si la variable de respuesta
+es continua (i.e. salario) es un problema de regresión.</li>
+</ul></li>
+<li><p>What is a validation set? What is a test set? Why do we need them?</p>
+<ul>
+<li><strong>R:</strong> El conjunto de validación se utiliza para computar métricas
+durante el entrenamiento del modelo. Recordar que las métricas son
+de consumo humano. Además el conjunto de validación nos permite probar
+distintas configuraciones del modelo especificadas por los hiperparámetros.
+En cambio, el conjunto de pruebas, o <em>test set</em>, es un conjunto de datos
+reservado exclusivamente para reportar la <em>performance</em> final de nuestro
+modelo, una vez que se probaron todas las ideas e iteraciones de experimentos.</li>
+</ul></li>
+<li><p>What will fastai do if you don’t provide a validation set?</p>
+<ul>
+<li><strong>R:</strong> La librería <code>fastai</code> automáticamente separa el dataset en 80/20,
+separando un 20% de los datos para el conjunto de validación. Si se requiere
+cambiar este porcentaje se debe especificar en el argumento <code>valid_pct</code> del
+<em>dataloader</em>.</li>
+</ul></li>
+<li><p>Can we always use a random sample for a validation set?</p>
+<ul>
+<li><strong>R:</strong> No siempre se debe usar un conjunto de validación aleatorio. La
+mayor importancia tanto del conjunto de validación como el conjunto
+de prueba es que sean representativos de datos futuros que no hemos visto.
+Y tomar un conjunto de datos y obtener una fracción de manera aleatoria
+no siempre es la respuesta. Imaginemos el caso de series de tiempo, no
+tiene mucho sentido tomar una muestra aleatoria del dataset para
+construir el conjunto de validación, pero si tiene sentido aislar
+una parte final de la serie para evaluar el modelo simulando datos
+futuros nunca antes visto. Otro ejemplo tiene que ver con posible redundancia
+en las observaciones que de no aislarlas apropiadamente, el modelo obtenga
+buenos resultados en el conjunto de validación solo porque ha memorizado
+ciertas características de este grupo de observaciones particulares,
+en vez de encontrar un patrón general. Por ejemplo, si tenemos la misma mascota
+en diferentes fotos del <em>dataset</em>, lo correcto sería que todos los
+ejemplos de esa mascota queden aislados en un mismo conjunto y no en
+separadas en ambos conjuntos.</li>
+</ul></li>
+<li><p>What is overfitting? Provide an example.</p>
+<ul>
+<li><strong>R:</strong> El sobreajuste de un modelo se refiere al fenómeno cuando el modelo
+comienza a memorizar el ruido, o parte “idiosincrática” del conjunto de datos
+destinado al entrenamiento, tomando en cuenta efectos particulares del
+<em>dataset</em> en el ajuste de sus parámetros y no realizando ajustes que
+capturen patrones generalizables en los datos. El objetivo es entrenar
+un modelo que obtenga un buen desempeño en datos nunca antes vistos y no
+memorizar perfectamento los datos de entrenamiento. Por ejemplo, si utilizamos
+un modelo para predecir el precio de viviendas, y el modelo durante el
+entrenamiento se sobreajustó, sus parámetros reflejaran condiciones particulares
+del grupo de viviendas utilizadas para ajustar el modelo y no un
+patrón generalizable sobre los fundamentos en los precios de la vivienda
+que sean de utilidad para cualquier otra vivienda que no se encuentre
+en el <em>dataset</em>. El modelo tendrá peor desempeño en viviendas que no se encuentren
+en los sectores cubiertos dentro del conjunto de entrenamiento, o que sus
+características difieran respecto a los rangos de valores en las características
+de las viviendas de entrenamiento.</li>
+</ul></li>
+<li><p>What is a metric? How does it differ from loss?</p>
+<ul>
+<li><strong>R:</strong> Una métrica sirve para medir el desempeño del modelo según
+algún objetivo como nivel de error, precisión, sesgo en las predicciones, o
+alguna métrica especifica de negocio (KPI). En otras palabras, las métricas
+son de consumo humano, y están estrechamente relacionadas con el problema que
+se busca resolver. En cambio, la función de costo esta diseñada para el
+proceso de ajuste de los parámetros del modelo. Es parte del mécanismo de
+retroalimentación automático del modelo. Por ejemplo, que la función de costo
+haya disminuido 20% en 100 iteraciones no nos dice nada respecto a si
+estamos identificando mejor las transaccions fraudulentas dentro de la
+red de pagos, pero la historia es diferente si nuestro <em>accuracy</em>
+mejoró 20%. Algo que si nos garantiza la función de costo es un mécanismo de
+retroalimentación respecto a las predicciones del modelo según un estado
+particular de parámetros (i.e. set de valores), y efectuar los cambios
+pertinentes de estos en la dirección que minimiza la función de costo. Por esta
+razón, la función debe cumplir ciertas propiedades como ser diferenciable,
+eficiente en computar, etcétera. En conclusión, la función de costo es para el
+computador y la métrica para el humano.</li>
+</ul></li>
+<li><p>How can pretrained models help?</p>
+<ul>
+<li><strong>R:</strong> Un modelo pre-entrenado ya paso por un proceso de ajuste de
+parámetros, por lo que cuenta con algún grado de capacidad que permite
+acelerar el aprendizaje en nuevos datos. Estas capacidades en
+el mejor de los casos pueden ser características, o <em>features</em>, que el modelo
+derechamente ya aprendió y pueden ser generalizables. Por ejemplo, en el
+caso de un problema de clasificación de imagenes, disponer de una
+característica que ya identifica “esquinas” siempre será de utilidad, y
+es algo que se puede reutilizar. En un caso no tan óptimo, un modelo
+pre-entrenado puede verse como una partida en caliente para el nuevo
+proceso de ajuste y proveernos de una buena inicialización de parámetros
+versus una inicialización completamente aleatoria.</li>
+</ul></li>
+<li><p>What is the “head” of a model?</p>
+<ul>
+<li><strong>R:</strong> La cabeza del modelo es la última capa que se agrega a una
+arquitectura de un modelo pre-entrenado especifica para el dataset
+que estamos trabajando. Cuando utilizamos un modelo pre-entrenado, debemos
+adaptar la capa final de la arquitectura del modelo a las dimensiones
+del <em>output</em> del problema que queremos “transferir” el modelo.
+Por ejemplo, si el modelo pre-entrenado fue ajustado en el <em>dataset</em> ImageNet
+el cual busca identificar 1000 categorías y nuestro problema solo requiere
+distinguir entre dos, debemos adaptar la cabeza del modelo a una salida
+de largo 2.</li>
+</ul></li>
+<li><p>What kind of features do the early layers of a CNN find? How about the
+later layers?</p>
+<ul>
+<li><strong>R:</strong> Los <em>features</em> de las primeras capas son más primitivos, o
+básicos, como texturas, gradientes o esquinas. En cambio, a medida que
+vamos avanzando en las capas, los <em>features</em> que aprende la red van
+siendo de mayor nivel como figuras geometricas, caras, etcétera. Una
+explicación de esto tiene que ver con las capas convolucionales, las cuáles
+son capas volumétricas que despliegan varios filtros o kernels que se especializan
+en una misma región de pixeles (aka receptive field), aprendiendo conceptos
+y aprovechando la estructura de “localidad” de la imagen: pixeles más
+cercanos tinen mayor relación que pixeles más distantes. Además, entre
+capas convulocionales, este tipo de arquitecturas suelen utilizar una capa
+de <em>pooling</em>, básicamente es una técnica de <em>downsampling</em>, reduciendo
+imagenes por ejemplo de 28x28 a 14x14 compactando los pixeles de la imagen
+a través de una operación de agregado, lo que luego, al aplicar otra capa
+convolucional tiene el efecto de aumentar la cobertura de los nuevos kernels
+sobre la información de la imagen, aumentando su receptive field. De esta forma
+las últimas capas comienzan aprender conceptos de mayor jerarquía al relacionar
+distintas regiones iniciales que los filtros observaban y a construir en base
+a los conceptos más primitivos.</li>
+</ul></li>
+<li><p>Are image models useful only for photos?</p>
+<ul>
+<li><strong>R:</strong> No, se puede utilizar modelos de imagen para todo problema que se
+pueda reformular como una imagen (e.g. sonido-a-espectogramas). Regla general,
+si un humano es capaz de interpretar un gráfico de cierto fenómeno que no
+es un problema inherente de imagen, es probable que una arquitectura diseñada
+para modelos de imagenes funcione bien.</li>
+</ul></li>
+<li><p>What is an architecture?</p>
+<ul>
+<li><strong>R:</strong> Las redes neuronales son funciones. La arquitectura es la forma
+funcional que toma una red neuronal, la cual esta compuesta por las diferentes
+capas y conexiones descrita en los parámetros. En la imagen a continuación
+se preseneta la forma funcional del modelo que ganó la
+competencia ImageNet 2012, llamada AlexNet:</li>
+</ul></li>
+</ol>
+<p><right><br />
+<img src="https://www.researchgate.net/profile/Moumita-Tora/publication/318796117/figure/fig4/AS:631679571996680@1527615554120/AlexNet-illustration-The-input-is-a-224-by-224-image-that-goes-through-several-hidden.png" />
+</right></p>
+<ol start="30" style="list-style-type: decimal">
+<li><p>What is segmentation?</p>
+<ul>
+<li><strong>R:</strong> Es un problema dentro del campo de visión por computadora que
+consiste en identificar el contenido al que pertenece cada pixel dentro
+de una imagen (i.e. autos, semaforos, peatones, etc).</li>
+</ul></li>
+<li><p>What is <code>y_range</code> used for? What do we need it?</p>
+<ul>
+<li><strong>R:</strong> Sirve para especificar el rango de la variable de respuesta cuando
+el problema es de regresión, es decir, tenemos una variable de respuesta
+tipo continua.</li>
+</ul></li>
+<li><p>What are hyperparameters?</p>
+<ul>
+<li><strong>R:</strong> Los hiperparámetros son variables que controlan algunos aspectos sobre
+el proceso de entrenamiento del modelo. Por ejemplo, la cantidad de regularización
+o la magnitud de la tasa de aprendizaje. Son parámetros sobre parámetros
+dado afectan el ajustes sobre los parámetros de una u otra forma.</li>
+</ul></li>
+<li><p>What’s the best way to avoid failures when using AI in an organization?</p>
+<ul>
+<li><strong>R:</strong> Siempre diseñar y crear un buen conjunto de validación
+para evaluar correctamente la generalización de los modelos. Si se trabaja
+con terceros, quienes se les encargará resolver un problema utilizando
+modelos ajustados en base a datos, siempre guardar un conjunto de prueba
+que no hayan visto los proveedores. Así tendremos capacidad para
+diagnosticar correctamente el desempeño del modelo. Otro punto importante
+es paralelamente elaborar un buen modelo base para saber de antemano
+el posible potencial de mejora utilizando modelos más complejos para
+resolver el problema.</li>
+</ul></li>
+</ol>
+</div>
+<div id="further-research-questions" class="section level2">
+<h2>Further Research Questions</h2>
+<p><em>Última actualización: 09/07/2022</em></p>
+<p><strong>Why is a GPU useful for Deep Learning? How a CPU is different, and why is it less effective for deep learning?</strong></p>
+<p>Hay una charla realizada por Stuart Oberman, vicepresidente de NVidia, en
+Stanford realizada el 2017 que da un buen <em>overview</em> acerca sobre las GPU: <a href="https://www.youtube.com/watch?v=98Xis1W1mMk">Nvidia GPU Computing: A Journey From PC Gaming to Deep Learning</a> (slides de la
+<a href="http://web.stanford.edu/class/ee380/Abstracts/171004-slides.pdf">presentación</a>).</p>
+<center>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/98Xis1W1mMk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+</iframe>
+</center>
+<p>GPU computing se divide en dos grandes grupos:</p>
+<ol style="list-style-type: decimal">
+<li>Simulación: drug design, options pricing, wheather forecasting</li>
+<li>Visualización: seismic imaging, automotive design, medical imaging</li>
+</ol>
+<p>NVIDIA introdujo la GPU en 1999, un único procesador para acelerar
+juegs de video y gráficas 3D.</p>
+<p>Objetivo: acercarse a la calidad de imagen de estudios de video
+renderizadas de manera offline , pero en tiempo real. Esto significa
+millones de pixeles por <em>frame</em>, &gt; 60 <em>frames</em> por segundo. Uso de largos
+<em>arrays</em> de floating points para explorar paralelismo a lo ancho y profundo.</p>
+<p>El modelo G80 fue la primera GPU que introdujo un procesador unificado
+para sombras (unified shader processor). Todas las etapas de sombra
+usan el mismo set de instrucciones y se ejecutan en la misma unidad: <em>streaming
+multiprocessor</em> (CUDA).</p>
+<blockquote>
+<p>CUDA: C++ for throughput computers, on-chip memory managmenet, asunchronous, parallel
+API, programmability makes it possible to innovate.</p>
+</blockquote>
+<p>La <em>slide</em> número 22 hace una comparación interesante entre el paradigma
+que guia un GPU versus a un CPU:</p>
+<blockquote>
+<blockquote>
+<p>Latency Oriented:
+- Fewer, bigger cores with out-of-order, speculative execution
+- Big caches optimized for latency
+- Math units are small part of the die</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>Throughput Oriented
+- Lots of simple compute cores and hardware scheduling
+- Big register files. Caches optimized for bandwidth.
+- Math units are most of the die</p>
+</blockquote>
+</blockquote>
+<p>Definiciones de los conceptos anteriores según el libro Designing Data-Intensive
+Application de Martin Kleppmann:</p>
+<p><strong>Throughput</strong></p>
+<blockquote>
+<p><em>Throughput is the number of records we can process per second, or the total time
+it takes to run a job on a dataset of a certain size</em></p>
+</blockquote>
+<p><strong>Latency</strong></p>
+<blockquote>
+<p><em>Latency is the duration that a request is waiting to be handled – during which
+it is latent, awaiting service</em></p>
+</blockquote>
+<p><strong>Response time</strong></p>
+<blockquote>
+<p><em>Response time is what the client sees: besides the actual time to process the
+request (the service time), it includes networks delays and queueing delays</em></p>
+</blockquote>
+<p>Pascal GP100: primer modelo de NVIDIA adaptado para Deep Learning, 21 TFLOPS fp16
+for Deep Learning training and inference acceleration. Primera vez que se
+agrega datatype fp16 con el objetivo de acelerar el entrenamiento e inferencia
+de modelos de Deep Learning.</p>
+<p>Tensor Core: matriz de precision hibrida. FP16 para AB y acumula con FP32 (o FP16).</p>
+<p><br>
+<br></p>
+<p><strong>Try to think three areas where feedback loops might impact the use of machine learning. See if you can find documented examples of that happening in practice.</strong></p>
+<p>TODO…</p>
+</div>
