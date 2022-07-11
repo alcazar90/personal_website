@@ -3,8 +3,8 @@ title: Deep Learning for Coders - notas capítulo 1
 author: Cristóbal Alcázar
 date: '2022-07-09'
 slug: []
-categories: []
-tags: []
+categories: [DL, fastai, book-notes, español, fastai-book]
+tags: [DL, fasti, book-notes, español, fastai-book]
 comments: no
 showcomments: yes
 showpagemeta: yes
@@ -249,7 +249,7 @@ características/_features_ de los datos.
 En cambio, las redes neuronales con múltiples capas tienen la
 capacidad de incorporar dentro del ajuste de parámetros el
 aprendizaje de la representación de los datos, el paso de "creación de conceptos"
-al cual se refiere Arthur en su ensayo. 
+a la cual se refiere Arthur en la cita del comienzo de esta sección. 
 Lo que es de gran utilidad para lidiar con datos no estructurados como imagenes o
 texto, cuya representación la mayoría de las veces no es trivial
 de construir, o en otras palabras, su _feature engineering_ es
@@ -321,10 +321,11 @@ argumentos es `resnet34` (34 por el número de capas), acá estamos especificand
 utilizaremos este modelo pre-entrenado para adaptarlo a nuestro problema. **Cuando
 se utiliza _transfer learning_ no se ajustan los parámetros desde 0**,
 sino que aplicamos `fine_tune(num_iter)` para (i) ajustar los parámetros de la
-cabeza del modelo, capa encargada de adaptar el modelo al nuevo problema, y (ii)
-ajustar los parámetros por cada época especificada pero ajustando con 
-mayor velocidad los parámetros de las últimas que los de las primeras, dado
-que ya fueron entrenados.
+cabeza del modelo, capa encargada de adaptar el modelo al nuevo problema, y 
+(ii) ajustar los parámetros por cada época especificada en el argumento de
+la función pero con la salvedad ir ajustando con mayor velocidad los
+parámetros de las últimas capas respecto a los de las primeras, lo que
+tiene sentido si pensamos que las primeras capas ya fueron entrenadas.
 
 ```python
 learn = cnn_learner(dls, restnet34, metrics=error_rate)
@@ -335,7 +336,7 @@ cualquier programa, el cual recibe un _input_ y entrega un _output_, este modo
 se conoce como **fase de inferencia**. Finalmente, y dado que el programa creado
 en este capítulo fue diseñado para resolver un problema de percepcción visual
 que responde a la _query_ ¿la imagen contiene un gato o un perro?. Podríamos
-integrarlo dentro de otro _software_ que, por ejemplo, permita entrar
+integrarlo dentro de otro _software_ que, por ejemplo, deje entrar
 a nuestro gato abriendole la puerta del patio pero que no haga lo mismo con el
 perro de algún vecino.
 
@@ -346,9 +347,9 @@ print(f"Es un gato?: {is_cat}.")
 print(f"Probabilidad de que sea un gato: {probs[1].item():.6f}")
 ```
 
-La librería es de alto nivel y tiene abstracciones de la mayoría de los 
-componentes de entrenar un modelo. Destacable la abstracción en el núcleo
-de la API sobre utilizar _transfer learning_.
+La librería es de alto nivel y tiene abstracciones sobre el _loop_ de
+aprendizaje para entrenar un modelo. Destacable que en núcleo de la API
+se encuentra la técnica de _transfer learning_.
 
 ## Cuestionario 
 1. Do you need these for deep learning?
