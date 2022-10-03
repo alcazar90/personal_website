@@ -139,6 +139,9 @@ In python, we have the <a href="https://altair-viz.github.io/" target="_blank">A
 
 Essays, articles and blog posts about computational thinking and tools for thought!
 
+
+- <a href="https://hardwarelottery.github.io/" target="_blank">The Hardware Lottery (Sara Hooker - August, 2020)</a>
+
 - <a href="https://numinous.productions/ttft/" target="_blank">How can we develop transformative tools for thought?</a>
 
 - <a href="https://www.cs.cmu.edu/~15110-s13/Wing06-ct.pdf" target="_blank">Computational Thinking</a>
