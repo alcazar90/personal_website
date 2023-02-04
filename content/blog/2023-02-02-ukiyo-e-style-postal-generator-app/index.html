@@ -1,0 +1,180 @@
+---
+title: Ukiyo-e style postcard generator App
+author: Cristóbal Alcázar
+date: '2023-02-02'
+slug: []
+categories: [generative-ai, diffusion-model, unconditional-image-generation, gradio, huggingface]
+tags: []
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<div class="figure">
+<img src="https://collectionapi.metmuseum.org/api/collection/v1/iiif/55735/140194/main-image" alt="" />
+<p class="caption">Source: Ejiri in Suruga Province (Sunshū Ejiri), from the series Thirty-six Views of Mount Fuji (Fugaku sanjūrokkei)</p>
+</div>
+<p><a href="https://colab.research.google.com/drive/1F7SH4T9y5fJKxj5lU9HqTzadv836Zj_G?usp=sharing" target="_blank">
+<img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a></p>
+<p>How can we train a model to generate novelty images while preserving the style? What is a generative model? what is a diffusion model? Is there a way to control the image generation process (aka sampling)? In this short post, I will answer these questions at a high level with a mini project implementation, the <a href="https://huggingface.co/spaces/alkzar90/ukiyo-e-postal" target="_blank">Ukiyo-e style postcard generator App</a>.</p>
+<p>The project, in a nutshell, consists of the following:</p>
+<ol style="list-style-type: decimal">
+<li>Take a bunch of images with the Ukiyo-e style</li>
+<li>Trained (finetune really) a diffusion model to learn a distribution of our images</li>
+<li>Use the learned “unconditional distribution” to generate novel images with ukiyo-e stylish</li>
+<li>Explore ways to gain control when we sample new pictures from our distribution</li>
+<li>Wrap the whole inference pipeline: model (distribution) + image generation (sampling) into a Gradio App</li>
+</ol>
+<div id="what-is-ukiyo-e-style" class="section level2">
+<h2>What is Ukiyo-e style?</h2>
+<p>Pictures-of-the-floating-world…, that’s what means the Japanese word Ukiyo-e. It’s a term to refer to an entire art gender, so don’t be confused that it is an artist’s name or a pseudonym. Its roots are popular, even vulgar, and accessible, so it was easy to find Ukiyo-e prints in Japanese houses. It was a genre that took influence from the west and china, but at some point, it influenced Europe and the western world. If you want to know more about this Japanese art genre, I highly recommend this interactive piece from the New York Times titled <a href="https://www.nytimes.com/interactive/2020/08/07/arts/design/hokusai-fuji.html"><em>“A Picture of Change for a World in Constant Motion”</em> (Farago 2020)</a>. It’s a journey from this popular genre’s history and distinctive elements.</p>
+<p>The dataset <a href="https://huggingface.co/datasets/huggan/ukiyoe2photo" target="_blank">ukiyoe2photo</a> contains pictures of the floating world, which I used in this project to learn a model to generate new images with ukiyo-e stylish. The below figure shows some of the ukiyo-e images in the dataset.</p>
+<center>
+<img src="/img/ukiyo-e-postalcard-app/ukiyoe-dataset-portrait-lightweight.png">
+</center>
+<p><br></p>
+</div>
+<div id="unconditional-image-generation" class="section level2">
+<h2>Unconditional image generation</h2>
+<p><a href="https://huggingface.co/tasks/unconditional-image-generation">What is unconditional image generation?</a></p>
+<blockquote>
+<p><em>Unconditional image generation is the task of generating images with no condition in any context (like a prompt text or another image). Once trained, the model will create images that resemble its training data distribution.</em></p>
+</blockquote>
+<p>My goal here is to highlight the main elements involved in a
+<a href="https://arxiv.org/pdf/2006.11239.pdf" target="_blank">Denoising Diffusion Probabilistic Model (Ho 2020)</a>, or DDPM for short, and its training dynamic. I will write a more detailed and technical post about this model in the future.</p>
+<p>Let’s start with the training dynamic; a diffusion model consists of two chain processes of the same number of steps, <span class="math inline">\(T\)</span>.</p>
+<ol style="list-style-type: decimal">
+<li>A <strong>forward process</strong>: in which the model takes an input image and gradually destroys it, adding gaussian noise until the entire image structure is reduced to just noise</li>
+<li>And a <strong>backward process</strong>: an inverse process encoded by a distribution with learnable parameters whose goal is to predict the noise added in each transition step (i.e. denoising)</li>
+</ol>
+<center>
+<figure>
+<img src="/img/ukiyo-e-postalcard-app/calvin-luo-2022-figure-5.png">
+<figcaption>
+Source: <a href="https://arxiv.org/abs/2208.11970" target="_blank">Understanding Diffusion Models: A Unified Perspective (Luo 2022)</a>
+</figcaption>
+</figure>
+</center>
+<p><br></p>
+<p>There are important elemenets to take into account:</p>
+<ul>
+<li>We use gaussian distributions for both processes, eah the lovely normal distribution <span class="math inline">\(\mathcal{N}(\mu, \sigma)\)</span></li>
+<li>Both processes are markovian; that means the distribution of a given step t depends on the immediately previous state <span class="math inline">\(t-1\)</span> or <span class="math inline">\(t+1\)</span> in the case of the backward process</li>
+<li>The gaussian distribution of the forward process (<span class="math inline">\(q(\cdot)\)</span> in the above diagram) has fixed parameters; in other words, we don’t have to learn any parameter here</li>
+<li>In contrast, the gaussian distribution for the backward process (<span class="math inline">\(p_{\theta}(\cdot)\)</span> in the diagram) has learnable parameters <span class="math inline">\(\boldsymbol \theta\)</span></li>
+<li>We used a noise schedule to destroy the images; this means that we have a deterministic function to inject the amount of noise during the <span class="math inline">\(T\)</span>-length forward process</li>
+<li>We used a neural network architecture (e.g. U-net) to predict the parameters of the backward gaussian distribution <span class="math inline">\(p_{\boldsymbol \theta}\)</span></li>
+<li>If we have a process of length <span class="math inline">\(T=1000\)</span> (like Ho 2020), <span class="math inline">\(\boldsymbol x_{0}\)</span> is the image input, <span class="math inline">\(\boldsymbol x_{1000}\)</span> is pure noise of the same input resolution, and any intermediate <span class="math inline">\(\boldsymbol x_t\)</span> with <span class="math inline">\(0\lt t \lt T\)</span> is a latent state; a blend of some degree between the input image and noise level (given by the noise scheduler)</li>
+<li>The last means that every latent space has the same resolutions as the input (a difference from other variational autoencoder models)</li>
+<li>The advantage of using a noise scheduler + gaussian distribution with known parameters <span class="math inline">\(q(\cdot)\)</span> is that we have a closed expression to compute the latent state at any given level <span class="math inline">\(t\)</span> (we don’t need to calculate the entire chain from <span class="math inline">\(0\)</span> to <span class="math inline">\(t\)</span>).</li>
+</ul>
+<p>Back to the training dynamic, a one parameter update cycle looks like the
+following:</p>
+<ol style="list-style-type: decimal">
+<li>Get a batch of images <span class="math inline">\(\mathrm{x}\)</span> from our dataset <code>(batch_size, width, height)</code></li>
+<li>Sample random gaussian noise <span class="math inline">\(\mathrm{\epsilon}\)</span> for each image <code>(batch_size, width, height)</code></li>
+<li>Pick a random vector <span class="math inline">\(\mathrm{t}\)</span>, which determine in which part of the forward process we are for each of the images <code>(batch_tize,)</code> (think we are extending parallel non-equal length chains)</li>
+<li>Compute the latent state <span class="math inline">\(\mathrm{z}\)</span>: each image in the batch use their
+corresponding <span class="math inline">\(t\)</span> level in <span class="math inline">\(\mathrm{t}\)</span> with the closed expression. The
+noise scheduler knows how to blend the image with the noise at the right level <code>(batch_size, width, height)</code></li>
+<li>Pass <span class="math inline">\(\mathrm{z}\)</span> for the model <span class="math inline">\(p_{\boldsymbol \theta}\)</span> to get the predicted noise <span class="math inline">\(\epsilon^{*}\)</span></li>
+<li>Using the mean squared error as a loss function, we compare the actual noise (<span class="math inline">\(\mathrm{\epsilon}\)</span>) with the predicted noise (<span class="math inline">\(\mathrm{\epsilon}^{*}\)</span>). Remember that we know the actual noise beforehand because our noise schedule needs it to blend it with the image and create the latent state.</li>
+<li>Backprop to compute the gradients</li>
+<li>Update the parameters in the direction that minimizes the loss</li>
+</ol>
+<pre class="python"><code>num_epochs = 1  # number of epochs
+lr = 1e-5  # learning rate
+grad_accumulation_steps = 2  # how many batches to accumulate the gradient before the update step
+optimizer = torch.optim.AdamW(image_pipe.unet.parameters(), lr=lr)
+
+for epoch in range(num_epochs):
+    for step, batch in tqdm(enumerate(train_dataloader), total=len(train_dataloader)):
+        # get a batch image 
+        clean_images = batch[&quot;images&quot;].to(device)
+        # Sample noise to add to the images
+        noise = torch.randn(clean_images.shape).to(clean_images.device)
+        bs = clean_images.shape[0]
+
+        # Sample a random timestep for each image
+        timesteps = torch.randint(
+            0,
+            image_pipe.scheduler.num_train_timesteps,
+            (bs,),
+            device=clean_images.device,
+        ).long()
+
+        # Add noise to the clean images according to the noise magnitude at each timestep
+        # (this is the forward diffusion process)
+        noisy_images = image_pipe.scheduler.add_noise(clean_images, noise, timesteps)
+
+        # Get the model prediction for the noise
+        noise_pred = image_pipe.unet(noisy_images, timesteps, return_dict=False)[0]
+
+        # Compare the prediction with the actual noise:
+        loss = F.mse_loss(
+            noise_pred, noise
+        )  
+
+        # Update the model parameters with the optimizer based on this loss
+        loss.backward(loss)
+
+        # Gradient accumulation:
+        if (step + 1) % grad_accumulation_steps == 0:
+            optimizer.step()
+            optimizer.zero_grad()</code></pre>
+<p>It looks straightforward, but there are many theoretical building blocks to end using a mean squared error loss. The code above uses the hugging face <a href="https://huggingface.co/docs/diffusers/index" target="_blank">diffuser library 🧨</a>, so some lines are more complex—for instance, <a href="https://huggingface.co/docs/diffusers/api/schedulers/overview" target="_blank"><code>image_pipe.scheduler_add_noise</code></a> knows exactly how to blend the images with the noise to get a determined latent state at <span class="math inline">\(t\)</span>. It’s initialized before with the <span class="math inline">\(T\)</span> length, noise schedule type, etc. The object <code>image_pipe.unet</code> contains the neural network architecture to process the images; remember that the latent space is of the same shape that the input (i.e. image). The last explained the decision by the authors to choose a <a href="https://arxiv.org/abs/1505.04597" target="_blank">U-net architecture</a>, well known because the output has the exact dimensions as the input.</p>
+<p>Training a generative model such as DDPM takes a long time and requires a lot of images. Instead, we can get fair results without much training and pictures using the same approach but with a pre-trained model as a starting point, such as <a href="https://huggingface.co/google/ddpm-celebahq-256" target="_blank">Google/ddpm-celebahq-256</a>. Of course, we need to make some compromises to the model resolutions we are using to finetune our data; the Google model was trained using a 256px resolution.</p>
+<p>Now we can use the model to sample 12 postcards:</p>
+<pre class="python"><code>x = torch.randn(12, 3, 256, 256).to(device)  # Batch of 12 
+for i, t in tqdm(enumerate(scheduler.timesteps)):
+    model_input = scheduler.scale_model_input(x, t)
+    with torch.no_grad():
+        noise_pred = image_pipe.unet(model_input, t)[&quot;sample&quot;]
+    x = scheduler.step(noise_pred, t, x).prev_sample</code></pre>
+<p>Notice that we need to denoise the gaussian random noise to get samples from the model throughout the backward process chain. In the next section, we will add some complexity to this inference pipeline beyond the model and the noise scheduler. You can find the model used to generate the images in <a href="https://huggingface.co/alkzar90/sd-class-ukiyo-e-256" target="_blank">alkzar90/sd-class-ukiyo-e-256</a>.</p>
+<p><img src="https://huggingface.co/alkzar90/sd-class-ukiyo-e-256/resolve/main/ukyo-e-portrait.jpeg" /></p>
+<p>There are psychodelich images, dreamy ones without some realistic object, but still with an artistic appeal. Observe the opaque pastel colours characteristic of the Ukiyo-e style.</p>
+</div>
+<div id="classifier-guidance" class="section level2">
+<h2>Classifier Guidance</h2>
+<p>What is the guidance technique? We can take this unconditional image generation process and guide it toward images that have a desired attribute or property of interest we want. It could be like conditioning the image distribution hackily because we don’t need to learn the conditional distribution like in popular text-to-image models such as <a href="https://stability.ai/blog/stable-diffusion-public-release">Stable Diffusion</a> or <a href="https://openai.com/dall-e-2/">Dall-E2</a>; we reuse the same model. Instead, we guide the sampling process (or denoising) by introducing a loss function that measures the property of interest in the sample generated, orienting the denoising process to minimize the designed objective. Specifically, in the Ukiyo-e style postcard generator App, we used:</p>
+<ul>
+<li>Colour guidance: samples images that have a (guess) desired colour</li>
+<li>Text prompt guidance: sample images according to a text description</li>
+</ul>
+<p>So, before we look that generating a new image, or sampling, means taking a pure gaussian noise and passing through this denoising process. But we do it in many little steps; you take the noise and denoising slowly, passing through an entire stochastic Markovian process of saying T=1000 steps (<a href="https://arxiv.org/pdf/2006.11239.pdf" target="_blank">Ho 2020</a>,). When we use guidance, we append a gradient graph to the sample tensor and calculate the loss for the sample in each state w.r.t our objective attribute (e.g. colour or text prompt). Then we compute the gradient and update the tensor in the direction that minimizes the loss, guiding the following sample image to be more appealing to the attribute that measures the loss. The process is called classifier guidance, and it was introduced in the paper <a href="https://arxiv.org/pdf/2105.05233.pdf" target="_blank">Diffusion Models Beat GANs on Image Synthesis (Dhariwal 2021)</a>.</p>
+<p>Now a beautiful image of a sakura tree…</p>
+<center>
+<img src="https://media.istockphoto.com/vectors/sketchy-little-tree-spring-vector-id92725461?b=1&k=20&m=92725461&s=170667a&w=0&h=xmfz8Gqa7-Gb0FtKiwPu0ZclWYm6WJUZ1pjec_BVj2I=" alt="A sakura tree">
+</center>
+<p><br></p>
+<p>We will use <em>“a sakura tree”</em> as a text prompt and the same starting gaussian noise as above, for which we got 12 ukiyo-e-postcard. But, this time, we will drive the sampling process using the gradients we get by comparing the sample image text encoding in each step <span class="math inline">\(t\)</span> with the text prompt encoding vector.</p>
+<p><img src="https://huggingface.co/alkzar90/sd-class-ukiyo-e-256/resolve/main/ukyo-e-sakura-tree.jpeg" /></p>
+<p>Compare these new postcards with the others. Notice how the text guidance makes that sakura tree’s pattern emerge during the denoising process: branches and pink leaves here and there, with hallucination touches. The model is neither perfect nor trained with surgery hands, but it’s still amazing that we have gained some control over the sampling process. Behind the curtains, to generate the above images, the following steps happen:</p>
+<ol style="list-style-type: decimal">
+<li>Download a pre-trained model to generate image captions such as OpenAI <a href="https://openai.com/blog/clip/" target="_blank">CLIP model</a></li>
+<li>Pass the noise tensor to the model to get an encoding vector</li>
+<li>Use a loss function that compares the vector for the current sample state w.r.t. encoding for the text prompt; the last vector is always the same because the prompt doesn’t change during the process</li>
+<li>Compute the sample gradient w.r.t loss value and update the sample values in the direction that minimizes the loss</li>
+<li>Repeat the process during the whole stochastic Markovian process</li>
+</ol>
+<p>Generally, any designed loss uses a scale factor to increase/decrease the attribute effect. It allows you to move between novelty and fidelity. Moreover, there’s nothing to block you from using more than one objective; the Ukiyo-e postcards generator uses colour, and text prompts together as guidance, and each loss contributes to accumulating gradients that modify the sample in each denoising step. Of course, there could be some gradient interaction effects. Imagine that you want green images, but at the same time, you are using the text prompt “a volcano lava” you will put against the red/brown implicit colours in the text prompt with the green one.</p>
+</div>
+<div id="wrap-the-inference-pipeline-into-an-app" class="section level2">
+<h2>Wrap the inference pipeline into an App</h2>
+<p>Now that we have a trained model and know how to control the sampling process of the unconditional distribution, <strong>why not wrap the entire inference pipeline into a friendly interface such as a <a href="https://gradio.app/" target="_blank">Gradio App</a>?</strong></p>
+<p>Let’s start by setting some context; Gradio is a framework that allows us to build machine-learning apps pretty fast based on the task for which our model was designed. For instance, in a generative image model, in which the inference process requires fixing different parameter types such as factor scale (slider), text prompt (text input), or colour (colour selector), plus we always expect an image as output. Gradio helps us accommodate these requirements, hiding many tedious details that save you valuable time.</p>
+<p>In addition, Hugging Face gives you free space to host your App running on a CPU (you can power up the running using a GPU, but you need to pay). It’s an excellent combo to provide you with a friendly web interface with minimal resources. There is a trend in the generative model community for using this interface to show and prototype their models’ properties and features, such as <a href="https://huggingface.co/spaces/stabilityai/stable-diffusion" target="_blank">Stable Diffusion 2.1 Demo</a> or <a href="https://huggingface.co/spaces/huggingface-projects/diffuse-the-rest" target="_blank">Diffuse the rest</a>. Therefore, taking time to learn Gradio is an excellent decision to share your project with a friendly facade.</p>
+<p><a href="https://huggingface.co/spaces/alkzar90/ukiyo-e-postal/blob/main/app.py" target="_blank">Here is the python script</a> with the pipeline and the
+App code, also a screenshoot of how does it look the <a href="https://huggingface.co/spaces/alkzar90/ukiyo-e-postal" target="_blank">Ukiyo-e style postcard generator App</a>:</p>
+<center>
+<img src="/img/ukiyo-e-postalcard-app/ukiyo-e-app.png">
+</center>
+<p><br></p>
+<p>As you can see, it is easier to pick the colour you want and enter a text prompt to guide the sampling; control the scale factors for experimenting with different guidance intensity levels. Using a seed is convenient for reproducing the gaussian noise, which the denoising process use as a starting point for generating the images, so you can edit iteratively the image generated by playing with the scale factors.</p>
+<p>PD: Unfortunately, this kind of model involves a lot of computation, and the gradio App is running using huggingface space with CPU, so that means the whole inference pipeline takes a lot of time. But, the good news is if you don’t have patience, you can run the Gradio App using the google colab notebook pointing out at the start of this post with the GPU setting.</p>
+</div>
