@@ -11,6 +11,9 @@
   {{ with .Site.Params.social.googlescholar}}
   <a href="https://scholar.google.com/citations?user={{.}}" aria-label="Google Scholar" target="_blank"><i class="fas fa-graduation-cap" aria-hidden="true"></i></a>
   {{ end }}
+  {{ with .Site.Params.social.huggingface }}
+  <a href="https://huggingface.co/{{.}}" aria-label="HuggingFace" target="_blank"><i class="fab fa-solid fa-face-smiling-hands" aria-hidden="true"></i></a>
+  {{ end }}
   {{ with .Site.Params.social.goodreads }}
   <a href="https://www.goodreads.com/{{.}}" aria-label="Goodreads" target="_blank"><i class="fab fa-goodreads" aria-hidden="true"></i></a>
   {{ end }}
@@ -124,6 +127,7 @@
    "name": "{{ .Site.Params.author }}",
    "url": "{{ .Site.Params.baseURL }}",
    "sameAs": [
+     {{ with .Site.Params.social.huggingface }}"https://huggingface.co/{{.}}",{{ end }}
      {{ with .Site.Params.social.twitter }}"https://twitter.com/{{.}}",{{ end }}
      {{ with .Site.Params.social.google }}"https://plus.google.com/{{.}}/about",{{ end }}
      {{ with .Site.Params.social.goodreads }}"https://www.goodreads.com/user/show/{{.}}",{{ end }}
