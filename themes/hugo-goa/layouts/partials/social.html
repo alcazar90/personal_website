@@ -1,6 +1,6 @@
 <section id="social-pane" class="text-center social">
   {{ with .Site.Params.social.cv }}
-  <a href="{{.}}" aria-label="CV" target="_blank"><i class="fas fa-file-pdf" aria-hidden="true"></i></a>
+  <a href="{{.}}" aria-label="CV" target="_blank"><i class="fas fa-thin fa-file-pdf" aria-hidden="true"></i></a>
   {{ end }}
   {{ with .Site.Params.social.twitter }}
   <a href="https://twitter.com/{{.}}" aria-label="Twitter" target="_blank"><i class="fab fa-twitter" aria-hidden="true"></i></a>
@@ -12,7 +12,7 @@
   <a href="https://scholar.google.com/citations?user={{.}}" aria-label="Google Scholar" target="_blank"><i class="fas fa-graduation-cap" aria-hidden="true"></i></a>
   {{ end }}
   {{ with .Site.Params.social.huggingface }}
-  <a href="https://huggingface.co/{{.}}" aria-label="HuggingFace" target="_blank"><i class="fab fa-solid fa-face-smiling-hands" aria-hidden="true"></i></a>
+  <a href="https://huggingface.co/{{.}}" aria-label="Hugging Face" target="_blank"><i class="fab fa-thin fa-face-smiling-hands" aria-hidden="true"></i></a>
   {{ end }}
   {{ with .Site.Params.social.goodreads }}
   <a href="https://www.goodreads.com/{{.}}" aria-label="Goodreads" target="_blank"><i class="fab fa-goodreads" aria-hidden="true"></i></a>
@@ -111,7 +111,7 @@
   <a href="https://wa.me/{{.}}" aria-label="Whatsapp" target="_blank"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
   {{ end }}
   {{ with .Site.Params.social.email }}
-  <a href="mailto:{{.}}" aria-label="Email"><i class="fas fa-envelope" aria-hidden="true"></i></a>
+  <a href="mailto:{{.}}" aria-label="Email"><i class="fas fa-thin fa-envelope" aria-hidden="true"></i></a>
   {{ end }}
   {{ with .Site.Params.social.pgp }}
   <a href="/{{.}}.txt" aria-label="PGP" name="{{.}}"><i class="fas fa-key" aria-hidden="true"></i></a>

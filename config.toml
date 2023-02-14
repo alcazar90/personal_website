@@ -42,6 +42,7 @@ keywords = "Cristóbal Alcázar, alkzar90, alkzar-blog, data-science, machine le
 ## Social Accounts
 [params.social]
 cv = "https://alkzar.cl/cv.pdf"
+huggingface = "alkzar90"
 github = "alcazar90"
 #instagram = "go.alcazar"
 goodreads = "alkzar90"
