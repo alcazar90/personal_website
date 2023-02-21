@@ -29,7 +29,7 @@ The project, in a nutshell, consists of the following:
 
 ## What is Ukiyo-e style?
 
-Pictures-of-the-floating-world..., that's what means the Japanese word Ukiyo-e. It's a term to refer to an entire art gender, so don't be confused that it is an artist's name or a pseudonym. Its roots are popular, even vulgar, and accessible, so it was easy to find Ukiyo-e prints in Japanese houses. It was a genre that took influence from the west and china, but at some point, it influenced Europe and the western world. If you want to know more about this Japanese art genre, I highly recommend this interactive piece from the New York Times titled [_"A Picture of Change for a World in Constant Motion"_ (Farago 2020)](https://www.nytimes.com/interactive/2020/08/07/arts/design/hokusai-fuji.html). It's a journey from this popular genre's history and distinctive elements.
+Pictures-of-the-floating-world..., that's what means the Japanese word Ukiyo-e. It's a term to refer to an entire art gender, so don't be confused that it is an artist's name or a pseudonym. Its roots are popular, even vulgar, and accessible, so it was easy to find Ukiyo-e prints in Japanese houses. It was a genre that took influence from the west and china, but at some point, it influenced Europe and the western world. If you want to know more about this Japanese art genre, I highly recommend this interactive piece from the New York Times titled <i><a href="https://www.nytimes.com/interactive/2020/08/07/arts/design/hokusai-fuji.html" target="_blank">A Picture of Change for a World in Constant Motion" (Farago 2020)</a></i>. It's a journey from this popular genre's history and distinctive elements.
 
 The dataset <a href="https://huggingface.co/datasets/huggan/ukiyoe2photo" target="_blank">ukiyoe2photo</a> contains pictures of the floating world, which I used in this project to learn a model to generate new images with ukiyo-e stylish. The below figure shows some of the ukiyo-e images in the dataset.
 
@@ -42,11 +42,9 @@ The dataset <a href="https://huggingface.co/datasets/huggan/ukiyoe2photo" target
 
 ## Unconditional image generation 
 
-[What is unconditional image generation?](https://huggingface.co/tasks/unconditional-image-generation)
+<a href="https://huggingface.co/tasks/unconditional-image-generation" target="_blank">What is unconditional image generation?</a> 
 
 > _Unconditional image generation is the task of generating images with no condition in any context (like a prompt text or another image). Once trained, the model will create images that resemble its training data distribution._
-
-
 
 My goal here is to highlight the main elements involved in a
 <a href="https://arxiv.org/pdf/2006.11239.pdf" target="_blank">Denoising Diffusion Probabilistic Model (Ho 2020)</a>, or DDPM for short, and its training dynamic. I will write a more detailed and technical post about this model in the future.
@@ -65,9 +63,9 @@ Let's start with the training dynamic; a diffusion model consists of two chain p
 
 <br>
 
-There are important elemenets to take into account:
+There are important elements to take into account:
 
-* We use gaussian distributions for both processes, eah the lovely normal distribution $\mathcal{N}(\mu, \sigma)$
+* We use gaussian distributions for both processes, yeah the lovely normal distribution $\mathcal{N}(\mu, \sigma)$
 * Both processes are markovian; that means the distribution of a given step t depends on the immediately previous state $t-1$ or $t+1$ in the case of the backward process
 * The gaussian distribution of the forward process ($q(\cdot)$ in the above diagram) has fixed parameters; in other words, we don't have to learn any parameter here
 * In contrast, the gaussian distribution for the backward process ($p_{\theta}(\cdot)$ in the diagram) has learnable parameters $\boldsymbol \theta$
@@ -157,7 +155,7 @@ There are psychodelich images, dreamy ones without some realistic object, but st
 
 ## Classifier Guidance
 
-What is the guidance technique? We can take this unconditional image generation process and guide it toward images that have a desired attribute or property of interest we want. It could be like conditioning the image distribution hackily because we don't need to learn the conditional distribution like in popular text-to-image models such as [Stable Diffusion](https://stability.ai/blog/stable-diffusion-public-release) or [Dall-E2](https://openai.com/dall-e-2/); we reuse the same model. Instead, we guide the sampling process (or denoising) by introducing a loss function that measures the property of interest in the sample generated, orienting the denoising process to minimize the designed objective. Specifically, in the Ukiyo-e style postcard generator App, we used:
+What is the guidance technique? We can take this unconditional image generation process and guide it toward images that have a desired attribute or property of interest we want. It could be like conditioning the image distribution hackily because we don't need to learn the conditional distribution like in popular text-to-image models such as <a href="https://stability.ai/blog/stable-diffusion-public-release" target="_blank">Stable Diffusion</a> or <a href="https://openai.com/dall-e-2/" target="_blank">Dall-E2</a>; we reuse the same model. Instead, we guide the sampling process (or denoising) by introducing a loss function that measures the property of interest in the sample generated, orienting the denoising process to minimize the designed objective. Specifically, in the Ukiyo-e style postcard generator App, we used:
 
 * Colour guidance: samples images that have a (guess) desired colour
 * Text prompt guidance: sample images according to a text description

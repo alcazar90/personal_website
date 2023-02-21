@@ -31,7 +31,7 @@ showpagemeta: yes
 </ol>
 <div id="what-is-ukiyo-e-style" class="section level2">
 <h2>What is Ukiyo-e style?</h2>
-<p>Pictures-of-the-floating-world…, that’s what means the Japanese word Ukiyo-e. It’s a term to refer to an entire art gender, so don’t be confused that it is an artist’s name or a pseudonym. Its roots are popular, even vulgar, and accessible, so it was easy to find Ukiyo-e prints in Japanese houses. It was a genre that took influence from the west and china, but at some point, it influenced Europe and the western world. If you want to know more about this Japanese art genre, I highly recommend this interactive piece from the New York Times titled <a href="https://www.nytimes.com/interactive/2020/08/07/arts/design/hokusai-fuji.html"><em>“A Picture of Change for a World in Constant Motion”</em> (Farago 2020)</a>. It’s a journey from this popular genre’s history and distinctive elements.</p>
+<p>Pictures-of-the-floating-world…, that’s what means the Japanese word Ukiyo-e. It’s a term to refer to an entire art gender, so don’t be confused that it is an artist’s name or a pseudonym. Its roots are popular, even vulgar, and accessible, so it was easy to find Ukiyo-e prints in Japanese houses. It was a genre that took influence from the west and china, but at some point, it influenced Europe and the western world. If you want to know more about this Japanese art genre, I highly recommend this interactive piece from the New York Times titled <i><a href="https://www.nytimes.com/interactive/2020/08/07/arts/design/hokusai-fuji.html" target="_blank">A Picture of Change for a World in Constant Motion" (Farago 2020)</a></i>. It’s a journey from this popular genre’s history and distinctive elements.</p>
 <p>The dataset <a href="https://huggingface.co/datasets/huggan/ukiyoe2photo" target="_blank">ukiyoe2photo</a> contains pictures of the floating world, which I used in this project to learn a model to generate new images with ukiyo-e stylish. The below figure shows some of the ukiyo-e images in the dataset.</p>
 <center>
 <img src="/img/ukiyo-e-postalcard-app/ukiyoe-dataset-portrait-lightweight.png">
@@ -40,7 +40,7 @@ showpagemeta: yes
 </div>
 <div id="unconditional-image-generation" class="section level2">
 <h2>Unconditional image generation</h2>
-<p><a href="https://huggingface.co/tasks/unconditional-image-generation">What is unconditional image generation?</a></p>
+<p><a href="https://huggingface.co/tasks/unconditional-image-generation" target="_blank">What is unconditional image generation?</a></p>
 <blockquote>
 <p><em>Unconditional image generation is the task of generating images with no condition in any context (like a prompt text or another image). Once trained, the model will create images that resemble its training data distribution.</em></p>
 </blockquote>
@@ -60,9 +60,9 @@ Source: <a href="https://arxiv.org/abs/2208.11970" target="_blank">Understanding
 </figure>
 </center>
 <p><br></p>
-<p>There are important elemenets to take into account:</p>
+<p>There are important elements to take into account:</p>
 <ul>
-<li>We use gaussian distributions for both processes, eah the lovely normal distribution <span class="math inline">\(\mathcal{N}(\mu, \sigma)\)</span></li>
+<li>We use gaussian distributions for both processes, yeah the lovely normal distribution <span class="math inline">\(\mathcal{N}(\mu, \sigma)\)</span></li>
 <li>Both processes are markovian; that means the distribution of a given step t depends on the immediately previous state <span class="math inline">\(t-1\)</span> or <span class="math inline">\(t+1\)</span> in the case of the backward process</li>
 <li>The gaussian distribution of the forward process (<span class="math inline">\(q(\cdot)\)</span> in the above diagram) has fixed parameters; in other words, we don’t have to learn any parameter here</li>
 <li>In contrast, the gaussian distribution for the backward process (<span class="math inline">\(p_{\theta}(\cdot)\)</span> in the diagram) has learnable parameters <span class="math inline">\(\boldsymbol \theta\)</span></li>
@@ -141,7 +141,7 @@ for i, t in tqdm(enumerate(scheduler.timesteps)):
 </div>
 <div id="classifier-guidance" class="section level2">
 <h2>Classifier Guidance</h2>
-<p>What is the guidance technique? We can take this unconditional image generation process and guide it toward images that have a desired attribute or property of interest we want. It could be like conditioning the image distribution hackily because we don’t need to learn the conditional distribution like in popular text-to-image models such as <a href="https://stability.ai/blog/stable-diffusion-public-release">Stable Diffusion</a> or <a href="https://openai.com/dall-e-2/">Dall-E2</a>; we reuse the same model. Instead, we guide the sampling process (or denoising) by introducing a loss function that measures the property of interest in the sample generated, orienting the denoising process to minimize the designed objective. Specifically, in the Ukiyo-e style postcard generator App, we used:</p>
+<p>What is the guidance technique? We can take this unconditional image generation process and guide it toward images that have a desired attribute or property of interest we want. It could be like conditioning the image distribution hackily because we don’t need to learn the conditional distribution like in popular text-to-image models such as <a href="https://stability.ai/blog/stable-diffusion-public-release" target="_blank">Stable Diffusion</a> or <a href="https://openai.com/dall-e-2/" target="_blank">Dall-E2</a>; we reuse the same model. Instead, we guide the sampling process (or denoising) by introducing a loss function that measures the property of interest in the sample generated, orienting the denoising process to minimize the designed objective. Specifically, in the Ukiyo-e style postcard generator App, we used:</p>
 <ul>
 <li>Colour guidance: samples images that have a (guess) desired colour</li>
 <li>Text prompt guidance: sample images according to a text description</li>
