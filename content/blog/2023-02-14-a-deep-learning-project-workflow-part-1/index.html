@@ -13,7 +13,7 @@ showpagemeta: yes
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
 
 
-Last update: 22/02/2023
+<p>Last update: 22/02/2023</p>
 <figure>
 <img src="/img/deep-learning-workflow/post-banner.png"
 alt="wandb.ai/alcazar90/cell-segmentation W&B project runs.summary picture">
@@ -21,6 +21,8 @@ alt="wandb.ai/alcazar90/cell-segmentation W&B project runs.summary picture">
 <p><a href="https://colab.research.google.com/drive/1tCN__7HxJ61WFUm14kr6ziloNaOH9Def?usp=sharing" target="_blank">
 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a></p>
+<p><i>You can read a W&amp;B report version of this post with interactive plots
+<a href="https://wandb.ai/alcazar90/cell-segmentation/reports/A-Deep-Learning-Project-Workflow-Part-1--VmlldzozNjE4NzYy" target="_blank">here</a>.</i></p>
 <p>I use many Google Colab notebooks, which are great for experimentation and sharing your deep learning projects with others. Not being required to set up the python environment makes it much easier to open the notebook and start to figure out what is there or jump directly into working on your problem. Also, if you’re working on a Deep Learning problem, you will undoubtedly require GPU computation; Colab provides you with a free usage quota. Exporting into a standard Jupyter notebook is trivial if you want to start a GitHub repository and move the notebook there. In a nutshell, it’s an excellent tool to prototype for small to mid-size projects and create tutorials or other learning artefacts to share with others.</p>
 <p>Nevertheless, two points start to provoke friction in the google collab advantages:</p>
 <ol style="list-style-type: decimal">
@@ -203,10 +205,9 @@ def parse_args(input_args=None):
 <li>Create a bash script for running a <code>.txt</code> file with different training
 configurations.</li>
 <li>Create files to separate code from <code>training.py</code>, such as <code>model.py</code> for code related to downloading and loading models and <code>inference.py</code> for computing evaluation metrics.</li>
-<li>Create files to separa code from <code>training.py</code>, such as <code>model.py</code> for
-code related to download and load the model checkpoints, and <code>inference.py</code> for compute evaluation metrics</li>
-<li>Use a cloud provider such as <a href="https://lambdalabs.com/service/gpu-cloud">Lambda Cloud</a> to connect via ssh and run the training script. Check if the results save in W&amp;B.</li>
+<li>Use a cloud provider such as <a href="https://lambdalabs.com/service/gpu-cloud" target="_blank">Lambda Cloud</a> to connect via ssh and run the training script. Check if the results save in W&amp;B.</li>
 <li>Explore how to use Hugging Face GitHub actions/webhooks to save model checkpoints in HF every time the training script outperforms the current best model. Check <a href="https://github.com/nateraw/huggingface-sync-action" target="_blank">hugging face sync action</a>, and <a href="https://huggingface.co/docs/hub/webhooks" target="_blank">HuggingFace Webhooks</a></li>
-<li>Study cases for popular deep learning code repositories such as <a href="https://github.com/openai/whisper">OpenAI whisper model</a>.</li>
+<li>Study cases for popular deep learning code repositories such as the
+<a href="https://github.com/openai/whisper" target="_blank">OpenAI whisper model</a> and <a href="https://github.com/karpathy/nanoGPT" target="_blank">nanoGPT</a>.</li>
 </ol>
 </div>
