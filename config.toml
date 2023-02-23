@@ -35,7 +35,7 @@ dateformat = "Jan 2, 2006"
 
 ## Site Meta Settings
 [params.meta]
-description = "Personal website"
+description = "Non-standard engineer. I write about neural nets to learn, improve as a writer, and improve as a thinker. "
 images="foto_perfil.jpg"
 keywords = "Cristóbal Alcázar, alkzar90, alkzar-blog, data-science, machine learning, python, ggplot2, DataViz, R, TidyTuesday, tidyverse"
 
