@@ -1,10 +1,10 @@
 ---
-title: A Deep Learning Project Workflow Part 1 -> HF datasets + W&B
+title: A Deep Learning Project Workflow Part 1, Hugging Face datasets + Weights & Biases
 author: Cristóbal Alcázar
 date: '2023-02-22'
 slug: []
-categories: [workflow, deep-learning, W&B, HF]
-tags: []
+categories: [workflow, deep-learning, huggingface, weights&biases, image-segmentation]
+tags: [deep-learning, image-segmentation, workflow, open-source]
 comments: no
 showcomments: yes
 showpagemeta: yes
