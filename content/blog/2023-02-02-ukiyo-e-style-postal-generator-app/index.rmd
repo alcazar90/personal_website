@@ -4,7 +4,7 @@ author: Cristóbal Alcázar
 date: '2023-02-02'
 slug: []
 categories: [generative-ai, diffusion-model, unconditional-image-generation, gradio, huggingface]
-tags: []
+tags: [deep-learning, generative-models, gradio, diffusion-model]
 comments: no
 showcomments: yes
 showpagemeta: yes
