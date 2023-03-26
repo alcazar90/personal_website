@@ -22,7 +22,7 @@ alt="wandb.ai/alcazar90/cell-segmentation W&B project runs.summary picture">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
-<i>This post was highlighted by the Weights & Biases community and published in their Fully Connected blog. You can read an interactive version <a href="https://wandb.ai/alcazar90/cell-segmentation/reports/A-Deep-Learning-Project-Workflow-Part-1--VmlldzozNjE4NzYy" target="_blank">here.</a></i>
+<i>This post was highlighted by the Weights & Biases community and published in their <a href="https://wandb.ai/fully-connected" target="_blank">Fully Connected blog</a>. You can read the interactive version <a href="https://wandb.ai/alcazar90/cell-segmentation/reports/A-Deep-Learning-Project-Workflow-Part-1--VmlldzozNjE4NzYy" target="_blank">here.</a></i>
 
 > _tl;dr Colabs are powerful, but they make experimentation difficult. In this article, we explore how to change your workflow with HuggingFace and Weights & Biases._
 
