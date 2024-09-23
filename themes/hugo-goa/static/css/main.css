@@ -300,16 +300,15 @@ img[src$='#floatright']
     margin: 0.7rem;      /* this margin is totally up to you */
     /* whatever else styles you fancy here */
 }
-/*
-  To align tweets
-*/
+/* To align tweets */
 .twitter-tweet {
 margin:auto;
 }
-/*
-pre > code {
-    white-space: pre;
-    word-wrap: initial;
-    word-break: initial;
+/* Specific overrides for .headshot class to ensure it takes precedence over Bootstrap */
+.headshot {
+    border-radius: 50%; /* Ensures the image is round */
+    border: 2px solid #8C1515; /* Custom border color and width */
+    margin: 0 auto; /* Centers the image */
+    display: block; /* Ensures the image is treated as a block-level element for centering */
+    object-fit: cover; /* Ensures the image is not distorted */
 }
-/*
