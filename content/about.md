@@ -15,7 +15,6 @@ showpagemeta = false
 </p>
 
 <br>
-<br>
 
 My interests lie in diffusion models and how to adapt them. Specifically, I'm
 interested in using reinforcement learning to build agents on top of pretrained
