@@ -23,14 +23,12 @@ I believe that mastering these areas could lead to powerful abstractions in
 human-computer interaction, enhancing applications and products such as cinematics,
 games, and scientific tools. 
 
-For my master's thesis, I concentrated on mastering (aha!)
-the fundamentals of diffusion models, policy gradient methods, and the intersection
-of both, under the supervision of <a href="https://www.dim.uchile.cl/~ftobar/" target="_blank">Felipe Tobar</a> (GAMES group: Group of MAchine learning, infErence and Signals). I am currently furthering my research in these fields.
+For my master's thesis, I focused on understanding the fundamentals of diffusion models, policy gradient methods, and their intersection, under the supervision of <a href="https://www.dim.uchile.cl/~ftobar/" target="_blank">Felipe Tobar</a> (GAMES group: Group of MAchine learning, infErence and Signals). I am currently continuing my research in these areas.
 
 During my master's program, I completed an internship at the <a href="https://www.eso.org/public/teles-instr/paranal-observatory/" target="_blank">Paranal
 Observatory (ESO)</a>, where I spent nearly 100 days collaborating with the software team to
 research and prototype language model applications for observatory operations. It
-was an incredible experience, working in the middle of the driest desert in the world, and close to the stars :) 
+was an incredible experience, working in the middle of the driest desert in the world, and close to the stars.
 
 Before my master's, I was part of a project born from a public policy
 initiative aimed at increasing financial inclusion in payment systems in Chile during 2 years. Initially a joint venture between public and private funds focused on offering m-POS
