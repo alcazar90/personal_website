@@ -49,7 +49,7 @@ Timeline
 
 * 2016 - 2019: Central Bank of Chile
 * 2019 - 2021: Compraquí (BancoEstado) 
-* 2022: Start <a href="https://mds.uchile.cl/">MSc in Data Science at Universidad de Chile</a>
+* 2022: Start <a href="https://mds.uchile.cl/" taget="_blank">MSc in Data Science at Universidad de Chile</a>
 * 2023: ESO
 * 2023: Started <a href="https://vendie.app/" target="_blank">Vendie</a>
 * 2024: MSc in Data Science completed
