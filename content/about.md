@@ -11,9 +11,9 @@ showpagemeta = false
 +++
 
 
-Hi, I'm Cristóbal!
+<img src="https://alkzar.cl/img/alcazar-cristobal-about.JPG" alt="Alcázar Cristóbal">
 
-<img src="https://alkzar.cl/img/alcazar-cristobal-about.jpeg" alt="Alcázar Cristóbal picture">
+Hi, I'm Cristóbal!
 
 My interests lie in diffusion models and how to adapt them. Specifically, I'm
 interested in using reinforcement learning to build agents on top of pretrained
