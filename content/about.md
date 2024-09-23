@@ -30,13 +30,9 @@ Observatory (ESO)</a>, where I spent nearly 100 days collaborating with the soft
 research and prototype language model applications for observatory operations. It
 was an incredible experience, working in the middle of the driest desert in the world, and close to the stars.
 
-Before my master's, I was part of a project born from a public policy
-initiative aimed at increasing financial inclusion in payment systems in Chile during 2 years. Initially a joint venture between public and private funds focused on offering m-POS
-payment systems to small and medium enterprises, I was part of the team that scaled
-operations to 90k merchants and USD $11M in revenue. My role spanned operations
-(transactions, data, payments), fraud risk (monitoring the payment network), and analytics until the innitiative consolidate as the <a href="https://www.compraqui.cl/landing" target="_blank">payment solutions of Banco Estado</a>.
+Before my master’s, I spent two years working on a public policy initiative aimed at expanding financial inclusion in Chile's payment systems. The project, initially a joint venture between public and private funds, focused on offering m-POS payment solutions to small and medium-sized enterprises. I was part of the team that scaled the operation to 90k merchants and USD $11M in revenue. My role spanned multiple areas, from managing operations (transactions, data, payments) to overseeing fraud risk (detecting fraudulent transactions and misuse of the service), as well as analytics. The initiative eventually became the <a href="https://www.compraqui.cl/landing" target="_blank">payment solutions subsidiary of Banco Estado</a>.
 
-I began my career in the macroeconomic statistics department at the <a href="https://www.bcentral.cl/en/web/banco-central/home" target="_blank">Central Bank of Chile</a>, where I spent 3 years focused on developing and tracking macroeconomic indicators for the local debt market using microdata, as well as other data projects.
+I began my career in the macroeconomic statistics department at the <a href="https://www.bcentral.cl/en/web/banco-central/home" target="_blank">Central Bank of Chile</a>, where I spent three years focused on developing and tracking macroeconomic indicators for the local debt market using microdata, as well as other data projects.
 
 A bit more about me: I contributed a chapter on digital literacy and computational thinking
 to the book <i><a href="https://blogs.harvard.edu/conectadosalsur/2019/12/14/ya-disponible-libro-inteligencia-artificial-y-bienestar-de-las-juventudes-en-america-latina/" target="_blank">Inteligencia Artificial y Bienestar de las Juventudes en América Latina (127-135)</a></i>. In my free time, I enjoy <a href="https://www.goodreads.com/alkzar90" target="_blank">reading sci-fi, non-fiction and novels</a>. I don’t know why, but I’ve never been able to rate a book I've read with less than 4 stars (of 5).
