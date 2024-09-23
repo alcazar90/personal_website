@@ -1,11 +1,11 @@
 +++
 categories = ["about"]
 comments = false
-date = "2016-10-02T22:55:05-04:00"
+date = "2024-09-23T01:59:05-04:00"
 draft = false
 slug = ""
 tags = ["about"]
-title = "About"
+title = "Hi, I'm Cristóbal!"
 showcomments = false
 showpagemeta = false
 +++
@@ -14,8 +14,7 @@ showpagemeta = false
 <img src="https://alkzar.cl/img/alcazar-cristobal-about.JPG" alt="Alcázar Cristóbal">
 
 <br>
-
-Hi, I'm Cristóbal!
+<br>
 
 My interests lie in diffusion models and how to adapt them. Specifically, I'm
 interested in using reinforcement learning to build agents on top of pretrained
@@ -48,13 +47,15 @@ to the book <i><a href="https://blogs.harvard.edu/conectadosalsur/2019/12/14/ya-
 
 If you're interested in collaborations or want to discuss any of the topics above, feel free to send me an email. My CV is available <a href="https://alkzar.cl/cv.pdf" target="_blank">here</a>.
 
-<br>
+Timeline
 
-<!-- 
-I like <a href="https://github.com/alcazar90/TidyTuesday" target="_blank">Data Visualization</a>. I co-created, collaborate, and then taught the course called <a href="https://icei.uchile.cl/noticias/147128/finaliza-con-exito-el-primer-curso-interdisciplinario-con-estudiant" target="_blank">Data Journalism</a> at the University of Chile, which brought
-engineering and journalism students together to use data science tools to create
-data narratives on social issues using data visualizations.
--->
+* 2016 - 2019: Central Bank of Chile
+* 2019 - 2021: Compraquí (BancoEstado) 
+* 2022: Start <a href="https://mds.uchile.cl/">MSc in Data Science at Universidad de Chile</a>
+* 2023: ESO
+* 2023: Started <a href="https://vendie.app/">Vendie</a>
+
+<br>
 
 
 ### Presentations
