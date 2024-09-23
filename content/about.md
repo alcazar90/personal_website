@@ -13,14 +13,19 @@ showpagemeta = false
 
 Hi, I'm Cristóbal!
 
+<img src="https://alkzar.cl/img/alcazar-cristobal-about.jpeg" alt="Alcázar Cristóbal picture">
+
 My interests lie in diffusion models and how to adapt them. Specifically, I'm
 interested in using reinforcement learning to build agents on top of pretrained
 models and gain control over them to (i) expand their generative capabilities,
 (ii) add specialization through reward functions (RLHF), and (iii) implement
 exploration mechanisms for control and potential mitigation of mode collapse.
 I believe that mastering these areas can lead to powerful abstractions for 
-human-computer interaction, improving applications and products (e.g., cinematics, games, scientific tools).
-For my master's thesis, I concentrated on mastering (aha) the fundamentals of diffusion models, policy gradient methods, and the intersection of both, under the supervision of [Felipe Tobar](https://www.dim.uchile.cl/~ftobar/) (GAMES group: Group of MAchine learning, infErence and Signals). I am currently furthering my research in these fields.
+human-computer interaction, improving applications and products (e.g., cinematics,
+games, scientific tools).For my master's thesis, I concentrated on mastering (aha!)
+the fundamentals of diffusion models, policy gradient methods, and the intersection
+of both, under the supervision of <a href="https://www.dim.uchile.cl/~ftobar/" target="_blank">Felipe Tobar</a> (GAMES group: Group of MAchine learning, infErence and Signals). I am
+currently furthering my research in these fields.
 
 During my master's program, I completed an internship that took me to the Paranal
 Observatory (ESO), where I spent nearly 100 days working with the software team to
