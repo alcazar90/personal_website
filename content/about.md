@@ -1,7 +1,7 @@
 +++
 categories = ["about"]
 comments = false
-date = "2024-09-23T01:59:05-04:00"
+date = "2016-10-02T22:55:05-04:00"
 draft = false
 slug = ""
 tags = ["about"]
@@ -54,6 +54,7 @@ Timeline
 * 2022: Start <a href="https://mds.uchile.cl/">MSc in Data Science at Universidad de Chile</a>
 * 2023: ESO
 * 2023: Started <a href="https://vendie.app/">Vendie</a>
+* 2024: MSc in Data Science completed
 
 <br>
 
