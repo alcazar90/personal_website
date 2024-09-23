@@ -307,7 +307,7 @@ margin:auto;
 /* Specific overrides for .headshot class to ensure it takes precedence over Bootstrap */
 .headshot {
     border-radius: 50%; /* Ensures the image is round */
-    border: 2px solid #8C1515; /* Custom border color and width */
+    border: none; /* Ensures the image has no border */
     margin: 0 auto; /* Centers the image */
     display: block; /* Ensures the image is treated as a block-level element for centering */
     object-fit: cover; /* Ensures the image is not distorted */
