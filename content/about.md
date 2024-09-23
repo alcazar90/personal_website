@@ -14,8 +14,6 @@ showpagemeta = false
   <img src="https://alkzar.cl/img/alcazar-cristobal-about.JPG" alt="Alcázar Cristóbal, about photo">
 </p>
 
-<br>
-
 My interests lie in diffusion models and how to adapt them. Specifically, I'm
 interested in using reinforcement learning to build agents on top of pretrained
 models and gain control over them to (i) expand their generative capabilities,
