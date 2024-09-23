@@ -10,8 +10,9 @@ showcomments = false
 showpagemeta = false
 +++
 
-
-<img src="https://alkzar.cl/img/alcazar-cristobal-about.JPG" alt="Alcázar Cristóbal">
+<p align="center">
+  <img src="https://alkzar.cl/img/alcazar-cristobal-about.JPG" alt="Alcázar Cristóbal, about photo">
+</p>
 
 <br>
 <br>
@@ -53,7 +54,7 @@ Timeline
 * 2019 - 2021: Compraquí (BancoEstado) 
 * 2022: Start <a href="https://mds.uchile.cl/">MSc in Data Science at Universidad de Chile</a>
 * 2023: ESO
-* 2023: Started <a href="https://vendie.app/">Vendie</a>
+* 2023: Started <a href="https://vendie.app/" target="_blank">Vendie</a>
 * 2024: MSc in Data Science completed
 
 <br>
