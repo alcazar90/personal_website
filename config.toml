@@ -28,7 +28,7 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_cache$", "\\.knit\\.md$", "\\.utf8\
 author = "Cristóbal Alcázar"
 intro = "Welcome to my website 👋🏽!"
 #description = "Now @Pied Piper. Previously @Hacker Hostel, @Bachmanity and @Aviato. <br/> \"What is F times 5? It's Fleventy-five.\""
-description = 'I am MSc in Data Science interested in diffusion models and deep reinforcement learning.<br> I also cofound and experiment with LLM agents at <a href="https://vendie.app/" target="_blank">@Vendie</a></b>'
+description = 'I am interested in diffusion models and deep reinforcement learning.<br> I also cofound and experiment with LLM agents at <a href="https://vendie.app/" target="_blank">@Vendie</a></b>'
 
 
 authorimage = "foto__perfil.png"
