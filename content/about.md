@@ -45,7 +45,7 @@ Timeline
 * 2016 - 2019: Central Bank of Chile
 * 2019 - 2021: Compraquí (BancoEstado) 
 * 2022: Start MSc in Data Science 
-* 2023: Graduate internship at European Southern Observatory 
+* 2023: European Southern Observatory 
 * 2023: Started <a href="https://vendie.app/" target="_blank">Vendie</a>
 * 2024: MSc in Data Science completed
 
