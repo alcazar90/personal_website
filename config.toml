@@ -26,7 +26,7 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_cache$", "\\.knit\\.md$", "\\.utf8\
 ## Site Settings
 [params]
 author = "Cristóbal Alcázar"
-intro = "hello there 👋🏽"
+intro = "MSc in Data Science at Universidad de Chile"
 #description = "Now @Pied Piper. Previously @Hacker Hostel, @Bachmanity and @Aviato. <br/> \"What is F times 5? It's Fleventy-five.\""
 description = "...this website is a messy collection of notes, <br> internet resources, and stuffs about me...</b>"
 

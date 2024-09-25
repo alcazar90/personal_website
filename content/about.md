@@ -5,7 +5,7 @@ date = "2016-10-02T22:55:05-04:00"
 draft = false
 slug = ""
 tags = ["about"]
-title = "Hi, I'm Cristóbal!"
+title = "About"
 showcomments = false
 showpagemeta = false
 +++
@@ -13,6 +13,8 @@ showpagemeta = false
 <p align="center">
   <img src="https://alkzar.cl/img/alcazar-cristobal-about.JPG" alt="Alcázar Cristóbal, about photo">
 </p>
+
+Hi, I'm Cristóbal! MSc in Data Science.
 
 My interests lie in diffusion models and how to adapt them. Specifically, I'm
 interested in using reinforcement learning to build agents on top of pretrained
@@ -27,7 +29,7 @@ For my master's thesis, I focused on understanding the fundamentals of diffusion
 
 During my master's program, I completed an internship at the <a href="https://www.eso.org/public/teles-instr/paranal-observatory/" target="_blank">Paranal
 Observatory (ESO)</a>, where I spent nearly 100 days collaborating with the software team to
-<a href="https://alkzar.cl/slides/ESO-graduate-internship-012023.pdf" target="_blank">research and prototype language model applications for observatory operations</a>. It was an incredible experience, working in the middle of the driest desert in the world, and close to the stars.
+<a href="https://alkzar.cl/slides/ESO-graduate-internship-012023.pdf" target="_blank">research and prototype language model applications for the observatory operations</a>. It was an incredible experience, working in the middle of the driest desert in the world, and close to the stars.
 
 Before my master’s, I spent two years working on a public policy initiative aimed at expanding financial inclusion in Chile's payment systems. The project, initially a joint venture between public and private funds, focused on offering m-POS payment solutions to small and medium-sized enterprises. I was part of the team that scaled the operation to 90k merchants and USD $11M in revenue. My role spanned multiple areas, from managing operations (transactions, data, payments) to overseeing fraud risk (detecting fraudulent transactions and misuse of the service), as well as analytics. The initiative eventually became the <a href="https://www.compraqui.cl/landing" target="_blank">payment solutions subsidiary of Banco Estado</a>.
 
