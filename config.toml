@@ -31,7 +31,8 @@ intro = "Welcome to my website 👋🏽!"
 description = 'I am interested in diffusion models and deep reinforcement learning.<br> I also cofound and experiment with LLM agents at <a href="https://vendie.app/" target="_blank">@Vendie</a></b>'
 
 
-authorimage = "foto__perfil.png"
+#authorimage = "foto__perfil.png"
+authorimage = "alcazar-cristobal-about.JPG"
 dateformat = "Jan 2, 2006"
 
 ## Site Meta Settings
