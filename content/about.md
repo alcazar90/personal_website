@@ -14,7 +14,7 @@ showpagemeta = false
   <img src="https://alkzar.cl/img/alcazar-cristobal-about.JPG" alt="Alcázar Cristóbal, about photo">
 </p>
 
-Hi, I'm Cristóbal! MSc in Data Science.
+Hi, I'm Cristóbal! MSc in Data Science at Universidad de Chile.
 
 My interests lie in diffusion models and how to adapt them. Specifically, I'm
 interested in using reinforcement learning to build agents on top of pretrained
@@ -44,8 +44,8 @@ Timeline
 
 * 2016 - 2019: Central Bank of Chile
 * 2019 - 2021: Compraquí (BancoEstado) 
-* 2022: Start <a href="https://mds.uchile.cl/" taget="_blank">MSc in Data Science at Universidad de Chile</a>
-* 2023: ESO
+* 2022: Start MSc in Data Science 
+* 2023: Graduate internship at European Southern Observatory 
 * 2023: Started <a href="https://vendie.app/" target="_blank">Vendie</a>
 * 2024: MSc in Data Science completed
 
