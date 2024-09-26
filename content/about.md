@@ -60,7 +60,17 @@ Timeline
  <br>
  <i style="font-size:14px;color:#989898;">
   <a href="https://alkzar.cl/slides/ESO-graduate-internship-012023.pdf" target="_blank">Slides</a>
-   - 01/2023 Paranal Observatory - European Southern Observatory 
+   - 01/2024 Paranal Observatory - European Southern Observatory 
+ </i>
+</p>
+
+
+<p>
+<i>"Sequence Models with Transformers. A Journey Through Language Models, Current Insights, and Practical Applications at Paranal Observatory" .- Camilo Carvajal, Cristóbal Alcázar</i>
+ <br>
+ <i style="font-size:14px;color:#989898;">
+  <a href="https://alkzar.cl/slides/ESO-sequence_models_with_transformers-091023.pdf" target="_blank">Slides</a>
+   - 10/2023 Paranal Observatory - European Southern Observatory 
  </i>
 </p>
 
