@@ -59,7 +59,7 @@ Timeline
 <i>"Building LLM-based Systems & Products at Paranal"</i>
  <br>
  <i style="font-size:14px;color:#989898;">
-  <a href="https://alkzar.cl/slides/ESO-graduate-internship-012023.pdf" target="_blank">Slides</a>
+  <a href="https://alkzar.cl/slides/ESO-graduate-internship-012024.pdf" target="_blank">Slides</a>
    - 01/2024 Paranal Observatory - European Southern Observatory 
  </i>
 </p>
