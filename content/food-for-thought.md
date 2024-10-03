@@ -24,9 +24,10 @@ Just an opinionated list of readings, talks, books, tools, projects, or whatever
 1. <a href="https://hardwarelottery.github.io/" target="_blank">The Hardware Lottery</a>.- Sara Hooker (August, 2020).</a> _How does tooling choose which research ideas succeed and fail, and what does the future hold?_
 1. <a href="https://www.cambridge.org/core/books/stand-out-of-our-light/3F8D7BA2C0FE3A7126A4D9B73A89415D" target="_blank">Stand out of our light: Freedom and Resistance in the Attention Economy</a>.- James Williams (May, 2018). Your attention is valuable; it is an asset that a market is trying to exploit.
 1. <a href="https://www.cs.cmu.edu/~15110-s13/Wing06-ct.pdf" target="_blank">«Computational Thinking»</a>.- Jeannette M. Wing (March, 2006). A beautiful and poweful idea.
+1. <a href="https://norvig.com/21-days.html" target="_blank">Teach Yourself Programming in Ten Years</a>.- Peter Norvig (1998). 
 1. <a href="https://www.scattered-thoughts.net/writing/reflections-on-a-decade-of-coding/" target="_blank">Reflections on a decade of coding</a>.- Jamie Brandon (September 22, 2021).
-1. <a href="https://numinous.productions/ttft/" target="_blank">How can we develop transformative tools for thought?</a>.- Andy Matuschak and Michael Nielsen (October, 2019).
-1. <a href="https://archive.org/details/the-parable-of-the-parser-1" target="_blank">The Pararable of the Parser</a>.- Ross Girshick (June 17, 2024). What are the real tasks of computer vision?
+4. <a href="https://numinous.productions/ttft/" target="_blank">How can we develop transformative tools for thought?</a>.- Andy Matuschak and Michael Nielsen (October, 2019).
+5. <a href="https://archive.org/details/the-parable-of-the-parser-1" target="_blank">The Pararable of the Parser</a>.- Ross Girshick (June 17, 2024). What are the real tasks of computer vision?
  
 
 <!--
@@ -37,7 +38,7 @@ Just an opinionated list of readings, talks, books, tools, projects, or whatever
 ## Blogs
 
 1. <a href="https://blog.otoro.net/" target="_blank">David Ha</a>
-1. <a href="https://colah.github.io/" target="_blank">Colah's</a>
+1. <a href="https://colah.github.io/" target="_blank">Chris Olah</a>
 1. <a href="https://www.redblobgames.com/" target="_blank">Red Blob Games</a>
 
 

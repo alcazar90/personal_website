@@ -38,7 +38,7 @@ I began my career in the macroeconomic statistics department at the <a href="htt
 A bit more about me: I contributed a chapter on digital literacy and computational thinking
 to the book <i><a href="https://blogs.harvard.edu/conectadosalsur/2019/12/14/ya-disponible-libro-inteligencia-artificial-y-bienestar-de-las-juventudes-en-america-latina/" target="_blank">Inteligencia Artificial y Bienestar de las Juventudes en América Latina (127-135)</a></i>. In my free time, I enjoy <a href="https://www.goodreads.com/alkzar90" target="_blank">reading sci-fi, non-fiction and novels</a>. I don’t know why, but I’ve never been able to rate a book I've read with less than 4 stars (of 5).
 
-If you're interested in collaborations or want to discuss any of the topics above, feel free to send me an email. My CV is available <a href="https://alkzar.cl/cv.pdf" target="_blank">here</a>.
+If you're interested in collaborations or want to discuss any of the topics above, feel free to send me an email (cristobal at alkzar.cl). My CV is available <a href="https://alkzar.cl/cv.pdf" target="_blank">here</a>.
 
 Timeline
 
