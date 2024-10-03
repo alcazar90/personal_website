@@ -79,7 +79,7 @@ socialmarkup = true
     name = "food for thought"
     identifier = "Food for Thought "
     weight = 300
-    url = "/food-for-thought/"
+    url = "/food_for_thought/"
 
 [markup]
   [markup.goldmark]
