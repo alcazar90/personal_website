@@ -4,8 +4,14 @@
 
 ## About
 
-This repo contain the source files to build my personal wrbsite using
-the hugo GOA Theme](https://github.com/shenoybr/hugo-goa) by [@shenoybr](https://github.com/shenoybr).
+This repo contain the source files to build my personal website using
+the [hugo Goa theme](https://github.com/shenoybr/hugo-goa) by [@shenoybr](https://github.com/shenoybr).
+
+For launch a local server with Hugo to see edition, run the following command:
+
+```bash
+hugo server -D
+```
 
 ## Notes
 
