@@ -77,9 +77,9 @@ socialmarkup = true
     url = "/about/"
 [[menu.main]]
     name = "food for thought"
-    identifier = "Learning Resources"
+    identifier = "Food for Thought "
     weight = 300
-    url = "/learning_resources/"
+    url = "/food-for-thought/"
 
 [markup]
   [markup.goldmark]
