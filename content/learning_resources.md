@@ -4,8 +4,8 @@ comments = false
 date = "2016-10-02T22:55:05-04:00"
 draft = false
 slug = ""
-tags = ["learning", "MOOC", "education"]
-title = "Learning Resources"
+tags = ["learning", "education"]
+title = "Food for thought"
 showcomments = false
 showpagemeta = false
 +++
