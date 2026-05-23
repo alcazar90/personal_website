@@ -1,0 +1,22 @@
+[workspace]
+resolver = "2"
+members = ["ssg", "migrate"]
+
+[workspace.package]
+edition = "2021"
+rust-version = "1.75"
+authors = ["Cristóbal Alcázar"]
+license = "MIT"
+
+[workspace.dependencies]
+anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.9"
+toml = "0.8"
+walkdir = "2"
+regex = "1"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = "symbols"
