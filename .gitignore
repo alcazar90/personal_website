@@ -9,3 +9,15 @@
 Thumbs.db
 *.icloud
 .hugo_build.lock
+
+# Rust workspace
+/target/
+**/*.rs.bk
+
+# Migration scratch output (committed intentionally in PR 2, not by accident)
+/posts/
+
+# Editor
+*.swp
+.idea/
+.vscode/
