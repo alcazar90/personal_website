@@ -35,6 +35,17 @@ fn main() -> ExitCode {
     let cmd = std::env::args().nth(1);
     let result = match cmd.as_deref() {
         Some("build") => cmd_build(),
+        Some("new-post") => {
+            let title = std::env::args().nth(2);
+            match title {
+                Some(t) if !t.trim().is_empty() => cmd_new_post(&t),
+                _ => {
+                    eprintln!("ssg: new-post requires a non-empty title argument");
+                    eprintln!("usage: ssg new-post \"<title>\"");
+                    return ExitCode::from(2);
+                }
+            }
+        }
         Some(other) => {
             eprintln!("ssg: unknown subcommand '{other}'");
             usage();
@@ -57,9 +68,10 @@ fn main() -> ExitCode {
 
 fn usage() {
     eprintln!("ssg v{}", env!("CARGO_PKG_VERSION"));
-    eprintln!("usage: ssg <build>");
+    eprintln!("usage: ssg <build | new-post \"<title>\">");
     eprintln!();
-    eprintln!("  build  Render content/ to public/.");
+    eprintln!("  build              Render content/ to public/.");
+    eprintln!("  new-post \"<title>\"  Scaffold a new post at content/posts/YYYY-MM-DD-<slug>.md.");
 }
 
 fn cmd_build() -> Result<()> {
@@ -392,6 +404,113 @@ fn current_year() -> i32 {
     OffsetDateTime::now_utc().year()
 }
 
+/// Scaffold a new post stub under `content/posts/YYYY-MM-DD-<slug>.md`.
+/// Refuses to overwrite existing files — re-running on the same title the
+/// same day prints an error so a typo doesn't silently nuke draft work.
+fn cmd_new_post(title: &str) -> Result<()> {
+    let posts_dir = Path::new("content").join("posts");
+    let date = today_iso();
+    let created = new_post_at(&posts_dir, title, &date)?;
+    println!("created: {}", created.display());
+    Ok(())
+}
+
+/// Inner helper for `cmd_new_post`. Split out so tests can pass an explicit
+/// temp dir + date — no cwd mutation, no system-clock flakes.
+fn new_post_at(
+    posts_dir: &Path,
+    title: &str,
+    date: &str,
+) -> Result<std::path::PathBuf> {
+    let title = title.trim();
+    let slug = slugify(title);
+    if slug.is_empty() {
+        return Err(anyhow!(
+            "title {:?} produces an empty slug; pick something with at least one alphanumeric character",
+            title
+        ));
+    }
+    fs::create_dir_all(posts_dir)
+        .with_context(|| format!("creating {}", posts_dir.display()))?;
+    let filename = format!("{date}-{slug}.md");
+    let path = posts_dir.join(&filename);
+    if path.exists() {
+        return Err(anyhow!(
+            "refusing to overwrite existing file: {}",
+            path.display()
+        ));
+    }
+    let body = format!(
+        "---\ntitle: \"{title}\"\ndate: {date}\nslug: {slug}\ntags: []\ndraft: true\n---\n\n\n"
+    );
+    fs::write(&path, body).with_context(|| format!("writing {}", path.display()))?;
+    Ok(path)
+}
+
+/// Today's date in YYYY-MM-DD. Falls back to UTC if local offset is
+/// unavailable (matches `current_year`'s posture).
+fn today_iso() -> String {
+    let d = OffsetDateTime::now_utc().date();
+    // time::Date's Display is ISO 8601 (YYYY-MM-DD).
+    format!("{:04}-{:02}-{:02}", d.year(), u8::from(d.month()), d.day())
+}
+
+/// Turn a human title into a URL slug.
+///
+/// Rules:
+/// - Spanish (and friends) accented letters fold to ASCII (e.g. "Útil" → "util")
+/// - lowercase
+/// - non-alphanumeric runs collapse to a single `-`
+/// - leading/trailing `-` trimmed
+///
+/// Inline so we don't pull in a `slug`/`unicode-normalization` crate just
+/// for this CLI ergonomics.
+fn slugify(input: &str) -> String {
+    let folded: String = input
+        .chars()
+        .map(fold_accent)
+        .flat_map(|c| c.to_lowercase())
+        .collect();
+    let mut out = String::with_capacity(folded.len());
+    let mut prev_dash = true; // suppress leading dash
+    for c in folded.chars() {
+        if c.is_ascii_alphanumeric() {
+            out.push(c);
+            prev_dash = false;
+        } else if !prev_dash {
+            out.push('-');
+            prev_dash = true;
+        }
+    }
+    while out.ends_with('-') {
+        out.pop();
+    }
+    out
+}
+
+/// Best-effort accent folding for the languages we actually write in
+/// (English + Spanish). Anything outside the table falls through unchanged
+/// and is then dropped by the alphanumeric filter in `slugify`.
+fn fold_accent(c: char) -> char {
+    match c {
+        'á' | 'à' | 'â' | 'ä' | 'ã' | 'å' => 'a',
+        'Á' | 'À' | 'Â' | 'Ä' | 'Ã' | 'Å' => 'A',
+        'é' | 'è' | 'ê' | 'ë' => 'e',
+        'É' | 'È' | 'Ê' | 'Ë' => 'E',
+        'í' | 'ì' | 'î' | 'ï' => 'i',
+        'Í' | 'Ì' | 'Î' | 'Ï' => 'I',
+        'ó' | 'ò' | 'ô' | 'ö' | 'õ' => 'o',
+        'Ó' | 'Ò' | 'Ô' | 'Ö' | 'Õ' => 'O',
+        'ú' | 'ù' | 'û' | 'ü' => 'u',
+        'Ú' | 'Ù' | 'Û' | 'Ü' => 'U',
+        'ñ' => 'n',
+        'Ñ' => 'N',
+        'ç' => 'c',
+        'Ç' => 'C',
+        other => other,
+    }
+}
+
 /// Recursively copy `src` directory contents into `dst`. Files overwrite,
 /// directories are created. Symlinks are dereferenced (read & copied).
 fn copy_dir_recursive(src: &Path, dst: &Path) -> Result<()> {
@@ -439,6 +558,119 @@ mod tests {
         assert_eq!(format_date("not-a-date"), "not-a-date");
         // Out-of-range month falls back to the raw string.
         assert_eq!(format_date("2024-13-40"), "2024-13-40");
+    }
+
+    #[test]
+    fn slugify_basic_lowercase_and_spaces() {
+        assert_eq!(slugify("Hello World"), "hello-world");
+        assert_eq!(slugify("HELLO"), "hello");
+    }
+
+    #[test]
+    fn slugify_collapses_runs_of_non_alnum() {
+        assert_eq!(slugify("foo   bar"), "foo-bar");
+        assert_eq!(slugify("foo--bar"), "foo-bar");
+        assert_eq!(slugify("a / b / c"), "a-b-c");
+        assert_eq!(slugify("hello, world!"), "hello-world");
+    }
+
+    #[test]
+    fn slugify_trims_leading_and_trailing_dashes() {
+        assert_eq!(slugify("  hello  "), "hello");
+        assert_eq!(slugify("---hello---"), "hello");
+        assert_eq!(slugify("!!!Hello!!!"), "hello");
+    }
+
+    #[test]
+    fn slugify_folds_spanish_accents() {
+        assert_eq!(slugify("Útil"), "util");
+        assert_eq!(slugify("Año Nuevo"), "ano-nuevo");
+        assert_eq!(slugify("Canción de Otoño"), "cancion-de-otono");
+        assert_eq!(slugify("Cómo escribir Rust"), "como-escribir-rust");
+    }
+
+    #[test]
+    fn slugify_drops_unknown_unicode() {
+        // Emoji/CJK fall through to the non-alnum branch and are skipped.
+        assert_eq!(slugify("Rust 🦀 rocks"), "rust-rocks");
+    }
+
+    #[test]
+    fn new_post_at_creates_file_with_expected_frontmatter() {
+        let tmp = std::env::temp_dir().join(format!(
+            "ssg-newpost-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let posts_dir = tmp.join("content").join("posts");
+
+        let created = new_post_at(&posts_dir, "Hello World", "2026-05-23")
+            .expect("first invocation should succeed");
+        assert_eq!(
+            created,
+            posts_dir.join("2026-05-23-hello-world.md"),
+            "unexpected output path"
+        );
+        let body = fs::read_to_string(&created).unwrap();
+        assert!(body.starts_with("---\n"), "missing frontmatter open: {body}");
+        assert!(body.contains("title: \"Hello World\""), "missing title: {body}");
+        assert!(body.contains("date: 2026-05-23"), "missing date: {body}");
+        assert!(body.contains("slug: hello-world"), "missing slug: {body}");
+        assert!(body.contains("tags: []"), "missing tags: {body}");
+        assert!(body.contains("draft: true"), "missing draft flag: {body}");
+        assert!(body.ends_with("---\n\n\n"), "missing trailing blank lines: {body}");
+
+        let _ = fs::remove_dir_all(&tmp);
+    }
+
+    #[test]
+    fn new_post_at_refuses_overwrite() {
+        let tmp = std::env::temp_dir().join(format!(
+            "ssg-newpost-overwrite-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let posts_dir = tmp.join("content").join("posts");
+        new_post_at(&posts_dir, "Hello World", "2026-05-23").unwrap();
+        let second = new_post_at(&posts_dir, "Hello World", "2026-05-23");
+        assert!(second.is_err(), "second call should refuse to overwrite");
+        let msg = format!("{:#}", second.unwrap_err());
+        assert!(msg.contains("refusing to overwrite"), "got: {msg}");
+        let _ = fs::remove_dir_all(&tmp);
+    }
+
+    #[test]
+    fn new_post_at_rejects_empty_slug_titles() {
+        let tmp = std::env::temp_dir().join(format!(
+            "ssg-newpost-empty-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let posts_dir = tmp.join("content").join("posts");
+        let err = new_post_at(&posts_dir, "   !!!   ", "2026-05-23")
+            .expect_err("empty-slug title should be rejected");
+        assert!(format!("{err:#}").contains("empty slug"));
+        let _ = fs::remove_dir_all(&tmp);
+    }
+
+    #[test]
+    fn today_iso_is_well_formed() {
+        let s = today_iso();
+        let parts: Vec<&str> = s.split('-').collect();
+        assert_eq!(parts.len(), 3, "expected YYYY-MM-DD, got {s}");
+        assert_eq!(parts[0].len(), 4);
+        assert_eq!(parts[1].len(), 2);
+        assert_eq!(parts[2].len(), 2);
+        assert!(parts.iter().all(|p| p.chars().all(|c| c.is_ascii_digit())));
     }
 
     #[test]

@@ -182,7 +182,7 @@ impl Templates {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::config::{Config, MenuItem};
+    use crate::config::{Config, GiscusConfig, MenuItem};
 
     fn fixture_config() -> Config {
         Config {
@@ -200,6 +200,7 @@ mod tests {
                     url: "/posts".to_string(),
                 },
             ],
+            giscus: None,
         }
     }
 
@@ -296,6 +297,87 @@ mod tests {
         let html = templates.render_page(&ctx).unwrap();
         assert!(html.contains("About Me"), "missing page title in: {html}");
         assert!(html.contains("<p>Hello.</p>"), "missing body in: {html}");
+    }
+
+    fn fixture_giscus() -> GiscusConfig {
+        GiscusConfig {
+            repo: "owner/repo".to_string(),
+            repo_id: "R_kgABC".to_string(),
+            category: "Comments".to_string(),
+            category_id: "DIC_kwABC".to_string(),
+            mapping: "pathname".to_string(),
+            reactions_enabled: "1".to_string(),
+            input_position: "bottom".to_string(),
+            strict: "0".to_string(),
+            loading: "lazy".to_string(),
+        }
+    }
+
+    #[test]
+    fn post_render_omits_giscus_when_unconfigured() {
+        let templates = Templates::new().unwrap();
+        let cfg = fixture_config();
+        let ctx = PostContext {
+            env: RenderEnv {
+                site: &cfg,
+                inline_css: "",
+                year: 2026,
+            },
+            post: fixture_post(),
+        };
+        let html = templates.render_post(&ctx).unwrap();
+        assert!(
+            !html.contains("giscus.app/client.js"),
+            "should not include giscus script when giscus is None"
+        );
+        assert!(
+            !html.contains("class=\"comments\""),
+            "should not include comments section when giscus is None"
+        );
+    }
+
+    #[test]
+    fn post_render_includes_giscus_when_configured() {
+        let templates = Templates::new().unwrap();
+        let mut cfg = fixture_config();
+        cfg.giscus = Some(fixture_giscus());
+        let ctx = PostContext {
+            env: RenderEnv {
+                site: &cfg,
+                inline_css: "",
+                year: 2026,
+            },
+            post: fixture_post(),
+        };
+        let html = templates.render_post(&ctx).unwrap();
+        assert!(
+            html.contains("giscus.app/client.js"),
+            "should include giscus script when configured"
+        );
+        // minijinja's HTML autoescape turns `/` into `&#x2f;` in attributes;
+        // browsers decode it transparently when giscus reads `script.dataset.repo`.
+        assert!(
+            html.contains("data-repo=\"owner&#x2f;repo\"")
+                || html.contains("data-repo=\"owner/repo\""),
+            "should wire repo into data-repo attribute"
+        );
+        assert!(
+            html.contains("data-repo-id=\"R_kgABC\""),
+            "should wire repo_id into data-repo-id attribute"
+        );
+        assert!(
+            html.contains("data-category-id=\"DIC_kwABC\""),
+            "should wire category_id into data-category-id attribute"
+        );
+        assert!(
+            html.contains("noscript"),
+            "should include a noscript fallback link"
+        );
+        // Theme bridge must ride along on post pages only.
+        assert!(
+            html.contains("giscus-frame"),
+            "post page should include theme bridge JS that targets .giscus-frame"
+        );
     }
 
     #[test]
