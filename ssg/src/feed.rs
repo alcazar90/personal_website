@@ -161,6 +161,7 @@ mod tests {
             author: "Tester".to_string(),
             description: "A test site.".to_string(),
             menu: Vec::new(),
+            giscus: None,
         }
     }
 
