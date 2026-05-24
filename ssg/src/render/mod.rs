@@ -32,7 +32,10 @@ pub fn render(source: &Source) -> Result<RenderedPost> {
     options.insert(Options::ENABLE_TASKLISTS);
     options.insert(Options::ENABLE_MATH);
 
-    let parser = Parser::new_ext(&source.body, options);
+    // Preprocess math: normalize legacy MathJax delimiters (\(...\), \[...\])
+    // into $/$$ form, and strip unsupported LaTeX envs (equation, label).
+    let preprocessed = math::preprocess_source(&source.body);
+    let parser = Parser::new_ext(&preprocessed, options);
     let events = transform_events(parser, &source.slug);
 
     let mut html = String::new();
@@ -81,14 +84,18 @@ fn transform_events<'a>(parser: Parser<'a>, slug: &str) -> Vec<Event<'a>> {
                 out.push(Event::Html(CowStr::from(html)));
             }
             Event::InlineMath(latex) => {
-                let html = match math::inline(&latex) {
+                // `\_` and `\*` in source were markdown escapes (to avoid italic
+                // interpretation); LaTeX wants the bare token (subscript / *).
+                let cleaned = sanitize_math_escapes(&latex);
+                let html = match math::inline(&cleaned) {
                     Ok(mathml) => format!("<span class=\"math inline\">{mathml}</span>"),
                     Err(_) => format!("<code>${}$</code>", html_escape(&latex)),
                 };
                 out.push(Event::Html(CowStr::from(html)));
             }
             Event::DisplayMath(latex) => {
-                let html = match math::display(&latex) {
+                let cleaned = sanitize_math_escapes(&latex);
+                let html = match math::display(&cleaned) {
                     Ok(mathml) => format!("<div class=\"math display\">{mathml}</div>"),
                     Err(_) => format!("<code>$${}$$</code>", html_escape(&latex)),
                 };
@@ -144,6 +151,14 @@ fn reading_time(body: &str) -> u32 {
     }
     let minutes = (words / 220.0).round() as u32;
     minutes.max(1)
+}
+
+/// Strip markdown escapes that don't belong in LaTeX math. The original
+/// posts used `\_` to prevent markdown from interpreting underscores as
+/// italics — but the content past pulldown-cmark is meant for LaTeX, where
+/// `\_` means literal underscore (not subscript). Same story for `\*`.
+fn sanitize_math_escapes(latex: &str) -> String {
+    latex.replace("\\_", "_").replace("\\*", "*")
 }
 
 fn html_escape(s: &str) -> String {
