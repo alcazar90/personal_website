@@ -12,3 +12,12 @@ path = "src/main.rs"
 
 [dependencies]
 anyhow.workspace = true
+serde.workspace = true
+serde_yaml.workspace = true
+toml.workspace = true
+walkdir.workspace = true
+regex.workspace = true
+pulldown-cmark.workspace = true
+pulldown-latex.workspace = true
+syntect.workspace = true
+once_cell.workspace = true
