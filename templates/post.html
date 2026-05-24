@@ -5,5 +5,56 @@
   <p class="meta"><time datetime="{{ post.date }}">{{ post.date_display }}</time> &middot; {{ post.reading_time }} min read</p>
   {{ post.html | safe }}
 </article>
-<div id="giscus-mount"></div>
+{% if site.giscus %}
+<section class="comments" aria-label="Comments">
+  <h2>Comments</h2>
+  <script src="https://giscus.app/client.js"
+          data-repo="{{ site.giscus.repo }}"
+          data-repo-id="{{ site.giscus.repo_id }}"
+          data-category="{{ site.giscus.category }}"
+          data-category-id="{{ site.giscus.category_id }}"
+          data-mapping="{{ site.giscus.mapping }}"
+          data-strict="{{ site.giscus.strict }}"
+          data-reactions-enabled="{{ site.giscus.reactions_enabled }}"
+          data-emit-metadata="0"
+          data-input-position="{{ site.giscus.input_position }}"
+          data-theme="preferred_color_scheme"
+          data-lang="en"
+          data-loading="{{ site.giscus.loading }}"
+          crossorigin="anonymous"
+          async></script>
+  <noscript>Comments require JavaScript. Open the post on <a href="https://github.com/{{ site.giscus.repo }}/discussions">GitHub Discussions</a>.</noscript>
+</section>
+<script>
+(function(){
+  // Bridge our theme toggle to giscus iframe. giscus injects the iframe
+  // asynchronously, so we both (a) hook the click handler for runtime
+  // toggles and (b) listen for the iframe's first message to set the
+  // initial theme on load.
+  function applyGiscusTheme(theme){
+    var f = document.querySelector('iframe.giscus-frame');
+    if(!f || !f.contentWindow) return;
+    f.contentWindow.postMessage(
+      {giscus:{setConfig:{theme: theme === 'dark' ? 'dark' : 'light'}}},
+      'https://giscus.app'
+    );
+  }
+  var btn = document.getElementById('theme-toggle');
+  if(btn){
+    btn.addEventListener('click', function(){
+      // Run AFTER base.html's handler flips data-theme.
+      setTimeout(function(){
+        applyGiscusTheme(document.documentElement.dataset.theme);
+      }, 0);
+    });
+  }
+  window.addEventListener('message', function(e){
+    if(e.origin !== 'https://giscus.app') return;
+    if(e.data && e.data.giscus){
+      applyGiscusTheme(document.documentElement.dataset.theme);
+    }
+  });
+})();
+</script>
+{% endif %}
 {% endblock %}

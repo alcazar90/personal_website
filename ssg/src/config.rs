@@ -15,6 +15,23 @@ pub struct MenuItem {
     pub url: String,
 }
 
+/// Optional giscus comments configuration. When present, post pages render a
+/// giscus mount; when absent, post pages render without a comments section.
+/// All fields are required when the block is present — `repo_id` and
+/// `category_id` are issued by https://giscus.app for a given GitHub repo.
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct GiscusConfig {
+    pub repo: String,
+    pub repo_id: String,
+    pub category: String,
+    pub category_id: String,
+    pub mapping: String,
+    pub reactions_enabled: String,
+    pub input_position: String,
+    pub strict: String,
+    pub loading: String,
+}
+
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Config {
     pub title: String,
@@ -23,6 +40,10 @@ pub struct Config {
     pub description: String,
     #[serde(default)]
     pub menu: Vec<MenuItem>,
+    /// Optional. Absent in dev/local configs that haven't claimed a giscus
+    /// repo yet — post pages just skip the comments mount in that case.
+    #[serde(default)]
+    pub giscus: Option<GiscusConfig>,
 }
 
 impl Config {
@@ -90,6 +111,54 @@ description = "D"
         );
         let config = Config::load(&path).unwrap();
         assert!(config.menu.is_empty());
+    }
+
+    #[test]
+    fn giscus_block_is_optional() {
+        let path = write_temp(
+            r#"
+title = "T"
+url = "U"
+author = "A"
+description = "D"
+"#,
+        );
+        let config = Config::load(&path).unwrap();
+        assert!(config.giscus.is_none());
+    }
+
+    #[test]
+    fn giscus_block_parses_when_present() {
+        let path = write_temp(
+            r#"
+title = "T"
+url = "U"
+author = "A"
+description = "D"
+
+[giscus]
+repo = "owner/repo"
+repo_id = "R_kgABC"
+category = "Comments"
+category_id = "DIC_kwABC"
+mapping = "pathname"
+reactions_enabled = "1"
+input_position = "bottom"
+strict = "0"
+loading = "lazy"
+"#,
+        );
+        let config = Config::load(&path).unwrap();
+        let g = config.giscus.expect("giscus block should parse");
+        assert_eq!(g.repo, "owner/repo");
+        assert_eq!(g.repo_id, "R_kgABC");
+        assert_eq!(g.category, "Comments");
+        assert_eq!(g.category_id, "DIC_kwABC");
+        assert_eq!(g.mapping, "pathname");
+        assert_eq!(g.reactions_enabled, "1");
+        assert_eq!(g.input_position, "bottom");
+        assert_eq!(g.strict, "0");
+        assert_eq!(g.loading, "lazy");
     }
 
     #[test]
