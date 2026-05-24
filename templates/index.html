@@ -1,4 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
-<p>Site index coming soon.</p>
+<section class="intro">
+  <p>{{ site.description }}</p>
+</section>
+<ul class="post-list">
+  {% for post in posts %}
+  <li>
+    <time datetime="{{ post.date }}">{{ post.date_display }}</time>
+    <a href="/posts/{{ post.slug }}/">{{ post.title }}</a>
+  </li>
+  {% endfor %}
+</ul>
 {% endblock %}

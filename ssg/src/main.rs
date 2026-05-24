@@ -15,12 +15,17 @@ use time::OffsetDateTime;
 
 mod config;
 mod content;
+mod feed;
 mod render;
 mod templates;
 
 use crate::config::Config;
 use crate::content::Source;
-use crate::templates::{PageContext, PageView, PostContext, PostView, RenderEnv, Templates};
+use crate::feed::{FeedEntry, SitemapEntry};
+use crate::templates::{
+    IndexContext, PageContext, PageView, PostContext, PostListEntry, PostView, Render404Context,
+    RenderEnv, Templates,
+};
 
 /// Inlined into every page's `<head>`. Single source of truth — no extra
 /// stylesheet request, no external CSS file in `public/`.
@@ -93,33 +98,101 @@ fn cmd_build() -> Result<()> {
     let mut post_count = 0usize;
     let mut page_count = 0usize;
     let mut total_bytes = 0usize;
+    // Index entries: lightweight view-models for the post listing.
+    let mut index_entries: Vec<PostListEntry> = Vec::new();
+    // Atom feed entries: include full rendered HTML body.
+    let mut feed_entries: Vec<FeedEntry> = Vec::new();
+    // Sitemap rows: one per output URL.
+    let mut sitemap_entries: Vec<SitemapEntry> = Vec::new();
 
     for source in &sources {
         let kind = classify(source);
         match kind {
             SourceKind::Post => {
-                let bytes = render_and_write_post(&templates, &env, source, out_root)
+                let outcome = render_and_write_post(&templates, &env, source, out_root)
                     .with_context(|| format!("emitting post {}", source.slug))?;
                 post_count += 1;
-                total_bytes += bytes;
+                total_bytes += outcome.bytes;
+                index_entries.push(PostListEntry {
+                    title: outcome.title.clone(),
+                    slug: source.slug.clone(),
+                    date: outcome.date.clone(),
+                    date_display: outcome.date_display.clone(),
+                });
+                feed_entries.push(FeedEntry {
+                    title: outcome.title,
+                    slug: source.slug.clone(),
+                    date: outcome.date.clone(),
+                    html: outcome.body_html,
+                });
+                sitemap_entries.push(SitemapEntry {
+                    path: format!("/posts/{}/", source.slug),
+                    lastmod: (!outcome.date.is_empty()).then_some(outcome.date),
+                });
             }
             SourceKind::Page => {
                 let bytes = render_and_write_page(&templates, &env, source, out_root)
                     .with_context(|| format!("emitting page {}", source.slug))?;
                 page_count += 1;
                 total_bytes += bytes;
+                sitemap_entries.push(SitemapEntry {
+                    path: format!("/{}/", source.slug),
+                    lastmod: source.frontmatter.date.clone(),
+                });
             }
         }
     }
 
-    // Stub index — real post listing lands in a later PR.
+    // Real home page: post listing in reverse-chronological order (sort
+    // already done by content::walk).
+    let index_ctx = IndexContext {
+        env: env.clone_borrowed(),
+        posts: &index_entries,
+    };
     let index_html = templates
-        .render_index(&env)
+        .render_index(&index_ctx)
         .context("rendering index.html")?;
     let index_path = out_root.join("index.html");
     fs::write(&index_path, &index_html)
         .with_context(|| format!("writing {}", index_path.display()))?;
     total_bytes += index_html.len();
+
+    // Atom feed with full post content.
+    let feed_xml = feed::generate_atom(&config, &feed_entries);
+    let feed_path = out_root.join("feed.xml");
+    fs::write(&feed_path, &feed_xml)
+        .with_context(|| format!("writing {}", feed_path.display()))?;
+
+    // Sitemap: home + every post + every page (404 deliberately excluded).
+    // Home `lastmod` is the newest post's date, so feed readers and crawlers
+    // know when the index changed.
+    let home_lastmod = sitemap_entries
+        .iter()
+        .filter(|e| e.path.starts_with("/posts/"))
+        .find_map(|e| e.lastmod.clone());
+    let mut all_sitemap = Vec::with_capacity(sitemap_entries.len() + 1);
+    all_sitemap.push(SitemapEntry {
+        path: "/".to_string(),
+        lastmod: home_lastmod,
+    });
+    all_sitemap.extend(sitemap_entries);
+    let sitemap_xml = feed::generate_sitemap(&config, &all_sitemap);
+    let sitemap_path = out_root.join("sitemap.xml");
+    fs::write(&sitemap_path, &sitemap_xml)
+        .with_context(|| format!("writing {}", sitemap_path.display()))?;
+
+    // 404 page — Cloudflare Pages serves this on missing routes when it
+    // lives at /404.html.
+    let not_found_ctx = Render404Context {
+        env: env.clone_borrowed(),
+    };
+    let not_found_html = templates
+        .render_404(&not_found_ctx)
+        .context("rendering 404.html")?;
+    let not_found_path = out_root.join("404.html");
+    fs::write(&not_found_path, &not_found_html)
+        .with_context(|| format!("writing {}", not_found_path.display()))?;
+    total_bytes += not_found_html.len();
 
     // Copy static assets verbatim, if any.
     let static_src = content_root.join("static");
@@ -129,8 +202,12 @@ fn cmd_build() -> Result<()> {
     }
 
     eprintln!(
-        "built {} post(s), {} page(s); {} bytes of HTML",
-        post_count, page_count, total_bytes
+        "built {} post(s), {} page(s); {} bytes of HTML; feed.xml {} bytes; sitemap.xml {} bytes",
+        post_count,
+        page_count,
+        total_bytes,
+        feed_xml.len(),
+        sitemap_xml.len()
     );
     Ok(())
 }
@@ -152,12 +229,22 @@ fn classify(source: &Source) -> SourceKind {
     SourceKind::Post
 }
 
+/// Side-channel return from `render_and_write_post` so the caller can build
+/// the index listing, Atom feed, and sitemap without re-rendering anything.
+struct PostOutcome {
+    title: String,
+    date: String,
+    date_display: String,
+    body_html: String,
+    bytes: usize,
+}
+
 fn render_and_write_post(
     templates: &Templates,
     env: &RenderEnv<'_>,
     source: &Source,
     out_root: &Path,
-) -> Result<usize> {
+) -> Result<PostOutcome> {
     let rendered = render::render(source)?;
     let title = source
         .frontmatter
@@ -181,10 +268,14 @@ fn render_and_write_post(
         .clone()
         .unwrap_or_else(|| "en".to_string());
 
+    // Clone body HTML once for the feed; the templated page consumes the
+    // original via PostView.
+    let body_html = rendered.html.clone();
+
     let view = PostView {
-        title,
-        date,
-        date_display,
+        title: title.clone(),
+        date: date.clone(),
+        date_display: date_display.clone(),
         reading_time: rendered.reading_time_minutes,
         html: rendered.html,
         slug: source.slug.clone(),
@@ -203,7 +294,13 @@ fn render_and_write_post(
     let out_path = out_dir.join("index.html");
     let bytes = html.len();
     fs::write(&out_path, html).with_context(|| format!("writing {}", out_path.display()))?;
-    Ok(bytes)
+    Ok(PostOutcome {
+        title,
+        date,
+        date_display,
+        body_html,
+        bytes,
+    })
 }
 
 fn render_and_write_page(
