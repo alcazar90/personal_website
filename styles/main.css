@@ -1,0 +1,165 @@
+/* Flexoki tokens — light (default) */
+:root {
+  --bg:        #FFFCF0;
+  --bg-2:      #F2F0E5;
+  --ui:        #E6E4D9;
+  --tx-3:      #B7B5AC;
+  --tx-2:      #6F6E69;
+  --tx:        #100F0F;
+  --accent:    #205EA6;
+
+  --syn-red:     #AF3029;
+  --syn-orange:  #BC5215;
+  --syn-yellow:  #AD8301;
+  --syn-green:   #66800B;
+  --syn-cyan:    #24837B;
+  --syn-blue:    #205EA6;
+  --syn-purple:  #5E409D;
+  --syn-magenta: #A02F6F;
+}
+
+[data-theme="dark"] {
+  --bg:        #100F0F;
+  --bg-2:      #1C1B1A;
+  --ui:        #282726;
+  --tx-3:      #575653;
+  --tx-2:      #CECDC3;
+  --tx:        #FFFCF0;
+  --accent:    #4385BE;
+
+  --syn-red:     #D14D41;
+  --syn-orange:  #DA702C;
+  --syn-yellow:  #D0A215;
+  --syn-green:   #879A39;
+  --syn-cyan:    #3AA99F;
+  --syn-blue:    #4385BE;
+  --syn-purple:  #8B7EC8;
+  --syn-magenta: #CE5D97;
+}
+
+/* Base */
+html { color-scheme: light dark; }
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--tx);
+  background: var(--bg);
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 { color: var(--tx); line-height: 1.25; }
+h1 { font-size: 1.75rem; margin: 2rem 0 1rem; }
+h2 { font-size: 1.35rem; margin: 2rem 0 0.75rem; }
+h3 { font-size: 1.15rem; margin: 1.5rem 0 0.5rem; }
+h4, h5, h6 { font-size: 1rem; margin: 1.25rem 0 0.5rem; }
+
+/* Links */
+a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Code */
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: var(--bg-2);
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+pre {
+  background: var(--bg-2);
+  border: 1px solid var(--ui);
+  border-radius: 4px;
+  padding: 1rem;
+  overflow-x: auto;
+  font-size: 0.875em;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 1em;
+}
+
+/* Header + nav */
+header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+header .site-title {
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--tx);
+}
+header nav { display: flex; gap: 1rem; align-items: baseline; }
+header nav a { color: var(--tx-2); text-decoration: none; }
+header nav a:hover { color: var(--accent); }
+
+/* Theme toggle */
+#theme-toggle {
+  background: none;
+  border: none;
+  color: var(--tx-2);
+  font-size: 1.2em;
+  cursor: pointer;
+  padding: 0 0.25rem;
+  line-height: 1;
+}
+#theme-toggle:hover { color: var(--accent); }
+
+/* Footer */
+footer {
+  margin-top: 4rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--ui);
+  font-size: 0.875em;
+  color: var(--tx-3);
+}
+
+/* Post meta */
+.meta {
+  color: var(--tx-3);
+  font-size: 0.875em;
+  margin-bottom: 2rem;
+}
+
+/* Math */
+math, .math.display, .math.inline { color: var(--tx); }
+.math.display { display: block; overflow-x: auto; margin: 1rem 0; }
+
+/* Lists, blockquote, hr, img */
+blockquote {
+  border-left: 3px solid var(--ui);
+  margin: 1rem 0;
+  padding: 0.25rem 0 0.25rem 1rem;
+  color: var(--tx-2);
+}
+hr { border: 0; border-top: 1px solid var(--ui); margin: 2rem 0; }
+img { max-width: 100%; height: auto; }
+
+/* Syntect class mapping → Flexoki accents.
+ * ClassStyle::Spaced emits dotted scopes as space-separated classes
+ * (e.g. <span class="keyword control">). Match on the most specific
+ * leaf first, then fall back to the broader scope. */
+.comment, .punctuation.definition.comment { color: var(--tx-3); font-style: italic; }
+.string, .string.quoted, .string.regexp { color: var(--syn-green); }
+.constant.numeric, .constant.language, .constant.character { color: var(--syn-orange); }
+.constant.other { color: var(--syn-orange); }
+.keyword, .keyword.control, .keyword.operator, .storage, .storage.type, .storage.modifier { color: var(--syn-purple); }
+.entity.name.function, .support.function, .meta.function-call { color: var(--syn-blue); }
+.entity.name.type, .entity.name.class, .support.type, .support.class { color: var(--syn-cyan); }
+.variable.parameter, .variable.other, .variable.language { color: var(--syn-magenta); }
+.meta.preprocessor, .meta.annotation, .meta.decorator, .entity.name.tag { color: var(--syn-yellow); }
+.invalid, .invalid.illegal { color: var(--syn-red); }
+.punctuation { color: var(--tx-2); }

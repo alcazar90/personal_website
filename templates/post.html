@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<article>
+  <h1>{{ post.title }}</h1>
+  <p class="meta"><time datetime="{{ post.date }}">{{ post.date_display }}</time> &middot; {{ post.reading_time }} min read</p>
+  {{ post.html | safe }}
+</article>
+<div id="giscus-mount"></div>
+{% endblock %}

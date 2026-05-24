@@ -21,3 +21,5 @@ pulldown-cmark.workspace = true
 pulldown-latex.workspace = true
 syntect.workspace = true
 once_cell.workspace = true
+minijinja.workspace = true
+time.workspace = true
