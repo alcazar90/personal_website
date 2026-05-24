@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="{{ lang | default('en') }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>{{ page_title }}</title>
+<meta name="description" content="{{ description }}">
+<script>
+(function(){
+  var s=localStorage.getItem('theme');
+  var p=matchMedia('(prefers-color-scheme: dark)').matches;
+  document.documentElement.dataset.theme=s||(p?'dark':'light');
+})();
+</script>
+<style>{{ inline_css | safe }}</style>
+<link rel="alternate" type="application/atom+xml" href="/feed.xml" title="{{ site.title }}">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+</head>
+<body>
+<header>
+  <a class="site-title" href="/">{{ site.title }}</a>
+  <nav>
+    {% for item in site.menu %}<a href="{{ item.url }}">{{ item.name }}</a>{% endfor %}
+    <button id="theme-toggle" aria-label="Toggle theme" type="button">&#9790;</button>
+  </nav>
+</header>
+<main>{% block content %}{% endblock %}</main>
+<footer>&copy; {{ year }} {{ site.author }}</footer>
+<script>
+(function(){
+  var b=document.getElementById('theme-toggle');
+  if(!b)return;
+  b.addEventListener('click',function(){
+    var cur=document.documentElement.dataset.theme==='dark'?'light':'dark';
+    document.documentElement.dataset.theme=cur;
+    localStorage.setItem('theme',cur);
+  });
+})();
+</script>
+</body>
+</html>
