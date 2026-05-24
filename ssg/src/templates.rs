@@ -13,6 +13,7 @@ const BASE_HTML: &str = include_str!("../../templates/base.html");
 const POST_HTML: &str = include_str!("../../templates/post.html");
 const PAGE_HTML: &str = include_str!("../../templates/page.html");
 const INDEX_HTML: &str = include_str!("../../templates/index.html");
+const NOT_FOUND_HTML: &str = include_str!("../../templates/404.html");
 
 /// Per-post view-model passed into `post.html`.
 #[derive(Debug, Clone, Serialize)]
@@ -37,6 +38,16 @@ pub struct PageView {
     pub lang: String,
 }
 
+/// One row in the home-page post listing. Kept deliberately thin — anything
+/// the listing template needs lives here, anything it doesn't is dropped.
+#[derive(Debug, Clone, Serialize)]
+pub struct PostListEntry {
+    pub title: String,
+    pub slug: String,
+    pub date: String,
+    pub date_display: String,
+}
+
 /// Render-time inputs that aren't owned by the markdown content itself.
 #[derive(Debug, Clone)]
 pub struct RenderEnv<'a> {
@@ -59,6 +70,21 @@ pub struct PageContext<'a> {
     pub page: PageView,
 }
 
+/// Full context handed to `render_index`. The post list is passed by
+/// reference to avoid cloning the per-build vec.
+#[derive(Debug, Clone)]
+pub struct IndexContext<'a> {
+    pub env: RenderEnv<'a>,
+    pub posts: &'a [PostListEntry],
+}
+
+/// Full context handed to `render_404`. Minimal — the 404 page only needs
+/// the site chrome.
+#[derive(Debug, Clone)]
+pub struct Render404Context<'a> {
+    pub env: RenderEnv<'a>,
+}
+
 pub struct Templates {
     env: Environment<'static>,
 }
@@ -75,6 +101,8 @@ impl Templates {
             .context("loading page.html")?;
         env.add_template("index.html", INDEX_HTML)
             .context("loading index.html")?;
+        env.add_template("404.html", NOT_FOUND_HTML)
+            .context("loading 404.html")?;
         Ok(Self { env })
     }
 
@@ -112,21 +140,42 @@ impl Templates {
         .context("rendering page.html")
     }
 
-    /// Render the stub index page. Real listing lands in a later PR.
-    pub fn render_index(&self, env: &RenderEnv<'_>) -> Result<String> {
+    /// Render the home page, listing every published post in reverse-
+    /// chronological order. The caller is responsible for the sort and for
+    /// excluding drafts (both handled by `content::walk`).
+    pub fn render_index(&self, ctx: &IndexContext<'_>) -> Result<String> {
         let tmpl = self
             .env
             .get_template("index.html")
             .context("looking up index.html")?;
         tmpl.render(context! {
-            site => env.site,
-            inline_css => env.inline_css,
-            year => env.year,
-            page_title => env.site.title.clone(),
-            description => env.site.description.clone(),
+            site => ctx.env.site,
+            inline_css => ctx.env.inline_css,
+            year => ctx.env.year,
+            page_title => ctx.env.site.title.clone(),
+            description => ctx.env.site.description.clone(),
             lang => "en",
+            posts => ctx.posts,
         })
         .context("rendering index.html")
+    }
+
+    /// Render the 404 page. Served by Cloudflare Pages automatically on
+    /// missing routes when written to `public/404.html`.
+    pub fn render_404(&self, ctx: &Render404Context<'_>) -> Result<String> {
+        let tmpl = self
+            .env
+            .get_template("404.html")
+            .context("looking up 404.html")?;
+        tmpl.render(context! {
+            site => ctx.env.site,
+            inline_css => ctx.env.inline_css,
+            year => ctx.env.year,
+            page_title => format!("404 — {}", ctx.env.site.title),
+            description => "Page not found.",
+            lang => "en",
+        })
+        .context("rendering 404.html")
     }
 }
 
@@ -250,7 +299,7 @@ mod tests {
     }
 
     #[test]
-    fn index_render_includes_site_header_and_stub() {
+    fn index_render_lists_every_post_with_title_date_and_slug_link() {
         let templates = Templates::new().unwrap();
         let cfg = fixture_config();
         let env = RenderEnv {
@@ -258,8 +307,81 @@ mod tests {
             inline_css: "",
             year: 2026,
         };
-        let html = templates.render_index(&env).unwrap();
+        let posts = vec![
+            PostListEntry {
+                title: "On RL".to_string(),
+                slug: "rl".to_string(),
+                date: "2024-10-02".to_string(),
+                date_display: "Oct 2, 2024".to_string(),
+            },
+            PostListEntry {
+                title: "Older Thoughts".to_string(),
+                slug: "older".to_string(),
+                date: "2022-01-01".to_string(),
+                date_display: "Jan 1, 2022".to_string(),
+            },
+        ];
+        let ctx = IndexContext {
+            env,
+            posts: &posts,
+        };
+        let html = templates.render_index(&ctx).unwrap();
+        assert!(html.contains("Test Site"), "missing site title in: {html}");
+        assert!(html.contains("On RL"), "missing first post title in: {html}");
+        assert!(
+            html.contains("Older Thoughts"),
+            "missing second post title in: {html}"
+        );
+        assert!(
+            html.contains("/posts/rl/"),
+            "missing first post link in: {html}"
+        );
+        assert!(
+            html.contains("/posts/older/"),
+            "missing second post link in: {html}"
+        );
+        assert!(html.contains("Oct 2, 2024"), "missing date in: {html}");
+        assert!(
+            html.contains("post-list"),
+            "missing post-list class in: {html}"
+        );
+    }
+
+    #[test]
+    fn index_render_with_no_posts_still_emits_site_chrome() {
+        let templates = Templates::new().unwrap();
+        let cfg = fixture_config();
+        let env = RenderEnv {
+            site: &cfg,
+            inline_css: "",
+            year: 2026,
+        };
+        let ctx = IndexContext {
+            env,
+            posts: &[],
+        };
+        let html = templates.render_index(&ctx).unwrap();
+        // Header link still present even when there are no posts.
         assert!(html.contains("Test Site"));
-        assert!(html.contains("Site index coming soon"));
+        assert!(html.contains("post-list"));
+    }
+
+    #[test]
+    fn render_404_contains_404_and_home_link() {
+        let templates = Templates::new().unwrap();
+        let cfg = fixture_config();
+        let env = RenderEnv {
+            site: &cfg,
+            inline_css: "",
+            year: 2026,
+        };
+        let ctx = Render404Context { env };
+        let html = templates.render_404(&ctx).unwrap();
+        assert!(html.contains("404"), "missing '404' in: {html}");
+        assert!(
+            html.contains("href=\"/\""),
+            "missing home link in: {html}"
+        );
+        assert!(html.contains("Test Site"), "missing site chrome in: {html}");
     }
 }
