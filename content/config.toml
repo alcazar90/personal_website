@@ -1,0 +1,16 @@
+title = "Cristóbal Alcázar"
+url = "https://alkzar.cl"
+author = "Cristóbal Alcázar"
+description = "Notes on machine learning, diffusion models, and reinforcement learning."
+
+[[menu]]
+name = "Blog"
+url = "/"
+
+[[menu]]
+name = "About"
+url = "/about/"
+
+[[menu]]
+name = "Food for Thought"
+url = "/food-for-thought/"

@@ -1,0 +1,212 @@
+---
+title: 'Berkson''s Paradox: why handsome people are such a jerk?'
+date: 2021-02-14
+tags:
+- critical-thinking
+- stat
+- viz
+---
+
+It is not difficult to find a relationship between two variables when there is not.
+We may observe a negative correlation between variables, but the actual correlation
+between them is positive, or vice versa. Many times this phenomenon is explained
+by Berkson's paradox.
+
+When we are talking about correlation is simply refers to the measure of the 
+relationship between two variables. A [correlation](https://brilliant.org/wiki/correlation/)
+measures the grade in which two variables are linearly associated. It can take a
+value that goes from -1 to 1, in which -1 means a perfect negative linear
+relationship: more $X$ is associate with less $Y$, or vice-versa. Conversely, a 
+correlation equal to 1 means that more $X$ is associated with more $Y$. Finally, 
+a 0 correlation coefficient between $X$ and $Y$ is interpreted as no relationship at all.
+
+It is essential to acknowledge the differences between what we observed and the
+truth or what it is. In our daily lives, we are surrounded by plenty of scenarios
+in which we don't think about the sample size or if groups are well represented
+within the sample. The thing is that we look at the world through 
+our kaleidoscope, full of patterns, full of colours.
+
+Imagine that you start thinking about the relationship between attractiveness and 
+sympathy...and you begin inferring by your own dates experiences and stories of 
+your fine selection of friends that handsome people are jerks; meanwhile,
+enjoyable people are not so good looking. 
+
+Why it's so common to hear this? Are attractiveness and niceness put in conflict 
+by our creators? It is widespread to hear from the popular wisdom library such a 
+conundrum, but we don't have many reasons to believe any relationship between
+these attributes. Indeed, both variables, in reality, correlate near to 0. But
+what could it explain this apparent contradiction between the observed and the
+"truth"?  Berkson's Paradox!
+
+Let's say that $X$ = "Niceness" and $Y$ = "Attractiveness". Then we collect data from
+many people, measuring these attributes, which you can visualize in the below animation.
+Every attribute has a score from 0 to 100; the former means absent and the later
+fullness of the attribute, respectively. Note that in the animation title, you 
+can see the correlation coefficient ($\rho$).
+
+<!--
+<center>
+<img src="img/berksonParadox.gif" width="450" height="450"/>
+</center>
+-->
+
+
+<center>
+<img src="img/berksonParadox.gif"/>
+</center>
+
+It's likely and honest to think that, on average, one restricts the potential
+candidates in which we are interested in getting a date. You accept to date with
+someone who is not so good-looking if their eloquent and lovely behaviour
+compensates the absence of visual gracefulness. Otherwise, you could tolerate an
+idiot in the way in which their handsomeness diminished its jerkiness fragrance.
+As you can appreciate, from the above animation, your preferences remove from the 
+map the group of candidates who don't meet your minimum criteria. Let's call this 
+group "You would not date".
+
+Now the ugly truth: another group would use similar arguments to avoid our perfect
+combination of attractiveness and niceness, which we call "Would not date you".
+This double mechanism of restrictions prevents us from "observed the world as it
+is" and explain how we go from a correlation close to 0 between attractiveness and
+niceness to a strong negative correlation of −0.7: *the more handsome you are,
+the more jerkiness you spit out*. An illusion of our kaleidoscope that gives us the
+impression of a false dichotomy between $X$ and $Y$.
+
+
+
+
+### Additional resources
+
+- [Read more about Berkson's paradox](https://brilliant.org/wiki/berksons-paradox/){target="_blank"}
+- This example was mention in the book ["Calling Bullshit, The Art of Skepticism in a Data-Driven World"](https://www.goodreads.com/book/show/48889983-calling-bullshit) and elaborate in ["How Not to Be Wrong: The Power of Mathematical Thinking"](https://www.goodreads.com/book/show/18693884-how-not-to-be-wrong?ac=1&from_search=true&qid=1QgwnLyEqF&rank=1)
+- [Avoiding the Piftalls of Selection Bias (Carl T. Bergstrom, 2021)](https://www.youtube.com/watch?v=eSVg_DqPkNM){target="_blank"}
+
+
+### Code
+
+The gif made by mounting three different plots created with ggplot2 (R) and using
+the tool [Animated Gif Maker](https://ezgif.com/maker).
+
+Here is the code if you want to reproduce the example:
+
+```r
+library(ggplot2)
+library(dplyr)
+library(latex2exp)
+
+# Multivariate normal dist parameters:
+mu <- c(50, 50)
+Sigma <- matrix(c(200, 4, 8, 200), 2)
+
+# Generate 10.000 data points
+set.seed(323)
+df <- as.data.frame(MASS::mvrnorm(5e3, mu, Sigma))
+
+# Compute correlation between V1 and V2
+cor0 <- round(cor(df$V1, df$V2), 2)
+
+# Initial plot
+p0 <- df %>% 
+  ggplot() +
+  geom_point(aes(V1, V2), alpha = .3, size = .2, color = "steelblue") +
+  scale_x_continuous(breaks = seq(0, 100, 20), n.breaks = seq(0, 100, 5)) +
+  scale_y_continuous(breaks = seq(0, 100, 20)) +
+  coord_cartesian(xlim = c(0, 100), ylim = c(0, 100), clip = "off") +  
+  labs(x = "Niceness",
+       y = "Attractiveness",
+       title = TeX(paste("$\\rho$ =", as.character(cor0)))) +
+  annotate(geom = "text", x = c(10, 90), y = -15,
+           label = c("JERK", "NICE"), size = 4) +
+  annotate(geom = "text", x = -10, y = c(10, 90),
+           label = c("NOT", "HOT"), size = 4) +
+  theme_bw(base_size = 8) +
+  theme(plot.margin = margin(1.5, 1.5, 1.5, 1.5, "cm"),
+        plot.title = element_text(hjust = 0.5),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+
+# Lower line:
+# ------------------------------------------------------------------------------
+# Create a lower diagonal line and assign an identifier to each group (2 labels)
+# C: {LA=Lower Area, MA = Middle Area}
+lower_line <- function(x, m=-1, b = 85) m * x + b
+
+df <- df %>% 
+  mutate(C = case_when(lower_line(V1) < V2 ~ "LA",
+                        TRUE ~ "MA")) 
+
+# Compute cor1
+cor1 <- round(cor(df[df$C == "MA", "V1"], df[df$C == "MA", "V2"]), 2)
+
+# Create p1
+p1 <- df %>% 
+  ggplot() +
+  geom_point(aes(V1, V2, colour = C), alpha = .27, size = .2) +
+  scale_x_continuous(breaks = seq(0, 100, 20)) +
+  scale_y_continuous(breaks = seq(0, 100, 20)) +
+  coord_cartesian(xlim = c(0, 100), ylim = c(0, 100), clip = "off") +
+  scale_colour_manual(guide = FALSE, values = c("steelblue", "grey45")) +
+  labs(x = "Niceness",
+       y = "Attractiveness",
+       colour = NULL,
+       title = TeX(paste("$\\rho$ =", as.character(cor1)))) +
+  annotate(geom = "text", x = c(10, 90), y = -15,
+           label = c("JERK", "NICE"), size = 4) +
+  annotate(geom = "text", x = -10, y = c(10, 90),
+           label = c("NOT", "HOT"), size = 4) +
+  annotate("text", label = "YOU WOULD\nNOT DATE", x = 20, y = 20, size = 3.5) + 
+  geom_segment(aes(x=-5, y=lower_line(-5), xend=90, yend=lower_line(90))) +
+  theme_bw(base_size = 8) + 
+  theme(plot.margin = margin(1.5, 1.5, 1.5, 1.5, "cm"),
+      plot.title = element_text(hjust = 0.5),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank())
+
+# Upper line:
+# ------------------------------------------------------------------------------
+# Create a upper diagonal line and assign an identifier (3 labels)
+upper_line <- function(x, m=-1, b=115) b + x*m
+
+
+df <- df %>% 
+  mutate(C = case_when((lower_line(V1) <= V2) & (V2 < upper_line(V1)) ~ "MA",
+                       upper_line(V1) >= V2 ~ "UA",
+                       lower_line(V1) < V2 ~ "LA"))
+
+# Compute cor2
+cor2 <- round(cor(df[df$C == "MA", "V1"], df[df$C == "MA", "V2"]), 2)
+
+# Create p2
+p2 <- df %>% 
+  ggplot() +
+  geom_point(aes(V1, V2, colour = C), alpha = .27, size = .2) +
+  scale_x_continuous(breaks = seq(0, 100, 20)) +
+  scale_y_continuous(breaks = seq(0, 100, 20)) +
+  coord_cartesian(xlim = c(0, 100), ylim = c(0, 100), clip = "off") +
+  scale_colour_manual(guide = FALSE, values = c("grey45", "steelblue", "grey45")) +
+  labs(x = "Niceness",
+       y = "Attractiveness",
+       colour = NULL,
+       title = TeX(paste("$\\rho$ =", as.character(cor2)))) +
+  annotate(geom = "text", x = c(10, 90), y = -15,
+           label = c("JERK", "NICE"), size = 4) +
+  annotate(geom = "text", x = -10, y = c(10, 90),
+           label = c("NOT", "HOT"), size = 4) +
+  annotate("text", label = "YOU WOULD\nNOT DATE", x = 20, y = 20, size = 3.5) + 
+  geom_segment(aes(x=-5, y=lower_line(-5), xend=90, yend=lower_line(90))) +
+  annotate("text", label = "WOULD NOT\nDATE YOU", x = 80, y = 80, size = 3.5) + 
+  geom_segment(aes(x=10, y=upper_line(10), xend=105, yend=upper_line(105))) +
+  theme_bw(base_size = 8) +
+  theme(plot.margin = margin(1.5, 1.5, 1.5, 1.5, "cm"),
+      plot.title = element_text(hjust = 0.5),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank())
+
+
+# Save plots
+ggsave("/Users/YourUser/Desktop/bp0.png", p0, width = 7.5, height = 7.5, dpi = "retina")
+ggsave("/Users/YourUser/Desktop/bp1.png", p1, width = 7.5, height = 7.5, dpi = "retina")
+ggsave("/Users/YourUser/Desktop/bp2.png", p2, width = 7.5, height = 7.5, dpi = "retina")
+```
+
+
