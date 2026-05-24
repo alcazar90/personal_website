@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MathML cross-browser spike — fixture</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, sans-serif;
+      max-width: 640px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      line-height: 1.6;
+      font-size: 17px;
+    }
+    h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+    h2 { font-size: 1.1rem; margin-top: 2rem; }
+    p.lede { color: #666; margin-top: 0; }
+    section { margin: 1.5rem 0 2rem; }
+    pre.latex {
+      background: rgba(127, 127, 127, 0.12);
+      padding: 0.5rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 0.5rem 0;
+    }
+    .label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #888;
+      margin-top: 0.75rem;
+    }
+    .math.display {
+      display: block;
+      text-align: center;
+      margin: 0.5rem 0;
+      font-size: 1.1em;
+    }
+    .math.inline {
+      display: inline;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid rgba(127, 127, 127, 0.2);
+      margin: 2rem 0;
+    }
+    footer {
+      font-size: 0.85rem;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>MathML cross-browser spike — fixture</h1>
+  <p class="lede">
+    Open this file in Chrome, Firefox, Safari (macOS), and Safari (iOS).
+    For each sample, confirm it renders as actual math, not as raw
+    markup. See <code>docs/mathml-spike.md</code> for the checklist.
+  </p>
+
+  <hr />
+
+  <!-- Sample 1: inline a + b -->
+  <section>
+    <h2>1. Inline math — <code>a + b</code></h2>
+    <p class="label">LaTeX source</p>
+    <pre class="latex">Let $a + b = c$ where $a, b \in \mathbb{R}$.</pre>
+    <p class="label">Rendered</p>
+    <p>
+      Let
+      <span class="math inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>a</mi><mo>+</mo><mi>b</mi><mo>=</mo><mi>c</mi></mrow></math></span>
+      where
+      <span class="math inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>a</mi><mo>,</mo><mi>b</mi><mo>&#x2208;</mo><mi mathvariant="double-struck">R</mi></mrow></math></span>.
+    </p>
+  </section>
+
+  <!-- Sample 2: display fraction -->
+  <section>
+    <h2>2. Display math — fraction</h2>
+    <p class="label">LaTeX source</p>
+    <pre class="latex">$$ \frac{\partial L}{\partial \theta} = \frac{1}{N} \sum_{i=1}^{N} \nabla_\theta \log \pi_\theta(a_i \mid s_i) $$</pre>
+    <p class="label">Rendered</p>
+    <div class="math display">
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+          <mfrac>
+            <mrow><mo>&#x2202;</mo><mi>L</mi></mrow>
+            <mrow><mo>&#x2202;</mo><mi>&#x03B8;</mi></mrow>
+          </mfrac>
+          <mo>=</mo>
+          <mfrac>
+            <mn>1</mn>
+            <mi>N</mi>
+          </mfrac>
+          <munderover>
+            <mo>&#x2211;</mo>
+            <mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow>
+            <mi>N</mi>
+          </munderover>
+          <msub>
+            <mo>&#x2207;</mo>
+            <mi>&#x03B8;</mi>
+          </msub>
+          <mi>log</mi>
+          <msub>
+            <mi>&#x03C0;</mi>
+            <mi>&#x03B8;</mi>
+          </msub>
+          <mo stretchy="false">(</mo>
+          <msub><mi>a</mi><mi>i</mi></msub>
+          <mo>&#x2223;</mo>
+          <msub><mi>s</mi><mi>i</mi></msub>
+          <mo stretchy="false">)</mo>
+        </mrow>
+      </math>
+    </div>
+  </section>
+
+  <!-- Sample 3: summation with sub/superscript -->
+  <section>
+    <h2>3. Summation with subscript and superscript</h2>
+    <p class="label">LaTeX source</p>
+    <pre class="latex">$$ S_n = \sum_{k=0}^{n} \binom{n}{k} x^{k} y^{n-k} $$</pre>
+    <p class="label">Rendered</p>
+    <div class="math display">
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+          <msub><mi>S</mi><mi>n</mi></msub>
+          <mo>=</mo>
+          <munderover>
+            <mo>&#x2211;</mo>
+            <mrow><mi>k</mi><mo>=</mo><mn>0</mn></mrow>
+            <mi>n</mi>
+          </munderover>
+          <mrow>
+            <mo stretchy="true">(</mo>
+            <mfrac linethickness="0">
+              <mi>n</mi>
+              <mi>k</mi>
+            </mfrac>
+            <mo stretchy="true">)</mo>
+          </mrow>
+          <msup><mi>x</mi><mi>k</mi></msup>
+          <msup>
+            <mi>y</mi>
+            <mrow><mi>n</mi><mo>&#x2212;</mo><mi>k</mi></mrow>
+          </msup>
+        </mrow>
+      </math>
+    </div>
+    <p>
+      Inline version for size comparison:
+      <span class="math inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><munderover><mo>&#x2211;</mo><mrow><mi>k</mi><mo>=</mo><mn>0</mn></mrow><mi>n</mi></munderover><msup><mi>x</mi><mi>k</mi></msup></mrow></math></span>
+      — should be visibly smaller than the display block above.
+    </p>
+  </section>
+
+  <!-- Sample 4: integral with bounds -->
+  <section>
+    <h2>4. Definite integral with subscript and superscript bounds</h2>
+    <p class="label">LaTeX source</p>
+    <pre class="latex">$$ \int_{0}^{\infty} e^{-x^2} \, dx = \frac{\sqrt{\pi}}{2} $$</pre>
+    <p class="label">Rendered</p>
+    <div class="math display">
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+          <msubsup>
+            <mo>&#x222B;</mo>
+            <mn>0</mn>
+            <mi>&#x221E;</mi>
+          </msubsup>
+          <msup>
+            <mi>e</mi>
+            <mrow><mo>&#x2212;</mo><msup><mi>x</mi><mn>2</mn></msup></mrow>
+          </msup>
+          <mspace width="0.17em" />
+          <mi>d</mi><mi>x</mi>
+          <mo>=</mo>
+          <mfrac>
+            <msqrt><mi>&#x03C0;</mi></msqrt>
+            <mn>2</mn>
+          </mfrac>
+        </mrow>
+      </math>
+    </div>
+  </section>
+
+  <!-- Sample 5: 2x2 matrix -->
+  <section>
+    <h2>5. Matrix (2&times;2 with brackets)</h2>
+    <p class="label">LaTeX source</p>
+    <pre class="latex">$$ A = \begin{bmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{bmatrix} $$</pre>
+    <p class="label">Rendered</p>
+    <div class="math display">
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+          <mi>A</mi>
+          <mo>=</mo>
+          <mrow>
+            <mo stretchy="true">[</mo>
+            <mtable columnspacing="1em" rowspacing="0.3em">
+              <mtr>
+                <mtd><msub><mi>a</mi><mrow><mn>1</mn><mn>1</mn></mrow></msub></mtd>
+                <mtd><msub><mi>a</mi><mrow><mn>1</mn><mn>2</mn></mrow></msub></mtd>
+              </mtr>
+              <mtr>
+                <mtd><msub><mi>a</mi><mrow><mn>2</mn><mn>1</mn></mrow></msub></mtd>
+                <mtd><msub><mi>a</mi><mrow><mn>2</mn><mn>2</mn></mrow></msub></mtd>
+              </mtr>
+            </mtable>
+            <mo stretchy="true">]</mo>
+          </mrow>
+        </mrow>
+      </math>
+    </div>
+  </section>
+
+  <hr />
+
+  <footer>
+    Spike fixture for
+    <a href="https://github.com/alcazar90/personal_website/issues/18">#18</a>.
+    Checklist lives in <code>docs/mathml-spike.md</code>.
+  </footer>
+
+</body>
+</html>
