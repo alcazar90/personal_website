@@ -1,0 +1,45 @@
+name: Build and deploy
+
+on:
+  push:
+    branches:
+      - master
+      - rust-ssg
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Cache Cargo build
+        uses: Swatinem/rust-cache@v2
+
+      - name: Build site
+        run: |
+          cargo run --release -p ssg -- build
+          # Fallback while the SSG is still a stub: ensure `public/` exists
+          # so the deploy step has something to upload. Once the real build
+          # populates `public/`, this is a no-op.
+          mkdir -p public && [ -d public ] && touch public/.placeholder
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: pages deploy public --project-name=alkzar --branch=main
