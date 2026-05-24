@@ -175,11 +175,31 @@ to Cloudflare Pages. The result will be visible at `https://alkzar.pages.dev`
 
 **Time**: ~5 minutes (workflow takes ~2 min to run).
 
-1. Open https://github.com/alcazar90/personal_website/actions
-2. In the left sidebar, click the workflow named **build-and-deploy**
-3. On the right side you'll see a **Run workflow** dropdown — click it
+1. Open https://github.com/alcazar90/personal_website/actions/workflows/deploy.yml
+   (this is the per-workflow page — the plain `/actions` URL shows a global
+   run list with NO "Run workflow" button. You have to drill into a specific
+   workflow to get the button.)
+2. On the right side you'll see a small banner: "This workflow has a
+   `workflow_dispatch` event trigger" with a **Run workflow** dropdown
+3. Click the **Run workflow** dropdown
 4. Make sure the branch dropdown says `rust-ssg` (NOT `master`)
 5. Click the green **Run workflow** button
+
+If you go to `/actions` first and don't see the button, drill in via the
+LEFT SIDEBAR: click **"Build and deploy"** (the workflow display name from
+`.github/workflows/deploy.yml` line 1) to land on the per-workflow page.
+
+### Note: every prior push has already triggered failed runs
+
+The workflow auto-triggers on every push to `rust-ssg`, so by now you'll see
+a list of failed runs (one per PR merge during implementation). They failed at
+the "Deploy to Cloudflare Pages" step for one specific reason: the CF secrets
+weren't set yet. That's exactly what step 3 fixes. After you do step 3 and
+trigger a new run, it'll succeed.
+
+If you want, you can also just push any commit to `rust-ssg` and the auto-trigger
+will pick it up — no need to manually click "Run workflow". The manual trigger
+is just here for the case where there's nothing new to push.
 
 The workflow starts immediately. It does three things:
 1. Compiles the Rust SSG (~30s with cache, ~3 min cold)
