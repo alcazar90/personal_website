@@ -16,6 +16,14 @@
   --syn-blue:    #205EA6;
   --syn-purple:  #5E409D;
   --syn-magenta: #A02F6F;
+
+  --font-content: -apple-system, BlinkMacSystemFont, "Inter", "IBM Plex Sans",
+    "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "Cascadia Code", "IBM Plex Mono",
+    "Roboto Mono", Menlo, Monaco, Consolas, monospace;
+  --font-small:   0.875em;
+  --font-smaller: 0.8em;
+  --heading-weight: 500;
 }
 
 [data-theme="dark"] {
@@ -41,9 +49,9 @@
 html { color-scheme: light dark; }
 * { box-sizing: border-box; }
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 16px;
-  line-height: 1.6;
+  font-family: var(--font-content);
+  font-size: 17px;
+  line-height: 1.65;
   color: var(--tx);
   background: var(--bg);
   max-width: 640px;
@@ -52,10 +60,14 @@ body {
 }
 
 /* Headings */
-h1, h2, h3, h4, h5, h6 { color: var(--tx); line-height: 1.25; }
-h1 { font-size: 1.75rem; margin: 2rem 0 1rem; }
-h2 { font-size: 1.35rem; margin: 2rem 0 0.75rem; }
-h3 { font-size: 1.15rem; margin: 1.5rem 0 0.5rem; }
+h1, h2, h3, h4, h5, h6 {
+  color: var(--tx);
+  line-height: 1.25;
+  font-weight: var(--heading-weight);
+}
+h1 { font-size: 1.75rem; margin: 2rem 0 1rem;   letter-spacing: -0.02em; }
+h2 { font-size: 1.35rem; margin: 2rem 0 0.75rem; letter-spacing: -0.015em; }
+h3 { font-size: 1.15rem; margin: 1.5rem 0 0.5rem; letter-spacing: -0.01em; }
 h4, h5, h6 { font-size: 1rem; margin: 1.25rem 0 0.5rem; }
 
 /* Links */
@@ -67,19 +79,20 @@ a {
 
 /* Code */
 code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: var(--font-mono);
   background: var(--bg-2);
   padding: 0.1em 0.3em;
   border-radius: 3px;
   font-size: 0.9em;
 }
 pre {
+  font-family: var(--font-mono);
   background: var(--bg-2);
   border: 1px solid var(--ui);
   border-radius: 4px;
   padding: 1rem;
   overflow-x: auto;
-  font-size: 0.875em;
+  font-size: var(--font-small);
   line-height: 1.5;
 }
 pre code {
@@ -123,14 +136,14 @@ footer {
   margin-top: 4rem;
   padding-top: 1rem;
   border-top: 1px solid var(--ui);
-  font-size: 0.875em;
+  font-size: var(--font-small);
   color: var(--tx-3);
 }
 
 /* Post meta */
 .meta {
   color: var(--tx-3);
-  font-size: 0.875em;
+  font-size: var(--font-small);
   margin-bottom: 2rem;
 }
 
@@ -150,7 +163,7 @@ footer {
 }
 .post-list time {
   color: var(--tx-3);
-  font-size: 0.875em;
+  font-size: var(--font-small);
   font-variant-numeric: tabular-nums;
 }
 .post-list a { text-decoration: none; color: var(--tx); }
