@@ -151,6 +151,7 @@ footer {
 
 /* Index intro + post listing */
 .intro { color: var(--tx-2); margin: 0 0 2rem; }
+.section-label { margin-top: 1rem; margin-bottom: 1rem; color: var(--tx-2); }
 .post-list {
   list-style: none;
   padding: 0;
