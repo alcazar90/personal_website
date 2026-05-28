@@ -67,7 +67,7 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.25;
   font-weight: var(--heading-weight);
 }
-h1 { font-size: 1.75rem; margin: 2rem 0 1rem;   letter-spacing: -0.02em; }
+h1 { font-size: calc(1.35em + .55vw); margin: 1.5em 0 0.25em; letter-spacing: -0.02em; }
 h2 { font-size: 1.35rem; margin: 2rem 0 0.75rem; letter-spacing: -0.015em; }
 h3 { font-size: 1.15rem; margin: 1.5rem 0 0.5rem; letter-spacing: -0.01em; }
 h4, h5, h6 { font-size: 1rem; margin: 1.25rem 0 0.5rem; }
@@ -144,8 +144,8 @@ footer {
 
 /* Post meta */
 .meta {
-  color: var(--tx-3);
-  font-size: var(--font-small);
+  color: var(--tx-2);
+  font-size: 1em;
   margin-bottom: 2rem;
 }
 
