@@ -4,7 +4,7 @@ author = "Cristóbal Alcázar"
 description = "Notes on machine learning, diffusion models, and reinforcement learning."
 
 [[menu]]
-name = "Blog"
+name = "Writing"
 url = "/"
 
 [[menu]]
