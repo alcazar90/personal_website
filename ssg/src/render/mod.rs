@@ -1,30 +1,60 @@
 //! Markdown → HTML pipeline.
 //!
 //! Walks the `pulldown_cmark` event stream and intercepts:
+//!   - headings → add `id=` anchors; collect TOC entries
 //!   - fenced code blocks → `render::code::highlight` (syntect, class-based)
 //!   - inline / display math → `render::math::inline|display` (pulldown-latex → MathML)
 //!   - image tags with relative URLs → rewrite to `/posts/<slug>/<filename>`
+//!
+//! Bibliography: if a `<post-stem>.refs.yaml` sidecar exists, `\cite{key}` /
+//! `\citep{key}` patterns are replaced with numbered superscript links, and a
+//! `<section class="references">` is appended after the rendered body.
 //!
 //! Everything else falls through to the default HTML emitter. Errors during
 //! math conversion fall back to a `<code>` block with the raw source rather
 //! than panicking — a broken equation must not break the build.
 
+pub mod bibliography;
 pub mod code;
 pub mod math;
 
 use crate::content::Source;
 use anyhow::Result;
 use pulldown_cmark::{CodeBlockKind, CowStr, Event, Options, Parser, Tag, TagEnd};
+use std::collections::HashMap;
+
+/// One entry in the auto-generated Table of Contents.
+#[derive(Debug, Clone)]
+pub struct TocEntry {
+    pub level: u8,
+    pub text: String,
+    pub id: String,
+}
 
 #[derive(Debug, Clone)]
 pub struct RenderedPost {
     pub html: String,
     pub reading_time_minutes: u32,
+    /// Pre-rendered `<nav class="toc">` block, or empty if the post has fewer
+    /// than two headings.
+    pub toc_html: String,
 }
 
-/// Render a `Source` to HTML, returning the body HTML and an estimated
-/// reading time. No templating happens here — that's a downstream concern.
+/// Render a `Source` to HTML, returning body HTML, reading time, and a
+/// pre-rendered TOC nav block. No templating happens here.
 pub fn render(source: &Source) -> Result<RenderedPost> {
+    // --- bibliography ---
+    let bib_path = source.path.with_extension("refs.yaml");
+    let bib = if bib_path.exists() {
+        bibliography::load_bib(&bib_path)?
+    } else {
+        bibliography::BibMap::new()
+    };
+
+    let body_stripped = bibliography::strip_references_section(&source.body);
+    let (body_with_cites, ordered_keys) = bibliography::preprocess_citations(body_stripped, &bib);
+
+    // --- markdown → HTML ---
     let mut options = Options::empty();
     options.insert(Options::ENABLE_TABLES);
     options.insert(Options::ENABLE_FOOTNOTES);
@@ -34,30 +64,90 @@ pub fn render(source: &Source) -> Result<RenderedPost> {
 
     // Preprocess math: normalize legacy MathJax delimiters (\(...\), \[...\])
     // into $/$$ form, and strip unsupported LaTeX envs (equation, label).
-    let preprocessed = math::preprocess_source(&source.body);
+    let preprocessed = math::preprocess_source(&body_with_cites);
     let parser = Parser::new_ext(&preprocessed, options);
-    let events = transform_events(parser, &source.slug);
+    let mut toc: Vec<TocEntry> = Vec::new();
+    let events = transform_events(parser, &source.slug, &mut toc);
 
     let mut html = String::new();
     pulldown_cmark::html::push_html(&mut html, events.into_iter());
 
-    let reading_time_minutes = reading_time(&source.body);
+    // --- append bibliography section ---
+    let bib_html = bibliography::render_bibliography_html(&bib, &ordered_keys);
+    if !bib_html.is_empty() {
+        // Add a synthetic TOC entry so References appears in the nav.
+        toc.push(TocEntry {
+            level: 2,
+            text: "References".to_string(),
+            id: "references".to_string(),
+        });
+        html.push_str(&bib_html);
+    }
+
+    // --- build TOC nav ---
+    let toc_html = if toc.len() >= 2 {
+        build_toc_html(&toc)
+    } else {
+        String::new()
+    };
 
     Ok(RenderedPost {
         html,
-        reading_time_minutes,
+        reading_time_minutes: reading_time(&source.body),
+        toc_html,
     })
 }
 
-fn transform_events<'a>(parser: Parser<'a>, slug: &str) -> Vec<Event<'a>> {
+fn transform_events<'a>(
+    parser: Parser<'a>,
+    slug: &str,
+    toc: &mut Vec<TocEntry>,
+) -> Vec<Event<'a>> {
     let mut out: Vec<Event<'a>> = Vec::new();
     let mut iter = parser;
+    // Track used heading IDs to deduplicate (e.g. two "Overview" headings).
+    let mut heading_ids: HashMap<String, usize> = HashMap::new();
 
     while let Some(ev) = iter.next() {
         match ev {
+            // ── Headings ────────────────────────────────────────────────────
+            Event::Start(Tag::Heading { level, id, .. }) => {
+                // Drain inner events, collecting plain text for the anchor.
+                let mut inner: Vec<Event<'a>> = Vec::new();
+                let mut plain = String::new();
+                for e in iter.by_ref() {
+                    if matches!(e, Event::End(TagEnd::Heading(_))) {
+                        break;
+                    }
+                    if let Event::Text(ref t) = e {
+                        plain.push_str(t);
+                    }
+                    inner.push(e);
+                }
+
+                let base_id = if let Some(eid) = id.filter(|s| !s.is_empty()) {
+                    eid.to_string()
+                } else {
+                    heading_slug(&plain)
+                };
+                let anchor = deduplicate_id(&base_id, &mut heading_ids);
+
+                let lvl = level as u8;
+                toc.push(TocEntry {
+                    level: lvl,
+                    text: plain,
+                    id: anchor.clone(),
+                });
+
+                out.push(Event::Html(CowStr::from(format!(
+                    "<h{lvl} id=\"{anchor}\">"
+                ))));
+                out.extend(inner);
+                out.push(Event::Html(CowStr::from(format!("</h{lvl}>"))));
+            }
+
+            // ── Code blocks ─────────────────────────────────────────────────
             Event::Start(Tag::CodeBlock(CodeBlockKind::Fenced(lang))) => {
-                // Collect text until the matching End. Nested code blocks
-                // aren't possible in CommonMark, so a flat buffer is fine.
                 let mut buf = String::new();
                 for inner in iter.by_ref() {
                     match inner {
@@ -70,8 +160,6 @@ fn transform_events<'a>(parser: Parser<'a>, slug: &str) -> Vec<Event<'a>> {
                 out.push(Event::Html(CowStr::from(html)));
             }
             Event::Start(Tag::CodeBlock(CodeBlockKind::Indented)) => {
-                // Treat indented code blocks identically to plain fenced blocks
-                // (no language metadata available).
                 let mut buf = String::new();
                 for inner in iter.by_ref() {
                     match inner {
@@ -83,6 +171,8 @@ fn transform_events<'a>(parser: Parser<'a>, slug: &str) -> Vec<Event<'a>> {
                 let html = code::highlight(&buf, "");
                 out.push(Event::Html(CowStr::from(html)));
             }
+
+            // ── Math ─────────────────────────────────────────────────────────
             Event::InlineMath(latex) => {
                 // `\_` and `\*` in source were markdown escapes (to avoid italic
                 // interpretation); LaTeX wants the bare token (subscript / *).
@@ -101,6 +191,8 @@ fn transform_events<'a>(parser: Parser<'a>, slug: &str) -> Vec<Event<'a>> {
                 };
                 out.push(Event::Html(CowStr::from(html)));
             }
+
+            // ── Images ───────────────────────────────────────────────────────
             Event::Start(Tag::Image {
                 link_type,
                 dest_url,
@@ -115,12 +207,98 @@ fn transform_events<'a>(parser: Parser<'a>, slug: &str) -> Vec<Event<'a>> {
                     id,
                 }));
             }
+
             other => out.push(other),
         }
     }
 
     out
 }
+
+// ── TOC helpers ──────────────────────────────────────────────────────────────
+
+/// Build a `<nav class="toc">` block from collected heading entries.
+fn build_toc_html(toc: &[TocEntry]) -> String {
+    let mut html =
+        String::from("<nav class=\"toc\">\n<details>\n<summary>Table of Contents</summary>\n");
+
+    // Stack tracks the heading level of each open <ul>/<li> layer. The
+    // sentinel 0 means "root" and never corresponds to a real heading.
+    let mut stack: Vec<u8> = vec![0];
+
+    for entry in toc {
+        let level = entry.level;
+        let text = html_escape(&entry.text);
+
+        // Close any open layers that are deeper than the current heading.
+        while stack.last().copied().map_or(false, |top| level < top) {
+            html.push_str("</li>\n</ul>\n");
+            stack.pop();
+        }
+
+        if stack.last().copied() == Some(level) {
+            // Same nesting level: close the previous <li> (if not the root).
+            if stack.len() > 1 {
+                html.push_str("</li>\n");
+            }
+        } else {
+            // Going deeper: open a new nested list.
+            html.push_str("<ul>\n");
+            stack.push(level);
+        }
+
+        html.push_str(&format!(
+            "<li><a href=\"#{id}\">{text}</a>",
+            id = entry.id,
+            text = text
+        ));
+    }
+
+    // Close all remaining open layers.
+    while stack.len() > 1 {
+        html.push_str("</li>\n</ul>\n");
+        stack.pop();
+    }
+
+    html.push_str("</details>\n</nav>\n");
+    html
+}
+
+/// Slug a heading's plain text into an HTML `id`-safe anchor string.
+///
+/// Rules: lowercase, collapse non-alphanumeric runs to `-`, trim leading/
+/// trailing `-`. Unicode letters and digits are preserved.
+fn heading_slug(text: &str) -> String {
+    let lower = text.to_lowercase();
+    let mut out = String::with_capacity(lower.len());
+    let mut prev_sep = true; // suppress a leading `-`
+    for c in lower.chars() {
+        if c.is_alphanumeric() {
+            out.push(c);
+            prev_sep = false;
+        } else if !prev_sep {
+            out.push('-');
+            prev_sep = true;
+        }
+    }
+    while out.ends_with('-') {
+        out.pop();
+    }
+    out
+}
+
+/// If `base_id` already exists in `used`, append `-2`, `-3`, … until unique.
+fn deduplicate_id(base_id: &str, used: &mut HashMap<String, usize>) -> String {
+    let count = used.entry(base_id.to_string()).or_insert(0);
+    *count += 1;
+    if *count == 1 {
+        base_id.to_string()
+    } else {
+        format!("{base_id}-{count}")
+    }
+}
+
+// ── Misc helpers ─────────────────────────────────────────────────────────────
 
 /// Rewrite a relative image path to its deployed location at
 /// `/posts/<slug>/<filename>`. Absolute URLs, schemed URLs, and root-
@@ -138,7 +316,6 @@ fn rewrite_image_url(dest_url: &str, slug: &str) -> String {
     {
         return dest_url.to_string();
     }
-    // Strip any leading `./` for tidiness.
     let trimmed = dest_url.strip_prefix("./").unwrap_or(dest_url);
     format!("/posts/{slug}/{trimmed}")
 }
@@ -161,18 +338,21 @@ fn sanitize_math_escapes(latex: &str) -> String {
     latex.replace("\\_", "_").replace("\\*", "*")
 }
 
-fn html_escape(s: &str) -> String {
+pub fn html_escape(s: &str) -> String {
     let mut out = String::with_capacity(s.len());
     for c in s.chars() {
         match c {
             '&' => out.push_str("&amp;"),
             '<' => out.push_str("&lt;"),
             '>' => out.push_str("&gt;"),
+            '"' => out.push_str("&quot;"),
             _ => out.push(c),
         }
     }
     out
 }
+
+// ── Tests ─────────────────────────────────────────────────────────────────────
 
 #[cfg(test)]
 mod tests {
@@ -194,7 +374,6 @@ mod tests {
         let md = "```python\ndef greet(name):\n    return f\"hi, {name}\"\n```\n";
         let out = render(&make_source(md, "post")).unwrap();
         assert!(out.html.contains("<pre>"), "html: {}", out.html);
-        // syntect with ClassedHTMLGenerator emits <span class="..."> tokens.
         assert!(
             out.html.contains("<span class=\""),
             "expected highlighted spans; got: {}",
@@ -281,18 +460,71 @@ mod tests {
         let words: Vec<&str> = std::iter::repeat("lorem").take(660).collect();
         let body = words.join(" ");
         let out = render(&make_source(&body, "post")).unwrap();
-        // 660 / 220 = 3
         assert_eq!(out.reading_time_minutes, 3);
     }
 
     #[test]
     fn malformed_math_falls_back_to_code_block() {
-        // Unmatched brace — pulldown-latex should error and we should
-        // emit a <code> fallback rather than panic.
         let md = "Bad: $\\frac{1$ here.\n";
         let out = render(&make_source(md, "post")).unwrap();
-        // Either rendered as mathml (lenient parser) or fell back to code —
-        // both are acceptable; what's NOT acceptable is a panic / build crash.
         assert!(!out.html.is_empty());
+    }
+
+    #[test]
+    fn headings_get_id_anchors() {
+        let md = "## Hello World\n\nSome text.\n\n### Sub Section\n\nMore text.\n";
+        let out = render(&make_source(md, "post")).unwrap();
+        assert!(
+            out.html.contains(r#"id="hello-world""#),
+            "got: {}",
+            out.html
+        );
+        assert!(
+            out.html.contains(r#"id="sub-section""#),
+            "got: {}",
+            out.html
+        );
+    }
+
+    #[test]
+    fn toc_generated_for_multi_heading_post() {
+        let md = "## Alpha\n\ntext.\n\n## Beta\n\nmore.\n";
+        let out = render(&make_source(md, "post")).unwrap();
+        assert!(
+            out.toc_html.contains("class=\"toc\""),
+            "expected toc nav; got: {}",
+            out.toc_html
+        );
+        assert!(out.toc_html.contains("#alpha"), "got: {}", out.toc_html);
+        assert!(out.toc_html.contains("#beta"), "got: {}", out.toc_html);
+    }
+
+    #[test]
+    fn toc_empty_for_single_heading() {
+        let md = "## Only One\n\ntext.\n";
+        let out = render(&make_source(md, "post")).unwrap();
+        assert!(
+            out.toc_html.is_empty(),
+            "expected empty toc for single heading; got: {}",
+            out.toc_html
+        );
+    }
+
+    #[test]
+    fn heading_slug_lowercases_and_replaces_separators() {
+        assert_eq!(heading_slug("Hello World"), "hello-world");
+        assert_eq!(
+            heading_slug("Vanilla Policy Gradient, aka REINFORCE"),
+            "vanilla-policy-gradient-aka-reinforce"
+        );
+        assert_eq!(heading_slug("  leading spaces  "), "leading-spaces");
+    }
+
+    #[test]
+    fn duplicate_heading_ids_get_suffix() {
+        let mut used = HashMap::new();
+        assert_eq!(deduplicate_id("intro", &mut used), "intro");
+        assert_eq!(deduplicate_id("intro", &mut used), "intro-2");
+        assert_eq!(deduplicate_id("intro", &mut used), "intro-3");
     }
 }

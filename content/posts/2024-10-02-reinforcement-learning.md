@@ -11,39 +11,11 @@ description: My notes on RL and policy gradient methods
 draft: false
 ---
 
-<details>
-    <summary><b>Table of Contents</b></summary>
-    <ul>
-        <li><a href="#the-framework-for-learning-to-act">The Framework for Learning to Act</a></li>
-        <li><a href="#policy-optimization">Policy Optimization</a>
-            <ul>
-                <li><a href="#learning-the-policy">Learning the Policy</a></li>
-                <li><a href="#gradient-estimation-via-score-function">Gradient Estimation via Score Function</a></li>
-            </ul>
-        </li>
-        <li><a href="#vanilla-policy-gradient-aka-reinforce">Vanilla Policy Gradient, aka REINFORCE</a></li>
-        <li><a href="#actor-critic-methods">Actor-Critic Methods</a></li>
-        <li><a href="#references">References</a></li>
-    </ul>
-</details>
-
-<br>
-
 Reinforcement learning (RL) <a href="http://incompleteideas.net/book/the-book-2nd.html" target="_blank">(Sutton, 1998)</a> is all about the interaction between an agent and its environment, where learning occurs through trial-and-error. The agent observes the current state of the environment, takes actions based on these observations, and influences new possible state configurations while receiving rewards based on its actions. The primary objective is to maximize cumulative rewards, which drives the agent's sequence of decisions towards achieving specific goals, such as escaping from a maze, <a href="https://arxiv.org/abs/1312.5602" target="_blank">winning an Atari (Mnih. 2013) </a>, or <a href="https://deepmind.google/technologies/alphago/" target="_blank">defeating the world champion of Go (Silver, 2016)</a>. But how does the agent learn to act effectively to achieve its goal? RL algorithms are designed to maximize the total rewards obtained by the agent, thereby guiding its actions towards these objectives. 
 
 In this post, we will introduce the essential concepts of RL required to implement these agents. We will specifically focus on model-free RL, where the agent learns to act without constructing a model of its environment, as opposed to model-based RL, which involves such modeling. The goal is to design agents that learn to perform well solely by consuming experiences from their environment. By understanding the fundamentals of designing such agents, we will explore policy optimization methods, such as REINFORCE and PPO, which are used to refine the agent’s behavior.  
 
 With the knowledge gained from this chapter, we will be equipped to set-up and implement this framework under popular research environment such as ATARI pong.
-
-<!-- <b>Table of Contents:</b>
-- [The Framework for Learning to Act](#the-framework-for-learning-to-act)
-- [Policy Optimization](#policy-optimization)
-  - [Learning the Policy](#learning-the-policy)
-  - [Gradient Estimation via Score Function](#gradient-estimation-via-score-function)
-- [Vanilla Policy Gradient, aka REINFORCE](#vanilla-policy-gradient-aka-reinforce)
-- [Actor-Critic Methods](#actor-critic-methods)
-- [References](#references) -->
-
 
 ## The Framework for Learning to Act
 
