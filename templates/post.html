@@ -3,6 +3,7 @@
 <article>
   <h1>{{ post.title }}</h1>
   <p class="meta"><time datetime="{{ post.date }}">{{ post.date_display }}</time> &middot; {{ post.reading_time }} min read</p>
+  {% if post.toc_html %}{{ post.toc_html | safe }}{% endif %}
   {{ post.html | safe }}
 </article>
 {% if site.giscus %}

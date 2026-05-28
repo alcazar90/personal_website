@@ -26,6 +26,8 @@ pub struct PostView {
     pub slug: String,
     pub description: String,
     pub lang: String,
+    /// Pre-rendered `<nav class="toc">` block, or empty string when absent.
+    pub toc_html: String,
 }
 
 /// Per-page view-model passed into `page.html`.
@@ -214,6 +216,7 @@ mod tests {
             slug: "rl".to_string(),
             description: "An intro.".to_string(),
             lang: "en".to_string(),
+            toc_html: String::new(),
         }
     }
 

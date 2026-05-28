@@ -1,0 +1,84 @@
+Sutton1998:
+  author: "Sutton, R. S. & Barto, A. G."
+  title: "Reinforcement Learning: An Introduction (2nd ed.)"
+  year: 2018
+  url: "http://incompleteideas.net/book/the-book-2nd.html"
+
+schulman2016optimizing:
+  author: "Schulman, J."
+  title: "Optimizing Expectations: From Deep Reinforcement Learning to Stochastic Computation Graphs"
+  year: 2016
+  url: "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-217.html"
+  note: "Doctoral dissertation, UC Berkeley"
+
+sutton1999policy:
+  author: "Sutton, R. S., McAllester, D., Singh, S., & Mansour, Y."
+  title: "Policy Gradient Methods for Reinforcement Learning with Function Approximation"
+  year: 1999
+  url: "https://proceedings.neurips.cc/paper/1999/hash/464d828b85b0bed98e80ade0a5c43b0f-Abstract.html"
+  booktitle: "Advances in Neural Information Processing Systems 12"
+
+williams1992simple:
+  author: "Williams, R. J."
+  title: "Simple Statistical Gradient-Following Algorithms for Connectionist Reinforcement Learning"
+  year: 1992
+  journal: "Machine Learning, 8, 229–256"
+  url: "https://link.springer.com/article/10.1007/BF00992696"
+
+mohamed2020monte:
+  author: "Mohamed, S., Rosca, M., Figurnov, M., & Mnih, A."
+  title: "Monte Carlo Gradient Estimation in Machine Learning"
+  year: 2020
+  journal: "Journal of Machine Learning Research, 21(132), 1–62"
+  url: "https://arxiv.org/abs/1906.10652"
+
+NIPS2001_584b98aa:
+  author: "Weaver, L. & Tao, N."
+  title: "The Optimal Reward Baseline for Gradient-Based Reinforcement Learning"
+  year: 2001
+  url: "https://proceedings.neurips.cc/paper/2001/hash/584b98aac2dddf59ee1f8e735d16c27a-Abstract.html"
+  booktitle: "Advances in Neural Information Processing Systems 14"
+
+andrychowicz2020mattersonpolicyreinforcementlearning:
+  author: "Andrychowicz, M., Raichuk, A., Stańczyk, P., Orsini, M., Girgin, S., Marinier, R., Hussenot, L., Geist, M., Pietquin, O., Michalski, M., Gelly, S., & Bachem, O."
+  title: "What Matters In On-Policy Reinforcement Learning? A Large-Scale Empirical Study"
+  year: 2021
+  url: "https://arxiv.org/abs/2006.05990"
+
+foundations-deeprl-series-l3:
+  author: "Abbeel, P."
+  title: "Foundations of Deep RL — Policy Gradients (Lecture 3)"
+  year: 2021
+  url: "https://www.youtube.com/watch?v=AKbX1Zvo7r8"
+
+dlr191986:
+  author: "Huang, S., Dossa, R. F. J., Ye, C., Braga, J., Chakraborty, D., Mehta, K., & Araújo, J. G. M."
+  title: "The 37 Implementation Details of Proximal Policy Optimization"
+  year: 2022
+  url: "https://iclr-blog-track.github.io/2022/03/25/ppo-implementation-details/"
+
+kingma2017adammethodstochasticoptimization:
+  author: "Kingma, D. P. & Ba, J."
+  title: "Adam: A Method for Stochastic Optimization"
+  year: 2015
+  url: "https://arxiv.org/abs/1412.6980"
+  booktitle: "International Conference on Learning Representations (ICLR)"
+
+mackay-book:
+  author: "MacKay, D. J. C."
+  title: "Information Theory, Inference, and Learning Algorithms"
+  year: 2003
+  url: "http://www.inference.org.uk/mackay/itila/"
+
+schulman2015trust:
+  author: "Schulman, J., Levine, S., Abbeel, P., Jordan, M., & Moritz, P."
+  title: "Trust Region Policy Optimization"
+  year: 2015
+  url: "https://arxiv.org/abs/1502.05477"
+  booktitle: "Proceedings of the 32nd International Conference on Machine Learning (ICML)"
+
+schulman2017proximal:
+  author: "Schulman, J., Wolski, F., Dhariwal, P., Radford, A., & Klimov, O."
+  title: "Proximal Policy Optimization Algorithms"
+  year: 2017
+  url: "https://arxiv.org/abs/1707.06347"

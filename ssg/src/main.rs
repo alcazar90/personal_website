@@ -293,6 +293,7 @@ fn render_and_write_post(
         slug: source.slug.clone(),
         description,
         lang,
+        toc_html: rendered.toc_html,
     };
     let ctx = PostContext {
         env: env.clone_borrowed(),
