@@ -51,12 +51,14 @@ html { color-scheme: light dark; }
 body {
   font-family: var(--font-content);
   font-size: 17px;
-  line-height: 1.65;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
   color: var(--tx);
   background: var(--bg);
-  max-width: 640px;
+  max-width: 700px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 2rem 2vw;
 }
 
 /* Headings */
