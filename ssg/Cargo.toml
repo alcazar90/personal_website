@@ -1,0 +1,25 @@
+[package]
+name = "ssg"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "ssg"
+path = "src/main.rs"
+
+[dependencies]
+anyhow.workspace = true
+serde.workspace = true
+serde_yaml.workspace = true
+toml.workspace = true
+walkdir.workspace = true
+regex.workspace = true
+pulldown-cmark.workspace = true
+pulldown-latex.workspace = true
+syntect.workspace = true
+once_cell.workspace = true
+minijinja.workspace = true
+time.workspace = true
