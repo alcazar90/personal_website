@@ -32,12 +32,30 @@ pub struct GiscusConfig {
     pub loading: String,
 }
 
+#[derive(Debug, Clone, Deserialize, Serialize, Default)]
+pub struct SocialLinks {
+    #[serde(default)]
+    pub cv: String,
+    #[serde(default)]
+    pub github: String,
+    #[serde(default)]
+    pub x: String,
+    #[serde(default)]
+    pub goodreads: String,
+    #[serde(default)]
+    pub linkedin: String,
+}
+
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Config {
     pub title: String,
     pub url: String,
     pub author: String,
     pub description: String,
+    #[serde(default)]
+    pub footnote: String,
+    #[serde(default)]
+    pub social: SocialLinks,
     #[serde(default)]
     pub menu: Vec<MenuItem>,
     /// Optional. Absent in dev/local configs that haven't claimed a giscus

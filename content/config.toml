@@ -2,10 +2,14 @@ title = "Cristóbal Alcázar"
 url = "https://alkzar.cl"
 author = "Cristóbal Alcázar"
 description = "Notes on machine learning, diffusion models, and reinforcement learning."
+footnote = "Theme inspired by Steph Ango"
 
-[[menu]]
-name = "Writing"
-url = "/"
+[social]
+cv        = "/cv.pdf"
+github    = "https://github.com/alcazar90"
+x         = "https://x.com/vamos_alcazar"
+goodreads = "https://www.goodreads.com/alkzar90"
+linkedin  = "https://www.linkedin.com/in/alcazar90/"
 
 [[menu]]
 name = "About"
