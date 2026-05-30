@@ -192,6 +192,8 @@ mod tests {
             url: "https://example.com".to_string(),
             author: "Tester".to_string(),
             description: "A test site.".to_string(),
+            footnote: String::new(),
+            social: Default::default(),
             menu: vec![
                 MenuItem {
                     name: "About".to_string(),

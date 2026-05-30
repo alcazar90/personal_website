@@ -1,11 +1,9 @@
 ---
-title: About
+title: About me
 description: About Cristóbal Alcázar
 ---
 
-<p align="center">
-  <img src="https://alkzar.cl/img/alcazar-cristobal-about.JPG" alt="Alcázar Cristóbal, about photo">
-</p>
+<img class="about-avatar" src="/img/alcazar-cristobal-about-cover.JPG" alt="Cristóbal Alcázar">
 
 Hi, I'm Cristóbal! MSc in Data Science at Universidad de Chile.
 

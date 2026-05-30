@@ -160,6 +160,8 @@ mod tests {
             url: "https://example.com".to_string(),
             author: "Tester".to_string(),
             description: "A test site.".to_string(),
+            footnote: String::new(),
+            social: Default::default(),
             menu: Vec::new(),
             giscus: None,
         }

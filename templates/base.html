@@ -25,19 +25,34 @@
   <a class="site-title" href="/">{{ site.title }}</a>
   <nav>
     {% for item in site.menu %}<a href="{{ item.url }}">{{ item.name }}</a>{% endfor %}
-    <button id="theme-toggle" aria-label="Toggle theme" type="button">&#9790;</button>
+    <button id="theme-toggle" class="appearance-toggle" type="button" role="switch" aria-checked="false" aria-label="Toggle theme">
+      <span class="toggle-check">
+        <span class="toggle-icon">
+          <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </span>
+      </span>
+    </button>
   </nav>
 </header>
 <main>{% block content %}{% endblock %}</main>
-<footer>&copy; {{ year }} {{ site.author }}</footer>
+<footer>&copy; {{ year }} {{ site.author }}{% if site.footnote %} — {{ site.footnote }}{% endif %}</footer>
 <script>
 (function(){
   var b=document.getElementById('theme-toggle');
   if(!b)return;
-  b.addEventListener('click',function(){
+  b.setAttribute('aria-checked',document.documentElement.dataset.theme==='dark'?'true':'false');
+  function toggleTheme(){
     var cur=document.documentElement.dataset.theme==='dark'?'light':'dark';
     document.documentElement.dataset.theme=cur;
     localStorage.setItem('theme',cur);
+    b.setAttribute('aria-checked',cur==='dark'?'true':'false');
+  }
+  b.addEventListener('click',toggleTheme);
+  document.addEventListener('keydown',function(e){
+    if(e.key==='D'&&!e.metaKey&&!e.ctrlKey&&!e.altKey&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){
+      toggleTheme();
+    }
   });
 })();
 </script>
