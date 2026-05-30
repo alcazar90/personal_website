@@ -5,10 +5,7 @@ description: An opinionated list of readings, talks, books, tools, and projects.
 
 *"It's not about information anymore,* ***it's about curation***. We are drowning in blog posts, tutorials, courses, repos, docs, papers." <a href="https://x.com/suzatweet/status/1166347201766780928?ref_src=twsrc%5Etfw" target="_blank">Suzana Ilić (MLT)</a> 
 
-
-<blockquote class="twitter-tweet" data-theme="dark"><p lang="en" dir="ltr">Someone asked me why we&#39;re organizing DL workshops, since there&#39;s a ton of excellent online resources out there. And I think that&#39;s the problem. It&#39;s not about information anymore, it&#39;s about curation. We are drowning in blog posts, tutorials, courses, repos, docs, papers.</p>&mdash; Suzana Ilić (@suzatweet) <a href="https://twitter.com/suzatweet/status/1166347201766780928?ref_src=twsrc%5Etfw">August 27, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
-<br>Just an opinionated list of readings, talks, books, tools, projects, or whatever that provokes or gets the brain going 🧠
+Just an opinionated list of readings, talks, books, tools, projects, or whatever that provokes or gets the brain going 🧠
 
 ## Essays, articles, or thoughts 
 
