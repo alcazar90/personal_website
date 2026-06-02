@@ -345,3 +345,12 @@ sup a.cite {
   font-size: 0.75em;
 }
 sup a.cite:hover { text-decoration: underline; }
+
+/* Twitter/X embedded card.
+ * border-radius on the <iframe> clips its content at the corners — the
+ * only way to fix corner bleed across a cross-origin frame. max-width
+ * caps the default 550 px and makes it responsive on narrow viewports. */
+.twitter-tweet-rendered {
+  border-radius: 12px !important;
+  max-width: min(500px, 100%) !important;
+}
