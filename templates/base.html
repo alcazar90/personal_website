@@ -47,6 +47,8 @@
   function toggleTheme(){
     var cur=document.documentElement.dataset.theme==='dark'?'light':'dark';
     document.documentElement.dataset.theme=cur;
+    document.documentElement.style.background='';
+    document.documentElement.style.color='';
     localStorage.setItem('theme',cur);
     b.setAttribute('aria-checked',cur==='dark'?'true':'false');
   }
