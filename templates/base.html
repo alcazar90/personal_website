@@ -10,7 +10,13 @@
 (function(){
   var s=localStorage.getItem('theme');
   var p=matchMedia('(prefers-color-scheme: dark)').matches;
+<<<<<<< Updated upstream
   document.documentElement.dataset.theme=s||(p?'dark':'light');
+=======
+  var t=s||(p?'dark':'light');
+  document.documentElement.dataset.theme=t;
+  if(t==='dark'){document.documentElement.style.background='#100F0F';document.documentElement.style.color='#CECDC3';}
+>>>>>>> Stashed changes
 })();
 </script>
 <style>{{ inline_css | safe }}</style>
