@@ -250,7 +250,7 @@ The reward-to-go technique is a simple trick that can reduce the variance of the
 \\]
 
 
-As we saw at the end of Section~\ref{sec:gradient-estimation-score-function}, it is possible to reduce the variance of the gradient estimator by using a baseline function, \\(b(s_{t})\\), without biasing the estimator. However, is the expectation of the score still unbiased in this setting? 
+As we saw at the end of [Gradient Estimation via Score Function](#gradient-estimation-via-score-function), it is possible to reduce the variance of the gradient estimator by using a baseline function, \\(b(s_{t})\\), without biasing the estimator. However, is the expectation of the score still unbiased in this setting? 
 
 \\[
 \begin{equation}\label{eqn:reinforce-gradient-estimator-baseline}
