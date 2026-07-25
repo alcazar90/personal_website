@@ -452,7 +452,7 @@ The vector $𝜹$ represents a difference between $x$ and $x_0$; the latter is a
 $D^k_x$ and $𝝳^k$ are tensors or k-dimensionl arrays.
 
 <br>
-<blockquote class="twitter-tweet" data-theme="dark"><p lang="en" dir="ltr"><a href="https://twitter.com/hardmaru/status/1326054980134973442?s=21">November 10, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr"><a href="https://twitter.com/hardmaru/status/1326054980134973442?s=21">November 10, 2020</a></blockquote>
 
 <br>
 

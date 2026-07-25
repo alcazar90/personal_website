@@ -46,7 +46,7 @@
 }
 
 /* Base */
-html { color-scheme: light dark; }
+html { color-scheme: light dark; background: var(--bg); }
 * { box-sizing: border-box; }
 body {
   font-family: var(--font-content);
@@ -83,6 +83,7 @@ a {
 code {
   font-family: var(--font-mono);
   background: var(--bg-2);
+  border: 1px solid var(--ui);
   padding: 0.1em 0.3em;
   border-radius: 3px;
   font-size: 0.9em;
@@ -99,6 +100,7 @@ pre {
 }
 pre code {
   background: transparent;
+  border: none;
   padding: 0;
   font-size: 1em;
 }
@@ -125,7 +127,7 @@ header nav a:hover { color: var(--accent); }
 /* Theme toggle */
 .appearance-toggle {
   background: var(--bg-2);
-  border: none;
+  border: 1px solid var(--ui);
   border-radius: 12px;
   width: 36px;
   height: 20px;
@@ -363,10 +365,15 @@ sup a.cite {
 sup a.cite:hover { text-decoration: underline; }
 
 /* Twitter/X embedded card.
+ * Scoped to our own `.tweet-embed` wrapper (see templates/post.html) rather
+ * than the iframe's own class — Twitter only adds `twitter-tweet-rendered`
+ * to the iframe on some init paths, not when we re-render it ourselves for
+ * theme switching, so it can't be relied on as a selector.
  * border-radius on the <iframe> clips its content at the corners — the
  * only way to fix corner bleed across a cross-origin frame. max-width
  * caps the default 550 px and makes it responsive on narrow viewports. */
-.twitter-tweet-rendered {
+.tweet-embed { display: flex; justify-content: center; margin: 1rem 0; }
+.tweet-embed iframe {
   border-radius: 12px !important;
   max-width: min(500px, 100%) !important;
 }
