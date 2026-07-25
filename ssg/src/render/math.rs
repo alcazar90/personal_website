@@ -14,6 +14,9 @@
 //!      confused by `$ content $` (leading space invalidates the span).
 //!   5. Strips environments pulldown-latex doesn't support: `\begin{equation}`,
 //!      `\end{equation}`, `\label{…}`.
+//!   6. Isolates bare `<br>` lines with a trailing blank line so they can't
+//!      swallow adjacent `$$…$$` blocks into a raw HTML block (see
+//!      `isolate_bare_br_tags`).
 
 use anyhow::{anyhow, Result};
 use pulldown_latex::config::RenderConfig;
@@ -51,12 +54,48 @@ pub fn display(latex: &str) -> Result<String> {
 
 /// Preprocess markdown source to make math compatible with our pipeline.
 pub fn preprocess_source(body: &str) -> String {
-    let labels = collect_equation_labels(body);
-    let s = replace_refs(body, &labels);
+    let body = isolate_bare_br_tags(body);
+    let labels = collect_equation_labels(&body);
+    let s = replace_refs(&body, &labels);
     let s = wrap_standalone_equations(&s);
     let s = normalize_delimiters(&s);
     let s = fix_display_math_newlines(&s);
     strip_unsupported_envs(&s)
+}
+
+// ── Bare `<br>` isolation ─────────────────────────────────────────────────────
+
+/// Ensure a standalone `<br>` (or `<br/>` / `<br />`) line is followed by a
+/// blank line.
+///
+/// CommonMark's HTML-block rule 6 lets a block-level tag like `<br>`
+/// interrupt a paragraph and start a raw HTML block; that block then
+/// swallows every subsequent non-blank line as literal text until the next
+/// blank line — including `$$…$$` math, which never reaches pulldown-cmark's
+/// math extension as a result (it just falls through as literal `$$` text,
+/// and any lone `~` inside the LaTeX can even get misparsed as GFM
+/// strikethrough). Some migrated posts use `<br>` as a bare spacer between
+/// display-math blocks with no blank line in between, so we insert one to
+/// keep each `<br>` an isolated one-line HTML block.
+fn isolate_bare_br_tags(body: &str) -> String {
+    static BR_RE: OnceLock<Regex> = OnceLock::new();
+    let br_re = BR_RE.get_or_init(|| Regex::new(r"(?i)^\s*<br\s*/?>\s*$").unwrap());
+
+    let had_trailing_newline = body.ends_with('\n');
+    let lines: Vec<&str> = body.lines().collect();
+    let mut out = String::with_capacity(body.len() + 16);
+    for (i, line) in lines.iter().enumerate() {
+        out.push_str(line);
+        out.push('\n');
+        let next_is_blank = lines.get(i + 1).map_or(true, |l| l.trim().is_empty());
+        if br_re.is_match(line) && !next_is_blank {
+            out.push('\n');
+        }
+    }
+    if !had_trailing_newline {
+        out.pop();
+    }
+    out
 }
 
 // ── Delimiter normalisation ───────────────────────────────────────────────────
@@ -132,7 +171,12 @@ fn fix_display_math_newlines(body: &str) -> String {
             format!("$$\\begin{{aligned}}{}\\end{{aligned}}$$", s)
         } else if stripped_newline {
             // Only a trailing \\ was removed; restore surrounding newlines.
-            format!("$$\n{}\n$$", s)
+            // `s` may still carry the ORIGINAL leading newline (only
+            // trim_end was applied above) — trim it here too, otherwise the
+            // "\n" we add below stacks with it into "\n\n" (a blank line),
+            // which splits the CommonMark paragraph in two and makes
+            // pulldown-cmark fail to recognize the $$ pair as math at all.
+            format!("$$\n{}\n$$", s.trim())
         } else {
             // Nothing to change — preserve original spacing exactly.
             format!("$${}$$", inner)
@@ -383,6 +427,92 @@ mod tests {
         assert_eq!(out.matches("$$").count(), 2, "expected one $$…$$ pair: {out}");
         // Ensure the block didn't get needlessly wrapped in aligned.
         assert!(!out.contains("\\begin{aligned}"), "spurious aligned wrap: {out}");
+        // Regression: re-wrapping must not introduce a blank line right after
+        // the opening `$$` — that splits the block into two CommonMark
+        // paragraphs, and pulldown-cmark then fails to recognize the `$$`
+        // pair as math at all (see `display_math_survives_paragraph_split`).
+        assert!(!out.contains("$$\n\n"), "blank line after opening $$: {out}");
+        assert!(!out.contains("\n\n$$"), "blank line before closing $$: {out}");
+    }
+
+    #[test]
+    fn display_math_survives_paragraph_split_regression() {
+        // Reproduces the exact shape found in the "gauss confusion matrix"
+        // post: a display block that opens with "$$\n" (content starts on
+        // the next line) and ends with a lone trailing `\\` before the
+        // closing `$$`. Before the fix, `fix_display_math_newlines` left a
+        // stray blank line after the opening `$$`, which splits the block
+        // into two CommonMark paragraphs. pulldown-cmark can then no longer
+        // match the `$$` pair as a single math span, so the block falls
+        // through as literal text — and any lone `~` inside (LaTeX's
+        // non-breaking space) gets misparsed as GFM strikethrough.
+        let input = "$$\n\\boldsymbol T^{\\top}\\hat{\\boldsymbol T} = \n\\begin{bmatrix}\n1 & 0 & 0\\\\\n1 & 0 & 1\\\\\n0 & 0 & 1\n\\end{bmatrix}~\\in~Z_{0+}^{3~\\times~3} \\\\\n$$";
+        let out = preprocess_source(input);
+        assert!(!out.contains("$$\n\n"), "blank line reintroduced: {out}");
+
+        let mut options = pulldown_cmark::Options::empty();
+        options.insert(pulldown_cmark::Options::ENABLE_MATH);
+        options.insert(pulldown_cmark::Options::ENABLE_STRIKETHROUGH);
+        let events: Vec<_> = pulldown_cmark::Parser::new_ext(&out, options).collect();
+        let has_display_math = events
+            .iter()
+            .any(|e| matches!(e, pulldown_cmark::Event::DisplayMath(_)));
+        assert!(has_display_math, "expected a DisplayMath event, got: {events:?}");
+        let has_strikethrough = events.iter().any(|e| {
+            matches!(
+                e,
+                pulldown_cmark::Event::Start(pulldown_cmark::Tag::Strikethrough)
+            )
+        });
+        assert!(
+            !has_strikethrough,
+            "lone `~` was misparsed as strikethrough: {events:?}"
+        );
+    }
+
+    #[test]
+    fn bare_br_between_display_math_blocks_does_not_swallow_them() {
+        // Reproduces the "taylor approximation" post: three single-line $$
+        // blocks separated only by bare `<br>` spacers with no blank lines.
+        // Without isolation, CommonMark treats the first `<br>` as the start
+        // of a raw HTML block that swallows everything up to the next blank
+        // line — i.e. all three $$ blocks render as literal text.
+        let input = "<br>\n$$y - y_0 = m (x - x_0)$$\n<br>\n$$y = 1 + f'(x_0)x$$\n<br>\n$$y = 1 + x$$\n\nAfter.\n";
+        let out = preprocess_source(input);
+
+        let mut options = pulldown_cmark::Options::empty();
+        options.insert(pulldown_cmark::Options::ENABLE_MATH);
+        let events: Vec<_> = pulldown_cmark::Parser::new_ext(&out, options).collect();
+        let display_math_count = events
+            .iter()
+            .filter(|e| matches!(e, pulldown_cmark::Event::DisplayMath(_)))
+            .count();
+        assert_eq!(
+            display_math_count, 3,
+            "expected 3 DisplayMath events, got: {events:?}"
+        );
+    }
+
+    #[test]
+    fn bare_br_immediately_before_display_math_does_not_swallow_it() {
+        // Reproduces the "directional derivatives" post: a `<br>` spacer
+        // directly followed (no blank line) by a multi-line $$ block.
+        let input = "Some text.\n<br>\n$$\n\\nabla f(x) = 0\n$$\n<br>\n\nAfter.\n";
+        let out = preprocess_source(input);
+
+        let mut options = pulldown_cmark::Options::empty();
+        options.insert(pulldown_cmark::Options::ENABLE_MATH);
+        let events: Vec<_> = pulldown_cmark::Parser::new_ext(&out, options).collect();
+        let has_display_math = events
+            .iter()
+            .any(|e| matches!(e, pulldown_cmark::Event::DisplayMath(_)));
+        assert!(has_display_math, "expected a DisplayMath event, got: {events:?}");
+    }
+
+    #[test]
+    fn br_followed_by_blank_line_is_left_untouched() {
+        let input = "<br>\n\nSome text.\n";
+        assert_eq!(preprocess_source(input), input);
     }
 
     #[test]
