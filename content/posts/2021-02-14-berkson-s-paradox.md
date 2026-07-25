@@ -77,9 +77,9 @@ impression of a false dichotomy between $X$ and $Y$.
 
 ### Additional resources
 
-- [Read more about Berkson's paradox](https://brilliant.org/wiki/berksons-paradox/){target="_blank"}
+- <a href="https://brilliant.org/wiki/berksons-paradox/" target="_blank">Read more about Berkson's paradox</a>
 - This example was mention in the book ["Calling Bullshit, The Art of Skepticism in a Data-Driven World"](https://www.goodreads.com/book/show/48889983-calling-bullshit) and elaborate in ["How Not to Be Wrong: The Power of Mathematical Thinking"](https://www.goodreads.com/book/show/18693884-how-not-to-be-wrong?ac=1&from_search=true&qid=1QgwnLyEqF&rank=1)
-- [Avoiding the Piftalls of Selection Bias (Carl T. Bergstrom, 2021)](https://www.youtube.com/watch?v=eSVg_DqPkNM){target="_blank"}
+- <a href="https://www.youtube.com/watch?v=eSVg_DqPkNM" target="_blank">Avoiding the Piftalls of Selection Bias (Carl T. Bergstrom, 2021)</a>
 
 
 ### Code
