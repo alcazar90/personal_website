@@ -263,7 +263,23 @@ footer {
 
 /* Math */
 math, .math.display, .math.inline { color: var(--tx); }
-.math.display { display: block; overflow-x: auto; margin: 1rem 0; }
+.math.display {
+  position: relative;
+  display: block;
+  overflow-x: auto;
+  margin: 1rem 0;
+  scroll-margin-top: 1.5rem;
+}
+.math.display.numbered { padding-right: 2.75rem; }
+.math.display .eq-number {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  color: var(--tx-2);
+  font-size: var(--font-small);
+  font-variant-numeric: tabular-nums;
+}
 
 /* Lists, blockquote, hr, img */
 blockquote {
