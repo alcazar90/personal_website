@@ -37,7 +37,7 @@ $$T_1(x):= f(x_0) + f^{(1)}(x_0)(x-x_0)$$
 
 Note: 𝑓(𝑘) is 𝑓 differentiate k times, and 𝑘=0 is 𝑓 itself.
 
-Let's code an example; I will replicate figure 5.4 from the [Mathematics for Machine Learning](https://mml-book.github.io/book/mml-book.pdf){target="_blank"} book.
+Let's code an example; I will replicate figure 5.4 from the <a href="https://mml-book.github.io/book/mml-book.pdf" target="_blank">Mathematics for Machine Learning</a> book.
 
 We want to approximate the following function around $x=0$: 
 <br>
@@ -180,7 +180,7 @@ manual computations?
 
 ### 2. Introducing Automatic Differentiation with JAX 
 
-[JAX](https://jax.readthedocs.io/en/latest/index.html){target="_blank"} is a python library that 
+<a href="https://jax.readthedocs.io/en/latest/index.html" target="_blank">JAX</a> is a python library that 
 combines the `numpy`'s interface, automatic differentiation capabilities, and
 high-performance operations using XLA and GPU operations.
 
@@ -192,7 +192,7 @@ for compute the gradient ($f'(x)$)
 2. `jax.vmap()`: vectorize a `jax.grad`'s function
 3. `jax.jit()`: accelerate a function computations using XLA
 
-Let's start with an [example](https://github.com/hips/autograd){target="_blank"} used by the `autograd`
+Let's start with an <a href="https://github.com/hips/autograd" target="_blank">example</a> used by the `autograd`
 library, the predecessor of `JAX`: differentiate the hyperbolic tangent function.
 
 The example is very illustrative because it is apparent how
@@ -305,10 +305,10 @@ plt.axis('off')
 <img src="/img/taylor-post/tanh_upto_10diff.png">
 </center>
 
-Computing higher-order derivatives can be computationally expensive. Read the paper ["Taylor-Mode Automatic Differentiation for Higher-Order Derivatives in JAX"](https://openreview.net/pdf?id=SkxEF3FNPH){target="_blank"}
+Computing higher-order derivatives can be computationally expensive. Read the paper <a href="https://openreview.net/pdf?id=SkxEF3FNPH" target="_blank">"Taylor-Mode Automatic Differentiation for Higher-Order Derivatives in JAX"</a>
 to understand the efficient way to compute higher-order derivatives. More context
 about this problem and the paper's genesis in this
-[discussion](https://github.com/google/jax/issues/520){target="_blank"}.
+<a href="https://github.com/google/jax/issues/520" target="_blank">discussion</a>.
 
 **How are the derivatives computed?** `JAX` allow us to perform automatic differentiation and calculates results transforming numerical functions into a directed acyclic graph (DAG): 
 
@@ -333,7 +333,7 @@ different orders to compute the gradient can get efficient depending on the prob
 
 The intermediate variables are equations (`jaxpr.eqns`) that receive inputs, could be the function's input or other intermediate variables, and a set of primitive operations to compute over these to produce outputs.
 
-You can read more about `jax.make_jaxpr` in the [documentation](https://jax.readthedocs.io/en/latest/notebooks/Writing_custom_interpreters_in_Jax.html){target="_blank"}.
+You can read more about `jax.make_jaxpr` in the <a href="https://jax.readthedocs.io/en/latest/notebooks/Writing_custom_interpreters_in_Jax.html" target="_blank">documentation</a>.
 
 For instance, we can inspect how JAX decouples the function $f(x)=x^2 + exp(x)$
 in intermediate variables.
@@ -430,10 +430,10 @@ differentiation:  $\partial/\partial x (x^2)\rightarrow 2x$\.
 
 Further resources on automatic differentiation and JAX:
 
-1. [What's automatic differentiation video](https://www.youtube.com/watch?v=wG_nF1awSS){target="_blank"}
-2. [JAX's tutorial by Mat Kelcey](http://matpalm.com/blog/ymxb_pod_slice){target="_blank"} showing more about
+1. <a href="https://www.youtube.com/watch?v=wG_nF1awSS" target="_blank">What's automatic differentiation video</a>
+2. <a href="http://matpalm.com/blog/ymxb_pod_slice" target="_blank">JAX's tutorial by Mat Kelcey</a> showing more about
 parallel computing using JAX
-3. [Automatic Differentiation, Deep Learning Summer School Montreal 2017 (Matthew Jonhson)](http://videolectures.net/deeplearning2017_johnson_automatic_differentiation/){target="_blank"}; another seminar about the topic [JAX seminar](https://www.youtube.com/watch?v=mVf3HJ6gND){target="_blank"}
+3. <a href="http://videolectures.net/deeplearning2017_johnson_automatic_differentiation/" target="_blank">Automatic Differentiation, Deep Learning Summer School Montreal 2017 (Matthew Jonhson)</a>; another seminar about the topic <a href="https://www.youtube.com/watch?v=mVf3HJ6gND" target="_blank">JAX seminar</a>
 
 ### 3. Taylor Approximation with two variables
 
@@ -496,8 +496,8 @@ For instance, in the last 4x4x4 array, the last number computed is 64 by
 third 4x4 array is 48 and you obtained it by `delta[2]*delta[3]*delta[3]` (3x4x4).
 
 The Einstein Summation implemented in `jnp.einsum` is a notation that allow you to
-represent a lot of array operations using index notation. Look this [video](https://www.youtube.com/watch?v=pkVwUVEHmfI){target="_blank"} for a detail explanation and the
-[documentation](https://numpy.org/doc/stable/reference/generated/numpy.einsum.html){target="_blank"}.
+represent a lot of array operations using index notation. Look this <a href="https://www.youtube.com/watch?v=pkVwUVEHmfI" target="_blank">video</a> for a detail explanation and the
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.einsum.html" target="_blank">documentation</a>.
 
 Let's code the example 5.15, deriving at first manually and then use JAX to check
 if we reach similar results.

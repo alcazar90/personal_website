@@ -231,7 +231,13 @@ fn has_top_level_double_backslash(s: &str) -> bool {
 /// Scan `body` for every `\label{key}` in document order and assign sequential
 /// numbers (1, 2, 3, …). The first occurrence of each key wins; duplicates are
 /// ignored.
-fn collect_equation_labels(body: &str) -> HashMap<String, u32> {
+///
+/// Exposed publicly so `render::mod` can re-derive the same numbering after
+/// `preprocess_source` has run (the `\label{…}` markers ride through every
+/// preprocessing step untouched — see the module docs) and use it to print a
+/// visible "(N)" beside each labelled equation, matching the number that
+/// `\ref`/`\eqref` links already point to.
+pub fn collect_equation_labels(body: &str) -> HashMap<String, u32> {
     static LABEL_RE: OnceLock<Regex> = OnceLock::new();
     let re = LABEL_RE.get_or_init(|| Regex::new(r"\\label\{([^}]+)\}").unwrap());
     let mut map = HashMap::new();

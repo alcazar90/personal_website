@@ -67,6 +67,11 @@ pub fn render(source: &Source) -> Result<RenderedPost> {
     // into $/$$ form, and strip unsupported LaTeX envs (equation, label).
     let preprocessed = math::preprocess_source(&body_with_cites);
 
+    // Re-derive the label -> number map from the preprocessed source (the
+    // `\label{…}` markers survive preprocessing untouched) so `transform_events`
+    // can print a visible "(N)" beside each labelled equation.
+    let eq_labels = math::collect_equation_labels(&preprocessed);
+
     // --- figures: numbering, cross-references, math inside <figure> ---
     // `<figure>`/`<figcaption>` are raw HTML blocks to pulldown-cmark, so
     // math inside them must be rendered here, before the parser ever sees
@@ -78,7 +83,7 @@ pub fn render(source: &Source) -> Result<RenderedPost> {
 
     let parser = Parser::new_ext(&preprocessed, options);
     let mut toc: Vec<TocEntry> = Vec::new();
-    let events = transform_events(parser, &source.slug, &mut toc);
+    let events = transform_events(parser, &source.slug, &mut toc, &eq_labels);
 
     let mut html = String::new();
     pulldown_cmark::html::push_html(&mut html, events.into_iter());
@@ -113,6 +118,7 @@ fn transform_events<'a>(
     parser: Parser<'a>,
     slug: &str,
     toc: &mut Vec<TocEntry>,
+    eq_labels: &HashMap<String, u32>,
 ) -> Vec<Event<'a>> {
     let mut out: Vec<Event<'a>> = Vec::new();
     let mut iter = parser;
@@ -204,10 +210,24 @@ fn transform_events<'a>(
                 let cleaned = sanitize_math_escapes(&label_stripped);
                 let html = match math::display(&cleaned) {
                     Ok(mathml) => {
-                        let id_attr = label_key
-                            .map(|key| format!(" id=\"{key}\""))
-                            .unwrap_or_default();
-                        format!("<div class=\"math display\"{id_attr}>{mathml}</div>")
+                        // Only labelled equations get a visible number — those
+                        // are exactly the ones a `\ref`/`\eqref` link elsewhere
+                        // in the post can jump to, so the number readers land
+                        // on next to the equation matches the number they
+                        // clicked in the prose.
+                        let number = label_key.as_deref().and_then(|k| eq_labels.get(k));
+                        let (id_attr, class_attr, number_html) = match (&label_key, number) {
+                            (Some(key), Some(n)) => (
+                                format!(" id=\"{key}\""),
+                                " numbered",
+                                format!("<span class=\"eq-number\">({n})</span>"),
+                            ),
+                            (Some(key), None) => (format!(" id=\"{key}\""), "", String::new()),
+                            (None, _) => (String::new(), "", String::new()),
+                        };
+                        format!(
+                            "<div class=\"math display{class_attr}\"{id_attr}>{mathml}{number_html}</div>"
+                        )
                     }
                     Err(_) => format!("<code>$${}$$</code>", html_escape(&latex)),
                 };
@@ -432,8 +452,13 @@ mod tests {
             out.html
         );
         assert!(
-            out.html.contains(r#"<div class="math display" id="eqn:foo">"#),
+            out.html.contains(r#"<div class="math display numbered" id="eqn:foo">"#),
             "expected anchored equation div; got: {}",
+            out.html
+        );
+        assert!(
+            out.html.contains(r##"<span class="eq-number">(1)</span>"##),
+            "expected visible equation number; got: {}",
             out.html
         );
         assert!(!out.html.contains("\\label"), "label leaked: {}", out.html);
