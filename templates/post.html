@@ -6,64 +6,6 @@
   {% if post.toc_html %}{{ post.toc_html | safe }}{% endif %}
   {{ post.html | safe }}
 </article>
-<script>
-(function(){
-  // Theme any embedded tweets to match the site's light/dark toggle. Only
-  // does anything on posts that actually embed a tweet — a no-op elsewhere.
-  //
-  // widgets.js doesn't just hide the original <blockquote> once it renders
-  // an iframe for it — it removes it from the DOM outright. So re-theming
-  // on toggle can't just tweak `data-theme` and re-scan; there's nothing
-  // left to scan. Instead each tweet gets a stable wrapper slot holding a
-  // saved copy of the original markup, which gets replayed fresh into the
-  // slot (wiping out whatever iframe was there) before every render.
-  var slots = Array.prototype.map.call(
-    document.querySelectorAll('blockquote.twitter-tweet'),
-    function(bq){
-      var slot = document.createElement('div');
-      slot.className = 'tweet-embed';
-      bq.parentNode.replaceChild(slot, bq);
-      return { el: slot, html: bq.outerHTML };
-    }
-  );
-  if(!slots.length) return;
-
-  function currentTheme(){
-    return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
-  }
-
-  function renderTweets(){
-    slots.forEach(function(slot){
-      slot.el.innerHTML = slot.html;
-      slot.el.firstElementChild.setAttribute('data-theme', currentTheme());
-    });
-    if(window.twttr && window.twttr.widgets){
-      window.twttr.widgets.load();
-    }
-  }
-
-  // Twitter's official async-loader snippet.
-  window.twttr = (function(d, s, id){
-    var js, fjs = d.getElementsByTagName(s)[0], t = window.twttr || {};
-    if(d.getElementById(id)) return t;
-    js = d.createElement(s); js.id = id;
-    js.src = "https://platform.twitter.com/widgets.js";
-    fjs.parentNode.insertBefore(js, fjs);
-    t._e = []; t.ready = function(f){ t._e.push(f); };
-    return t;
-  }(document, "script", "twitter-wjs"));
-
-  window.twttr.ready(renderTweets);
-
-  var btn = document.getElementById('theme-toggle');
-  if(btn){
-    btn.addEventListener('click', function(){
-      // Run AFTER base.html's handler flips data-theme.
-      setTimeout(renderTweets, 0);
-    });
-  }
-})();
-</script>
 {% if site.giscus %}
 <section class="comments" aria-label="Comments">
   <h2>Comments</h2>
