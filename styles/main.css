@@ -46,7 +46,7 @@
 }
 
 /* Base */
-html { color-scheme: light dark; }
+html { color-scheme: light dark; background: var(--bg); }
 * { box-sizing: border-box; }
 body {
   font-family: var(--font-content);
@@ -83,6 +83,7 @@ a {
 code {
   font-family: var(--font-mono);
   background: var(--bg-2);
+  border: 1px solid var(--ui);
   padding: 0.1em 0.3em;
   border-radius: 3px;
   font-size: 0.9em;
@@ -99,6 +100,7 @@ pre {
 }
 pre code {
   background: transparent;
+  border: none;
   padding: 0;
   font-size: 1em;
 }
@@ -125,7 +127,7 @@ header nav a:hover { color: var(--accent); }
 /* Theme toggle */
 .appearance-toggle {
   background: var(--bg-2);
-  border: none;
+  border: 1px solid var(--ui);
   border-radius: 12px;
   width: 36px;
   height: 20px;
