@@ -24,9 +24,13 @@
   --font-small:   0.875em;
   --font-smaller: 0.8em;
   --heading-weight: 500;
+
+  color-scheme: light;
 }
 
 [data-theme="dark"] {
+  color-scheme: dark;
+
   --bg:        #100F0F;
   --bg-2:      #1C1B1A;
   --ui:        #282726;
@@ -46,7 +50,7 @@
 }
 
 /* Base */
-html { color-scheme: light dark; background: var(--bg); }
+html { background: var(--bg); }
 * { box-sizing: border-box; }
 body {
   font-family: var(--font-content);
