@@ -365,10 +365,15 @@ sup a.cite {
 sup a.cite:hover { text-decoration: underline; }
 
 /* Twitter/X embedded card.
+ * Scoped to our own `.tweet-embed` wrapper (see templates/post.html) rather
+ * than the iframe's own class — Twitter only adds `twitter-tweet-rendered`
+ * to the iframe on some init paths, not when we re-render it ourselves for
+ * theme switching, so it can't be relied on as a selector.
  * border-radius on the <iframe> clips its content at the corners — the
  * only way to fix corner bleed across a cross-origin frame. max-width
  * caps the default 550 px and makes it responsive on narrow viewports. */
-.twitter-tweet-rendered {
+.tweet-embed { display: flex; justify-content: center; margin: 1rem 0; }
+.tweet-embed iframe {
   border-radius: 12px !important;
   max-width: min(500px, 100%) !important;
 }
