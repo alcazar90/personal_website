@@ -16,6 +16,7 @@
 
 pub mod bibliography;
 pub mod code;
+pub mod figure;
 pub mod math;
 
 use crate::content::Source;
@@ -65,6 +66,16 @@ pub fn render(source: &Source) -> Result<RenderedPost> {
     // Preprocess math: normalize legacy MathJax delimiters (\(...\), \[...\])
     // into $/$$ form, and strip unsupported LaTeX envs (equation, label).
     let preprocessed = math::preprocess_source(&body_with_cites);
+
+    // --- figures: numbering, cross-references, math inside <figure> ---
+    // `<figure>`/`<figcaption>` are raw HTML blocks to pulldown-cmark, so
+    // math inside them must be rendered here, before the parser ever sees
+    // the source (see `render::figure`).
+    let figure_labels = figure::collect_figure_labels(&preprocessed);
+    let preprocessed = figure::replace_figrefs(&preprocessed, &figure_labels);
+    let preprocessed = figure::number_figcaptions(&preprocessed, &figure_labels);
+    let preprocessed = figure::render_math_in_figures(&preprocessed);
+
     let parser = Parser::new_ext(&preprocessed, options);
     let mut toc: Vec<TocEntry> = Vec::new();
     let events = transform_events(parser, &source.slug, &mut toc);
@@ -184,9 +195,20 @@ fn transform_events<'a>(
                 out.push(Event::Html(CowStr::from(html)));
             }
             Event::DisplayMath(latex) => {
-                let cleaned = sanitize_math_escapes(&latex);
+                // `\label{key}` (if present) rides along inside the raw
+                // LaTeX text all the way from `math::preprocess_source`; it
+                // must be stripped before pulldown-latex sees it, and its
+                // key becomes this equation's anchor so `\ref`/`\eqref`
+                // links (see `math::replace_refs`) have somewhere to jump.
+                let (label_stripped, label_key) = math::extract_label(&latex);
+                let cleaned = sanitize_math_escapes(&label_stripped);
                 let html = match math::display(&cleaned) {
-                    Ok(mathml) => format!("<div class=\"math display\">{mathml}</div>"),
+                    Ok(mathml) => {
+                        let id_attr = label_key
+                            .map(|key| format!(" id=\"{key}\""))
+                            .unwrap_or_default();
+                        format!("<div class=\"math display\"{id_attr}>{mathml}</div>")
+                    }
                     Err(_) => format!("<code>$${}$$</code>", html_escape(&latex)),
                 };
                 out.push(Event::Html(CowStr::from(html)));
@@ -334,7 +356,7 @@ fn reading_time(body: &str) -> u32 {
 /// posts used `\_` to prevent markdown from interpreting underscores as
 /// italics — but the content past pulldown-cmark is meant for LaTeX, where
 /// `\_` means literal underscore (not subscript). Same story for `\*`.
-fn sanitize_math_escapes(latex: &str) -> String {
+pub(crate) fn sanitize_math_escapes(latex: &str) -> String {
     latex.replace("\\_", "_").replace("\\*", "*")
 }
 
@@ -367,6 +389,54 @@ mod tests {
             frontmatter: Frontmatter::default(),
             body: body.to_string(),
         }
+    }
+
+    #[test]
+    fn figure_caption_math_renders_as_mathml_end_to_end() {
+        // Regression test for the bug where `<figure>`/`<figcaption>` — both
+        // CommonMark "type 6" HTML block tags — swallowed their contents as
+        // raw HTML, leaving legacy `\\(...\\)` math as literal `$...$` text.
+        let md = "Text before.\n\n\
+                  <figure id=\"fig:demo\">\n\
+                  \x20 <img src=\"demo.png\" alt=\"demo\">\n\
+                  \x20 <figcaption>A caption with \\\\(x + y\\\\) inline math.</figcaption>\n\
+                  </figure>\n\n\
+                  See \\figref{fig:demo} for details.\n";
+        let out = render(&make_source(md, "post")).unwrap();
+        assert!(
+            out.html.contains("<math"),
+            "expected figcaption math rendered to MathML; got: {}",
+            out.html
+        );
+        assert!(!out.html.contains('$'), "literal $ leaked through: {}", out.html);
+        assert!(
+            out.html.contains("Figure 1. A caption"),
+            "expected auto-numbered caption; got: {}",
+            out.html
+        );
+        assert!(
+            out.html.contains(r##"<a href="#fig:demo">Figure 1</a>"##),
+            "expected figref link; got: {}",
+            out.html
+        );
+    }
+
+    #[test]
+    fn equation_ref_links_jump_to_labeled_equation() {
+        let md = "See Equation~(\\ref{eqn:foo}) below.\n\n\
+                  $$\n\\begin{equation}\\label{eqn:foo}\nx = y\n\\end{equation}\n$$\n";
+        let out = render(&make_source(md, "post")).unwrap();
+        assert!(
+            out.html.contains(r##"<a href="#eqn:foo">1</a>"##),
+            "expected linked ref; got: {}",
+            out.html
+        );
+        assert!(
+            out.html.contains(r#"<div class="math display" id="eqn:foo">"#),
+            "expected anchored equation div; got: {}",
+            out.html
+        );
+        assert!(!out.html.contains("\\label"), "label leaked: {}", out.html);
     }
 
     #[test]

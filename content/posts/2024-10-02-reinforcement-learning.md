@@ -29,25 +29,14 @@ The starting point for designing agents that learn to act is the Markov Decision
 * \\(\rho_{0}\\), **initial state distribution**, which determines the probability of the agent starting in a particular state.
 * \\(\gamma\in\left[0, 1 \right]\\) is the **discount factor**, which determines the importance of future rewards.
 
-<!-- \begin{figure}[ht]
-    \centering
-    \includegraphics[scale=0.63]{ch3-rl/MDP-diagram.pdf}
-    \captionsetup{width=\textwidth} % set the width of the caption
-    \caption{\textbf{Left:} A loop representation of a Markov Decision Process (MDP). \textbf{Right:} An unrolled MDP depecting an episodic case with a finite horizon $T$ and a parameterized policy $\pi_{\theta}$.}
-    \label{fig:mdp-diagram}
-  \end{figure} -->
-
-
-<br>
-
 <figure id="fig:mdp-diagram">
   <img src="https://alkzar.cl/img/rl/MDP-diagram.png" alt="Markov Decision Process Diagram">
-  <figcaption><br><small>Figure 1. <b>Left:</b> A loop representation of a Markov Decision Process (MDP). <b>Right:</b> An unrilled MDP depecting an episodic case with a finite horizon \\(T\\) and a parameterized policy \\(\pi\_{\theta}\\).</small></figcaption>
+  <figcaption><b>Left:</b> A loop representation of a Markov Decision Process (MDP). <b>Right:</b> An unrolled MDP depicting an episodic case with a finite horizon \\(T\\) and a parameterized policy \\(\pi\_{\theta}\\).</figcaption>
 </figure>
 
- Markov Decision Processes generate sequences of state-action pairs, or trajectories \\(\tau\\), starting from an initial state \\(s_{0}\sim\rho_{0}\\). The agent's behavior is determined by a policy \\(\pi:\mathcal{S}\rightarrow\Delta(\mathcal{A})\\), which maps states to a probability distribution over actions. An action \\(a_{0}\sim\pi(s_{0})\\) is chosen, leading to the next state \\(s_{1}\\) according to the transition distribution \\(P\\), and a reward \\(r_{0}=R(a_{0}, s_{0})\\) is received. This cycle repeats iteratively, with the agent selecting actions, transitioning through states, and receiving rewards, as shown on the left side of [Figure 1](#fig:mdp-diagram). Thus, the trajectory \\(\tau\\) encapsulates the dynamic sequence of state-action pairs resulting from the agent's interaction with its environment. 
+ Markov Decision Processes generate sequences of state-action pairs, or trajectories \\(\tau\\), starting from an initial state \\(s_{0}\sim\rho_{0}\\). The agent's behavior is determined by a policy \\(\pi:\mathcal{S}\rightarrow\Delta(\mathcal{A})\\), which maps states to a probability distribution over actions. An action \\(a_{0}\sim\pi(s_{0})\\) is chosen, leading to the next state \\(s_{1}\\) according to the transition distribution \\(P\\), and a reward \\(r_{0}=R(a_{0}, s_{0})\\) is received. This cycle repeats iteratively, with the agent selecting actions, transitioning through states, and receiving rewards, as shown on the left side of \figref{fig:mdp-diagram}. Thus, the trajectory \\(\tau\\) encapsulates the dynamic sequence of state-action pairs resulting from the agent's interaction with its environment. 
 
- The process can continue indefinitely, known as an infinite horizon, or be confined to episodes that end in the terminal state \\(s_{T}\\), referred to as episodic tasks, such as winning or losing a game, as illustrated on the right side of [Figure 1](#fig:mdp-diagram). It is important to note that the transition to the next state depends only on the current state and action, not on the sequence of prior events. This characteristic is known as the _Markov property_, which states that the future and the past are conditionally independent, given the present (_memoryless_). In this work, we focus on the episodic setting, where the trajectory begins at \\(s_{0}\\) and concludes at \\(s_{T}\\), with a finite horizon \\(T\\). Therefore, the trajectory \\(\tau\\) is defined as \\(\tau = (s_{0}, a_{0}, \dots, s_{T-1}, a_{T-1}, s_{T})\\), summarizing the agent's behavior throughout the episodic task. 
+ The process can continue indefinitely, known as an infinite horizon, or be confined to episodes that end in the terminal state \\(s_{T}\\), referred to as episodic tasks, such as winning or losing a game, as illustrated on the right side of \figref{fig:mdp-diagram}. It is important to note that the transition to the next state depends only on the current state and action, not on the sequence of prior events. This characteristic is known as the _Markov property_, which states that the future and the past are conditionally independent, given the present (_memoryless_). In this work, we focus on the episodic setting, where the trajectory begins at \\(s_{0}\\) and concludes at \\(s_{T}\\), with a finite horizon \\(T\\). Therefore, the trajectory \\(\tau\\) is defined as \\(\tau = (s_{0}, a_{0}, \dots, s_{T-1}, a_{T-1}, s_{T})\\), summarizing the agent's behavior throughout the episodic task. 
 
  In reinforcement learning, the primary goal is for the agent to develop a behavior that maximizes the expected return from its actions results within the environment. This concept of maximization is formalized through the objective function \\(\mathcal{J}\_{\text{RL}}(\theta)\\), which aims to maximize the expected return over a collection of trajectories \\( \{\tau^{(i)}\}\_{1:N} \\) generated by the policy \\(\pi\\), commonly referred to as "policy rollouts". The term "rollout" is used to describe the process of simulating the agent's behavior in the environment by executing the policy \\(\pi\\) and observing the resulting trajectory \\(\tau\\). The objective function is defined as follows:
 
@@ -62,11 +51,11 @@ The return over a trajectory \\(\tau\\) is defined as the accumulated discounted
 
 ## Policy Optimization
 
-In reinforcement learning there are different approaches to solve the MDP formulated in the previous section, which are summarized in [Figure 2](#fig:rl-model-free-taxonomy). The most common are value-based methods and policy-based methods. In value-based methods, the agent learns which state is more valuable and take action that leads to it. In policy-based methods, the agent learns a policy that directly maps states to actions. In this work we will focus on the latter methods, specifically in policy gradients. 
+In reinforcement learning there are different approaches to solve the MDP formulated in the previous section, which are summarized in \figref{fig:rl-model-free-taxonomy}. The most common are value-based methods and policy-based methods. In value-based methods, the agent learns which state is more valuable and take action that leads to it. In policy-based methods, the agent learns a policy that directly maps states to actions. In this work we will focus on the latter methods, specifically in policy gradients. 
 
 <figure id="fig:rl-model-free-taxonomy">
   <img src="https://alkzar.cl/img/rl/rf-solve-methods-schulman-thesis-img.png" alt="Markov Decision Process Diagram">
-  <figcaption>Figure 2. <b>Illustration of a taxonomy of model-free RL algorithms.</b> Source: <a href="https://rail.eecs.berkeley.edu/deeprlcourse/" target="_blank">Optimizing Expectations: From Deep Reinforcement Learning to Stochastic Computation Graphs by John, Schulman (2016)</a> \cite{schulman2016optimizing}.</figcaption>
+  <figcaption><b>Illustration of a taxonomy of model-free RL algorithms.</b> Source: <a href="https://rail.eecs.berkeley.edu/deeprlcourse/" target="_blank">Optimizing Expectations: From Deep Reinforcement Learning to Stochastic Computation Graphs by John, Schulman (2016)</a> \cite{schulman2016optimizing}.</figcaption>
 </figure>
 
 Other approaches for finding a policy is by non solving the MDP, but by directly optimizing the policy. This is the case of derivative free optimization (DFO), or evolutionary algorithms, in which the policy is parameterized by a vector \\(\theta\\), and the agent explores the space of parameters by searching. Nothing of the temporal structure and actions of the MDPs are considered in this kind of solution.
@@ -163,7 +152,7 @@ which satisfies the property that the score function expectation is zero, can be
 ## Vanilla Policy Gradient, aka REINFORCE
 
 The REINFORCE algorithm \citep{williams1992simple} translates the previous 
-derivation of gradient estimation via the score function into reinforcement learning terminology. This is the earliest member of the Policy Gradient family (Figure~\ref{fig:rl-model-free-taxonomy}), where the objective is to maximize the expected return of the trajectory \\(\tau\\) under a policy \\(\pi\\) parameterized by \\(\theta\\) (e.g., a neural network). At each state \\(s_{t}\\), the agent takes an action \\(a_{t}\\) according to the policy \\(\pi\\), which generates a probability distribution over actions \\(\pi(a_{t}\mid s_{t};\theta)\\). Here, we will use the notation \\(\pi_{\theta}(\cdot)\\) instead of \\(\pi(\cdot;\theta)\\). 
+derivation of gradient estimation via the score function into reinforcement learning terminology. This is the earliest member of the Policy Gradient family (\figref{fig:rl-model-free-taxonomy}), where the objective is to maximize the expected return of the trajectory \\(\tau\\) under a policy \\(\pi\\) parameterized by \\(\theta\\) (e.g., a neural network). At each state \\(s_{t}\\), the agent takes an action \\(a_{t}\\) according to the policy \\(\pi\\), which generates a probability distribution over actions \\(\pi(a_{t}\mid s_{t};\theta)\\). Here, we will use the notation \\(\pi_{\theta}(\cdot)\\) instead of \\(\pi(\cdot;\theta)\\). 
 
  As we mentioned in previous section, a trajectory \\(\tau\\) represents the sequence of state-action pairs resulting from the agent's interaction with its environment. From the initial state \\(s_{0}\\) to the terminal state \\(s_{T}\\), the trajectory \\(\tau\\) is a sequence of states and actions, \\(\tau = (s_{0}, a_{0}, \dots, s_{T-1}, a_{T-1}, s_{T})\\), which describes how the agent acts during the episodic task. Let \\(p_{\theta}(\tau)\\) be the
 probability of obtaining the trajectory under the policy \\(\pi_{\theta}\\). 
@@ -218,7 +207,7 @@ The distribution of initial states and the transition probabilities are disregar
     \end{equation}
 \\]
 
-The core concept is to collect a set of trajectories \\(\mathcal{D}^{\pi_{\theta}}\\) under the policy \\(\pi_{\theta}\\) and update the policy parameters \\(\theta\\) to increase the likelihood of high-reward trajectories while decreasing the likelihood of low-reward ones, as illustrated in Figure~\ref{fig:anatomy-rl-trajectories}. This trial-and-error learning approach, described in [Algorithm 1](#alg:reinforce), repeats this process over multiple iterations, reinforcing successful trajectories and discouraging unsuccessful ones, thus encoding the agent's behavior in its parameters. 
+The core concept is to collect a set of trajectories \\(\mathcal{D}^{\pi_{\theta}}\\) under the policy \\(\pi_{\theta}\\) and update the policy parameters \\(\theta\\) to increase the likelihood of high-reward trajectories while decreasing the likelihood of low-reward ones, as illustrated in \figref{fig:anatomy-rl-trajectories}. This trial-and-error learning approach, described in [Algorithm 1](#alg:reinforce), repeats this process over multiple iterations, reinforcing successful trajectories and discouraging unsuccessful ones, thus encoding the agent's behavior in its parameters. 
 
 <!-- % algoritmo naive REINFORCE -->
 <div id="alg:reinforce">
@@ -244,7 +233,7 @@ The core concept is to collect a set of trajectories \\(\mathcal{D}^{\pi_{\theta
 <figure id="fig:anatomy-rl-trajectories" style="text-align: center;">
   <img src="https://alkzar.cl/img/rl/simulated-trajectories-levine-slides.png" alt="Simulated trajectories levine slides">
   <figcaption>
-    <b>Illustration of three simulated trajectories</b>, denoted as \\(\\\{\tau^{(i)}\\\}\\) where \\(i=(1,2,3)\\), traversing the parametric space \\(\theta\in\mathbb{R}^2\\) under the policy \\(\pi\_{\theta}\\). Each trajectory is marked with a colored symbol (cross, check) representing its _goodness_ based on the reward function \\(R(\tau^{(i)})\\). <b>Source:</b> <a href="https://rail.eecs.berkeley.edu/deeprlcourse/" target="_blank">Policy Gradients Lecture, Deep Reinforcement Learning Course</a> by Sergey Levine.
+    <b>Illustration of three simulated trajectories</b>, denoted as \\(\{\tau^{(i)}\}\\) where \\(i=(1,2,3)\\), traversing the parametric space \\(\theta\in\mathbb{R}^2\\) under the policy \\(\pi\_{\theta}\\). Each trajectory is marked with a colored symbol (cross, check) representing its <i>goodness</i> based on the reward function \\(R(\tau^{(i)})\\). <b>Source:</b> <a href="https://rail.eecs.berkeley.edu/deeprlcourse/" target="_blank">Policy Gradients Lecture, Deep Reinforcement Learning Course</a> by Sergey Levine.
   </figcaption>
 </figure>
   
@@ -261,7 +250,7 @@ The reward-to-go technique is a simple trick that can reduce the variance of the
 \\]
 
 
-As we saw at the end of Section~\ref{sec:gradient-estimation-score-function}, it is possible to reduce the variance of the gradient estimator by using a baseline function, \\(b(s_{t})\\), without biasing the estimator. However, is the expectation of the score still unbiased in this setting? 
+As we saw at the end of [Gradient Estimation via Score Function](#gradient-estimation-via-score-function), it is possible to reduce the variance of the gradient estimator by using a baseline function, \\(b(s_{t})\\), without biasing the estimator. However, is the expectation of the score still unbiased in this setting? 
 
 \\[
 \begin{equation}\label{eqn:reinforce-gradient-estimator-baseline}
@@ -310,7 +299,7 @@ What remains is how do we get estimates for \\(V^{\pi}\\) in practice.
 
 ## Actor-Critic Methods
 
-Actor-Critic referred to learn concurrently models for the policy and the value function. This methods are more data efficient because they amortize the samples collected \\(\mathcal{D}^{\pi\_{\theta}}\\) used for Monte Carlo estimations while reducing the variance of the gradient estimator. The actor controls how the agent behaves---_by updating the policy parameters \\(\theta\\) as we see in previous sections_---whereas the critic measures how good the taken action is, and could be a state-value (\\(V\\)) or action-value (\\(Q\\)) **\footnote**{Action-value function (\\(Q\\)) refers to the value of take action \\(a\\) on state \\(s\\) under a policy \\(\pi\\).} function. Notice that we are combining in some way both approaches for solving MDPs as is depicted in Figure~\ref{fig:rl-model-free-taxonomy}.
+Actor-Critic referred to learn concurrently models for the policy and the value function. This methods are more data efficient because they amortize the samples collected \\(\mathcal{D}^{\pi\_{\theta}}\\) used for Monte Carlo estimations while reducing the variance of the gradient estimator. The actor controls how the agent behaves---_by updating the policy parameters \\(\theta\\) as we see in previous sections_---whereas the critic measures how good the taken action is, and could be a state-value (\\(V\\)) or action-value (\\(Q\\)) **\footnote**{Action-value function (\\(Q\\)) refers to the value of take action \\(a\\) on state \\(s\\) under a policy \\(\pi\\).} function. Notice that we are combining in some way both approaches for solving MDPs as is depicted in \figref{fig:rl-model-free-taxonomy}.
 
  We are introducing a new function approximator for the value function, \\(V_{\phi}(s_{t})\\), where \\(\phi\\) are the parameters of the value function 
 
