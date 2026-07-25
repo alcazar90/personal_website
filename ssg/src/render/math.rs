@@ -6,14 +6,20 @@
 //!
 //! Also exports `preprocess_source` — a markdown-level pass that:
 //!   1. Collects `\label{key}` in document order → sequential equation numbers.
-//!   2. Replaces `\ref{key}` / `\eqref{key}` in body text with those numbers.
+//!   2. Replaces `\ref{key}` / `\eqref{key}` in body text with links to that
+//!      equation, e.g. `<a href="#key">N</a>` / `<a href="#key">(N)</a>`.
 //!   3. Wraps standalone `\begin{equation}…\end{equation}` blocks (those NOT
 //!      already inside `\\[…\\]`) in `$$…$$` so they render as display math.
 //!   4. Normalizes legacy MathJax delimiters (`\\(…\\)`, `\\[…\\]`) → `$…$` / `$$…$$`.
 //!      Inline captures are trimmed so pulldown-cmark's math parser isn't
 //!      confused by `$ content $` (leading space invalidates the span).
-//!   5. Strips environments pulldown-latex doesn't support: `\begin{equation}`,
-//!      `\end{equation}`, `\label{…}`.
+//!   5. Strips `\begin{equation}` / `\end{equation}` markers, which
+//!      pulldown-latex doesn't understand. `\label{…}` is deliberately left
+//!      in place — it rides along inside the `$$…$$` text all the way to
+//!      `render::transform_events`'s `DisplayMath` handler (see
+//!      `extract_label`), which strips it there and uses the key as the
+//!      `id` on the rendered `<div class="math display">`, so `\ref`/`\eqref`
+//!      links above have somewhere to jump to.
 //!   6. Isolates bare `<br>` lines with a trailing blank line so they can't
 //!      swallow adjacent `$$…$$` blocks into a raw HTML block (see
 //!      `isolate_bare_br_tags`).
@@ -130,14 +136,27 @@ fn normalize_delimiters(body: &str) -> String {
 
 fn strip_unsupported_envs(body: &str) -> String {
     static ENV_RE: OnceLock<Regex> = OnceLock::new();
-    static LABEL_RE: OnceLock<Regex> = OnceLock::new();
     let env = ENV_RE
         .get_or_init(|| Regex::new(r"\\(?:begin|end)\{equation\*?\}").unwrap());
-    let label = LABEL_RE.get_or_init(|| Regex::new(r"\\label\{[^}]*\}").unwrap());
+    env.replace_all(body, "").into_owned()
+}
 
-    let body = env.replace_all(body, "");
-    let body = label.replace_all(&body, "");
-    body.into_owned()
+// ── Per-equation label extraction ────────────────────────────────────────────
+
+/// Extract a `\label{key}` from a single display-math LaTeX fragment (the
+/// text captured by `pulldown_cmark::Event::DisplayMath`), returning the
+/// cleaned LaTeX (label removed, since pulldown-latex doesn't understand
+/// `\label`) and the label key, if one was present. Only the first `\label`
+/// is consumed — a display math block should have at most one.
+pub fn extract_label(latex: &str) -> (String, Option<String>) {
+    static LABEL_RE: OnceLock<Regex> = OnceLock::new();
+    let re = LABEL_RE.get_or_init(|| Regex::new(r"\\label\{([^}]+)\}").unwrap());
+    let mut key = None;
+    let cleaned = re.replace(latex, |c: &regex::Captures| {
+        key = Some(c[1].to_string());
+        ""
+    });
+    (cleaned.into_owned(), key)
 }
 
 // ── Top-level newline fix for $$ blocks ──────────────────────────────────────
@@ -228,7 +247,11 @@ fn collect_equation_labels(body: &str) -> HashMap<String, u32> {
     map
 }
 
-/// Replace `\eqref{key}` → `(N)` and `\ref{key}` → `N` throughout `body`.
+/// Replace `\eqref{key}` → `<a href="#key">(N)</a>` and `\ref{key}` →
+/// `<a href="#key">N</a>` throughout `body`. The link target is the `id`
+/// that `render::transform_events` attaches to the equation's rendered
+/// `<div class="math display">` (see `extract_label`), so clicking jumps
+/// straight to where the equation is defined.
 ///
 /// `\s*` in the `\ref` pattern absorbs the occasional stray space before `{`
 /// (e.g. `\ref {eqn:foo}`) that some LaTeX editors emit.
@@ -241,13 +264,19 @@ fn replace_refs(body: &str, labels: &HashMap<String, u32>) -> String {
     let eqref = EQREF_RE.get_or_init(|| Regex::new(r"\\eqref\{([^}]+)\}").unwrap());
     let rref  = REF_RE.get_or_init(|| Regex::new(r"\\ref\s*\{([^}]+)\}").unwrap());
 
-    let s = eqref.replace_all(body, |c: &regex::Captures| match labels.get(&c[1]) {
-        Some(n) => format!("({n})"),
-        None    => format!("[?:{}]", &c[1]),
+    let s = eqref.replace_all(body, |c: &regex::Captures| {
+        let key = &c[1];
+        match labels.get(key) {
+            Some(n) => format!(r##"<a href="#{key}">({n})</a>"##),
+            None => format!("[?:{key}]"),
+        }
     });
-    let s = rref.replace_all(&s, |c: &regex::Captures| match labels.get(&c[1]) {
-        Some(n) => n.to_string(),
-        None    => format!("[?:{}]", &c[1]),
+    let s = rref.replace_all(&s, |c: &regex::Captures| {
+        let key = &c[1];
+        match labels.get(key) {
+            Some(n) => format!(r##"<a href="#{key}">{n}</a>"##),
+            None => format!("[?:{key}]"),
+        }
     });
     s.into_owned()
 }
@@ -331,14 +360,16 @@ mod tests {
     }
 
     #[test]
-    fn equation_env_is_stripped_label_too() {
+    fn equation_env_is_stripped_but_label_survives_for_anchor() {
         let input =
             "\\\\[ \\begin{equation}\\label{eq:foo} x = y \\end{equation} \\\\]";
         let out = preprocess_source(input);
         assert!(out.contains("$$"), "delimiters: {out}");
         assert!(!out.contains("\\begin{equation}"), "begin remained: {out}");
         assert!(!out.contains("\\end{equation}"), "end remained: {out}");
-        assert!(!out.contains("\\label"), "label remained: {out}");
+        // \label is deliberately kept — `transform_events`'s DisplayMath
+        // handler consumes it later to set the equation's anchor `id`.
+        assert!(out.contains("\\label{eq:foo}"), "label lost: {out}");
         assert!(out.contains("x = y"), "math content lost: {out}");
     }
 
@@ -348,7 +379,7 @@ mod tests {
         let out = preprocess_source(input);
         assert!(out.contains("$$"), "missing display delimiters: {out}");
         assert!(!out.contains("\\begin{equation}"), "begin remained: {out}");
-        assert!(!out.contains("\\label"), "label remained: {out}");
+        assert!(out.contains("\\label{eq:bar}"), "label lost: {out}");
         assert!(out.contains("x = y + z"), "math content lost: {out}");
     }
 
@@ -366,7 +397,10 @@ mod tests {
     fn ref_replaced_with_equation_number() {
         let input = "See Equation~(\\ref{eqn:foo}).\n\n\\begin{equation}\\label{eqn:foo}\n    x=1\n\\end{equation}";
         let out = preprocess_source(input);
-        assert!(out.contains("(1)"), "expected number in ref: {out}");
+        assert!(
+            out.contains(r##"<a href="#eqn:foo">1</a>"##),
+            "expected linked number in ref: {out}"
+        );
         assert!(!out.contains("\\ref{"), "\\ref remained: {out}");
     }
 
@@ -374,7 +408,10 @@ mod tests {
     fn eqref_replaced_with_parenthesised_number() {
         let input = "As in \\eqref{eqn:first}.\n\n\\begin{equation}\\label{eqn:first}\n    y=2\n\\end{equation}";
         let out = preprocess_source(input);
-        assert!(out.contains("(1)"), "expected (1): {out}");
+        assert!(
+            out.contains(r##"<a href="#eqn:first">(1)</a>"##),
+            "expected linked (1): {out}"
+        );
         assert!(!out.contains("\\eqref{"), "\\eqref remained: {out}");
     }
 
@@ -533,5 +570,19 @@ mod tests {
         let out = preprocess_source(input);
         assert!(!out.contains("\\begin{aligned}"), "incorrectly wrapped: {out}");
         assert!(out.contains("\\begin{bmatrix}"), "bmatrix lost: {out}");
+    }
+
+    #[test]
+    fn extract_label_returns_key_and_strips_it() {
+        let (cleaned, key) = extract_label("\\label{eqn:foo} x = y");
+        assert_eq!(key.as_deref(), Some("eqn:foo"));
+        assert_eq!(cleaned.trim(), "x = y");
+    }
+
+    #[test]
+    fn extract_label_none_when_absent() {
+        let (cleaned, key) = extract_label("x = y");
+        assert_eq!(key, None);
+        assert_eq!(cleaned, "x = y");
     }
 }

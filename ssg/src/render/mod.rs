@@ -195,9 +195,20 @@ fn transform_events<'a>(
                 out.push(Event::Html(CowStr::from(html)));
             }
             Event::DisplayMath(latex) => {
-                let cleaned = sanitize_math_escapes(&latex);
+                // `\label{key}` (if present) rides along inside the raw
+                // LaTeX text all the way from `math::preprocess_source`; it
+                // must be stripped before pulldown-latex sees it, and its
+                // key becomes this equation's anchor so `\ref`/`\eqref`
+                // links (see `math::replace_refs`) have somewhere to jump.
+                let (label_stripped, label_key) = math::extract_label(&latex);
+                let cleaned = sanitize_math_escapes(&label_stripped);
                 let html = match math::display(&cleaned) {
-                    Ok(mathml) => format!("<div class=\"math display\">{mathml}</div>"),
+                    Ok(mathml) => {
+                        let id_attr = label_key
+                            .map(|key| format!(" id=\"{key}\""))
+                            .unwrap_or_default();
+                        format!("<div class=\"math display\"{id_attr}>{mathml}</div>")
+                    }
                     Err(_) => format!("<code>$${}$$</code>", html_escape(&latex)),
                 };
                 out.push(Event::Html(CowStr::from(html)));
@@ -408,6 +419,24 @@ mod tests {
             "expected figref link; got: {}",
             out.html
         );
+    }
+
+    #[test]
+    fn equation_ref_links_jump_to_labeled_equation() {
+        let md = "See Equation~(\\ref{eqn:foo}) below.\n\n\
+                  $$\n\\begin{equation}\\label{eqn:foo}\nx = y\n\\end{equation}\n$$\n";
+        let out = render(&make_source(md, "post")).unwrap();
+        assert!(
+            out.html.contains(r##"<a href="#eqn:foo">1</a>"##),
+            "expected linked ref; got: {}",
+            out.html
+        );
+        assert!(
+            out.html.contains(r#"<div class="math display" id="eqn:foo">"#),
+            "expected anchored equation div; got: {}",
+            out.html
+        );
+        assert!(!out.html.contains("\\label"), "label leaked: {}", out.html);
     }
 
     #[test]
