@@ -326,7 +326,14 @@ fn build_toc_html(toc: &[TocEntry]) -> String {
         stack.pop();
     }
 
-    html.push_str("</details>\n</nav>\n");
+    html.push_str("</details>\n");
+    html.push_str(
+        "<svg class=\"toc-mark\" viewBox=\"0 0 100 100\" aria-hidden=\"true\">\
+         <path d=\"M40,42 L78,34 C88,33 93,42 92,52 C91,64 86,76 76,84 C68,90 55,91 46,88 C36,85 32,76 33,66 C34,56 36,48 40,42 Z\"/>\
+         <path d=\"M14,80 L24,77 C28,78 30,82 28,86 C26,90 20,91 15,90 C10,89 9,84 14,80 Z\"/>\
+         </svg>\n",
+    );
+    html.push_str("</nav>\n");
     html
 }
 

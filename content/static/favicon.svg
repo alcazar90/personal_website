@@ -1,3 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <path d="M50,3 C78,18 82,48 82,66 A32,32,0,0,1,18,66 C18,48 22,18 50,3 Z" fill="#A02F6F"/>
+  <style>
+    .stone { fill: #55483A; }
+    @media (prefers-color-scheme: dark) {
+      .stone { fill: #BCAE9D; }
+    }
+  </style>
+  <path class="stone" d="M40,42
+    L78,34
+    C88,33 93,42 92,52
+    C91,64 86,76 76,84
+    C68,90 55,91 46,88
+    C36,85 32,76 33,66
+    C34,56 36,48 40,42 Z"/>
+  <path class="stone" d="M14,80
+    L24,77
+    C28,78 30,82 28,86
+    C26,90 20,91 15,90
+    C10,89 9,84 14,80 Z"/>
 </svg>
