@@ -139,9 +139,21 @@ pub fn optimize(static_root: &Path, cache_root: &Path) -> (ImageManifest, Optimi
         let key = rel.to_string_lossy().replace(std::path::MAIN_SEPARATOR, "/");
         let stamp = stamp_of(&src);
 
+        let prior = previous
+            .get(&key)
+            .filter(|p| stamp.as_ref().is_some_and(|s| p.same_source(s)));
+
+        // Already known to encode larger than the source. There is no file to
+        // check and nothing to gain from encoding it again.
+        if let Some(prior) = prior.filter(|p| !p.useful) {
+            current_stamps.insert(key, prior.clone());
+            report.skipped += 1;
+            continue;
+        }
+
         // Reuse only when the derivative exists *and* was built from exactly
         // these bytes.
-        let fresh = out.exists() && stamp.is_some() && previous.get(&key) == stamp.as_ref();
+        let fresh = out.exists() && prior.is_some();
         if !fresh {
             if let Some(parent) = out.parent() {
                 if let Err(e) = std::fs::create_dir_all(parent) {
@@ -158,26 +170,36 @@ pub fn optimize(static_root: &Path, cache_root: &Path) -> (ImageManifest, Optimi
             }
         }
 
-        // Record the fingerprint before the size guard below: derivatives we
-        // decline to *use* still exist on disk, and re-encoding them on every
-        // build to reach the same verdict would be pure waste.
-        if let Some(stamp) = stamp {
-            current_stamps.insert(key, stamp);
-        }
-
         let out_bytes = file_len(&out);
         // A derivative that came out bigger is worse than doing nothing —
-        // already-optimized PNGs and tiny icons land here.
+        // already-quantized GIFs, flat PNGs and tiny icons land here.
+        //
+        // `public/` is a verbatim copy of the derivatives tree, so one we
+        // decline to reference would still ship as dead weight. Delete it,
+        // and record the verdict so the next build doesn't encode it all
+        // over again just to reach the same answer.
         if out_bytes == 0 || out_bytes >= src_bytes {
+            let _ = std::fs::remove_file(&out);
+            if let Some(mut stamp) = stamp {
+                stamp.useful = false;
+                current_stamps.insert(key, stamp);
+            }
             report.skipped += 1;
             continue;
         }
 
-        let Some(dims) = imagesize::size(&out).ok() else {
+        let Ok(dims) = imagesize::size(&out) else {
+            // Unreadable output — leave no stamp, so this retries next build
+            // instead of caching a failure.
             eprintln!("ssg: warning: couldn't read dimensions of {}", out.display());
+            let _ = std::fs::remove_file(&out);
             report.skipped += 1;
             continue;
         };
+
+        if let Some(stamp) = stamp {
+            current_stamps.insert(key, stamp);
+        }
 
         let original_url = to_url(rel);
         let optimized_url = to_url(&rel.with_extension("webp"));
@@ -321,6 +343,25 @@ fn prune_stale(static_root: &Path, cache_root: &Path) -> usize {
 struct SourceStamp {
     hash: u64,
     len: u64,
+    /// Whether the derivative came out smaller than this source. When it
+    /// didn't, the file is deleted rather than kept — so `out.exists()` can
+    /// no longer distinguish "not built yet" from "built and rejected", and
+    /// this records the verdict so the next build doesn't re-encode just to
+    /// reach it again.
+    #[serde(default = "yes")]
+    useful: bool,
+}
+
+fn yes() -> bool {
+    true
+}
+
+impl SourceStamp {
+    /// Compares the *source* only. Two stamps for identical bytes are the
+    /// same source even if one predates the `useful` field.
+    fn same_source(&self, other: &SourceStamp) -> bool {
+        self.hash == other.hash && self.len == other.len
+    }
 }
 
 type StampDb = HashMap<String, SourceStamp>;
@@ -346,6 +387,7 @@ fn stamp_of(path: &Path) -> Option<SourceStamp> {
     Some(SourceStamp {
         hash: fnv1a(&bytes),
         len: bytes.len() as u64,
+        useful: true,
     })
 }
 
@@ -404,8 +446,12 @@ fn to_url(rel: &Path) -> String {
 
 /// Matches the tags we need to track: anchors (to know whether an image is
 /// already inside a link) and images themselves.
+/// Comments come first in the alternation so a commented-out `<img>` is
+/// consumed whole and never treated as a tag. Legacy posts leave old markup
+/// commented out, and counting one as the page's first image hands
+/// `loading="lazy"` to the real LCP element — the opposite of the intent.
 static TAG_RE: Lazy<Regex> =
-    Lazy::new(|| Regex::new(r"(?is)<a\b[^>]*>|</a\s*>|<img\b[^>]*>").unwrap());
+    Lazy::new(|| Regex::new(r"(?is)<!--.*?-->|<a\b[^>]*>|</a\s*>|<img\b[^>]*>").unwrap());
 
 static SRC_RE: Lazy<Regex> =
     Lazy::new(|| Regex::new(r#"(?is)\bsrc\s*=\s*("([^"]*)"|'([^']*)')"#).unwrap());
@@ -433,7 +479,9 @@ pub fn rewrite_images(html: &str, manifest: &ImageManifest, site_url: &str) -> S
         last = m.end();
         let tag = m.as_str();
 
-        if tag.starts_with("</") {
+        if tag.starts_with("<!--") {
+            out.push_str(tag);
+        } else if tag.starts_with("</") {
             link_depth = link_depth.saturating_sub(1);
             out.push_str(tag);
         } else if tag.len() > 3 && tag[..3].eq_ignore_ascii_case("<a ")
@@ -653,6 +701,24 @@ mod tests {
     }
 
     #[test]
+    fn commented_out_images_are_left_alone_and_dont_claim_the_lcp_slot() {
+        let out = rewrite_images(
+            r#"<!-- <center><img src="/img/a.png" width="450"/></center> --><img src="/img/a.png">"#,
+            &manifest(),
+            "https://alkzar.cl",
+        );
+        assert!(
+            out.contains(r#"<!-- <center><img src="/img/a.png" width="450"/></center> -->"#),
+            "commented markup must pass through untouched: {out}"
+        );
+        assert!(
+            !out.contains(r#"loading="lazy""#),
+            "the one real image is the LCP element and must stay eager: {out}"
+        );
+        assert!(out.contains(r#"src="/img/a.webp""#), "{out}");
+    }
+
+    #[test]
     fn to_url_is_root_relative() {
         assert_eq!(to_url(Path::new("img/a/b.png")), "/img/a/b.png");
     }
@@ -699,5 +765,39 @@ mod tests {
 
         assert_eq!(stamp_of(&dir.join("missing.png")), None);
         let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    /// Derivatives that encode larger than their source are deleted rather
+    /// than shipped, so `out.exists()` can no longer tell "never built" from
+    /// "built and rejected". The verdict rides on the stamp instead — and it
+    /// must not make two identical sources look different.
+    #[test]
+    fn rejection_verdict_survives_the_stamp_but_does_not_define_the_source() {
+        let useful = SourceStamp {
+            hash: 7,
+            len: 11,
+            useful: true,
+        };
+        let rejected = SourceStamp {
+            useful: false,
+            ..useful.clone()
+        };
+
+        assert!(useful.same_source(&rejected), "same bytes, same source");
+        assert!(
+            !useful.same_source(&SourceStamp { hash: 8, ..useful }),
+            "different bytes must invalidate regardless of verdict"
+        );
+
+        let db: StampDb = HashMap::from([("img/a.png".to_string(), rejected.clone())]);
+        let round_tripped: StampDb =
+            serde_json::from_str(&serde_json::to_string(&db).unwrap()).unwrap();
+        assert_eq!(round_tripped["img/a.png"], rejected, "verdict must persist");
+
+        // A cache written before the field existed must not read back as
+        // "rejected" — that would drop the image from every page.
+        let legacy: StampDb =
+            serde_json::from_str(r#"{"img/a.png":{"hash":7,"len":11}}"#).unwrap();
+        assert!(legacy["img/a.png"].useful, "legacy stamps default to usable");
     }
 }
