@@ -10,6 +10,10 @@ Thumbs.db
 *.icloud
 .hugo_build.lock
 
+# Generated image derivatives (see ssg/src/assets.rs). Pure derivatives of
+# content/static/, regenerated on first build after a clean checkout.
+/.image-cache/
+
 # Rust workspace
 /target/
 **/*.rs.bk

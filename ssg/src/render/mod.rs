@@ -6,6 +6,9 @@
 //!   - inline / display math → `render::math::inline|display` (pulldown-latex → MathML)
 //!   - image tags with relative URLs → rewrite to `/posts/<slug>/<filename>`
 //!
+//! After the event stream is flushed to HTML, `render::assets::rewrite_images`
+//! makes a final pass to point every image at its optimized derivative.
+//!
 //! Bibliography: if a `<post-stem>.refs.yaml` sidecar exists, `\cite{key}` /
 //! `\citep{key}` patterns are replaced with numbered superscript links, and a
 //! `<section class="references">` is appended after the rendered body.
@@ -20,6 +23,7 @@ pub mod figure;
 pub mod math;
 pub mod tweet;
 
+use crate::assets;
 use crate::content::Source;
 use anyhow::Result;
 use pulldown_cmark::{CodeBlockKind, CowStr, Event, Options, Parser, Tag, TagEnd};
@@ -44,7 +48,14 @@ pub struct RenderedPost {
 
 /// Render a `Source` to HTML, returning body HTML, reading time, and a
 /// pre-rendered TOC nav block. No templating happens here.
-pub fn render(source: &Source) -> Result<RenderedPost> {
+///
+/// `images` maps original image URLs to their build-time WebP derivatives
+/// (see `crate::assets`); an empty manifest leaves image markup untouched.
+pub fn render(
+    source: &Source,
+    images: &crate::assets::ImageManifest,
+    site_url: &str,
+) -> Result<RenderedPost> {
     // --- bibliography ---
     let bib_path = source.path.with_extension("refs.yaml");
     let bib = if bib_path.exists() {
@@ -105,6 +116,13 @@ pub fn render(source: &Source) -> Result<RenderedPost> {
         });
         html.push_str(&bib_html);
     }
+
+    // --- images: swap in build-time WebP derivatives, stamp intrinsic
+    // dimensions and loading hints, and link through to the original. Runs
+    // over the finished HTML rather than the event stream so that raw-HTML
+    // `<img>` tags — inside `<figure>` blocks or written inline in legacy
+    // posts — get the same treatment as markdown images.
+    let html = assets::rewrite_images(&html, images, site_url);
 
     // --- build TOC nav ---
     let toc_html = if toc.len() >= 2 {
@@ -428,7 +446,7 @@ mod tests {
                   \x20 <figcaption>A caption with \\\\(x + y\\\\) inline math.</figcaption>\n\
                   </figure>\n\n\
                   See \\figref{fig:demo} for details.\n";
-        let out = render(&make_source(md, "post")).unwrap();
+        let out = render(&make_source(md, "post"), &assets::ImageManifest::default(), "https://alkzar.cl").unwrap();
         assert!(
             out.html.contains("<math"),
             "expected figcaption math rendered to MathML; got: {}",
@@ -451,7 +469,7 @@ mod tests {
     fn equation_ref_links_jump_to_labeled_equation() {
         let md = "See Equation~(\\ref{eqn:foo}) below.\n\n\
                   $$\n\\begin{equation}\\label{eqn:foo}\nx = y\n\\end{equation}\n$$\n";
-        let out = render(&make_source(md, "post")).unwrap();
+        let out = render(&make_source(md, "post"), &assets::ImageManifest::default(), "https://alkzar.cl").unwrap();
         assert!(
             out.html.contains(r##"<a href="#eqn:foo">1</a>"##),
             "expected linked ref; got: {}",
@@ -473,7 +491,7 @@ mod tests {
     #[test]
     fn renders_python_code_block_with_syntect_classes() {
         let md = "```python\ndef greet(name):\n    return f\"hi, {name}\"\n```\n";
-        let out = render(&make_source(md, "post")).unwrap();
+        let out = render(&make_source(md, "post"), &assets::ImageManifest::default(), "https://alkzar.cl").unwrap();
         assert!(out.html.contains("<pre>"), "html: {}", out.html);
         assert!(
             out.html.contains("<span class=\""),
@@ -485,7 +503,7 @@ mod tests {
     #[test]
     fn renders_inline_math_to_mathml() {
         let md = "Here is $a + b$ inline.\n";
-        let out = render(&make_source(md, "post")).unwrap();
+        let out = render(&make_source(md, "post"), &assets::ImageManifest::default(), "https://alkzar.cl").unwrap();
         assert!(
             out.html.contains("<math"),
             "expected <math> element; got: {}",
@@ -501,7 +519,7 @@ mod tests {
     #[test]
     fn renders_display_math_to_mathml() {
         let md = "Behold:\n\n$$\\sum x$$\n";
-        let out = render(&make_source(md, "post")).unwrap();
+        let out = render(&make_source(md, "post"), &assets::ImageManifest::default(), "https://alkzar.cl").unwrap();
         assert!(
             out.html.contains("<math"),
             "expected <math> element; got: {}",
@@ -517,7 +535,7 @@ mod tests {
     #[test]
     fn code_fence_without_language_does_not_crash() {
         let md = "```\njust some text\n```\n";
-        let out = render(&make_source(md, "post")).unwrap();
+        let out = render(&make_source(md, "post"), &assets::ImageManifest::default(), "https://alkzar.cl").unwrap();
         assert!(out.html.contains("<pre>"));
         assert!(out.html.contains("just some text"));
     }
@@ -525,7 +543,7 @@ mod tests {
     #[test]
     fn unknown_language_falls_back_cleanly() {
         let md = "```not-a-real-language\nfoo bar\n```\n";
-        let out = render(&make_source(md, "post")).unwrap();
+        let out = render(&make_source(md, "post"), &assets::ImageManifest::default(), "https://alkzar.cl").unwrap();
         assert!(out.html.contains("<pre>"));
         assert!(out.html.contains("foo bar"));
     }
@@ -533,7 +551,7 @@ mod tests {
     #[test]
     fn relative_image_url_is_rewritten() {
         let md = "![alt](thumb.png)\n";
-        let out = render(&make_source(md, "my-post")).unwrap();
+        let out = render(&make_source(md, "my-post"), &assets::ImageManifest::default(), "https://alkzar.cl").unwrap();
         assert!(
             out.html.contains("/posts/my-post/thumb.png"),
             "expected rewritten image src; got: {}",
@@ -544,7 +562,7 @@ mod tests {
     #[test]
     fn absolute_image_url_is_preserved() {
         let md = "![alt](https://example.com/img.png)\n";
-        let out = render(&make_source(md, "post")).unwrap();
+        let out = render(&make_source(md, "post"), &assets::ImageManifest::default(), "https://alkzar.cl").unwrap();
         assert!(out.html.contains("https://example.com/img.png"));
         assert!(!out.html.contains("/posts/post/https"));
     }
@@ -552,7 +570,7 @@ mod tests {
     #[test]
     fn reading_time_minimum_is_one() {
         let md = "tiny.";
-        let out = render(&make_source(md, "post")).unwrap();
+        let out = render(&make_source(md, "post"), &assets::ImageManifest::default(), "https://alkzar.cl").unwrap();
         assert_eq!(out.reading_time_minutes, 1);
     }
 
@@ -560,21 +578,21 @@ mod tests {
     fn reading_time_scales_with_words() {
         let words: Vec<&str> = std::iter::repeat("lorem").take(660).collect();
         let body = words.join(" ");
-        let out = render(&make_source(&body, "post")).unwrap();
+        let out = render(&make_source(&body, "post"), &assets::ImageManifest::default(), "https://alkzar.cl").unwrap();
         assert_eq!(out.reading_time_minutes, 3);
     }
 
     #[test]
     fn malformed_math_falls_back_to_code_block() {
         let md = "Bad: $\\frac{1$ here.\n";
-        let out = render(&make_source(md, "post")).unwrap();
+        let out = render(&make_source(md, "post"), &assets::ImageManifest::default(), "https://alkzar.cl").unwrap();
         assert!(!out.html.is_empty());
     }
 
     #[test]
     fn headings_get_id_anchors() {
         let md = "## Hello World\n\nSome text.\n\n### Sub Section\n\nMore text.\n";
-        let out = render(&make_source(md, "post")).unwrap();
+        let out = render(&make_source(md, "post"), &assets::ImageManifest::default(), "https://alkzar.cl").unwrap();
         assert!(
             out.html.contains(r#"id="hello-world""#),
             "got: {}",
@@ -590,7 +608,7 @@ mod tests {
     #[test]
     fn toc_generated_for_multi_heading_post() {
         let md = "## Alpha\n\ntext.\n\n## Beta\n\nmore.\n";
-        let out = render(&make_source(md, "post")).unwrap();
+        let out = render(&make_source(md, "post"), &assets::ImageManifest::default(), "https://alkzar.cl").unwrap();
         assert!(
             out.toc_html.contains("class=\"toc\""),
             "expected toc nav; got: {}",
@@ -603,7 +621,7 @@ mod tests {
     #[test]
     fn toc_empty_for_single_heading() {
         let md = "## Only One\n\ntext.\n";
-        let out = render(&make_source(md, "post")).unwrap();
+        let out = render(&make_source(md, "post"), &assets::ImageManifest::default(), "https://alkzar.cl").unwrap();
         assert!(
             out.toc_html.is_empty(),
             "expected empty toc for single heading; got: {}",
