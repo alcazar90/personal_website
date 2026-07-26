@@ -7,6 +7,7 @@
   --tx-2:      #6F6E69;
   --tx:        #100F0F;
   --accent:    #205EA6;
+  --stone:     #55483A;
 
   --syn-red:     #AF3029;
   --syn-orange:  #BC5215;
@@ -38,6 +39,7 @@
   --tx-2:      #878580;
   --tx:        #CECDC3;
   --accent:    #4385BE;
+  --stone:     #BCAE9D;
 
   --syn-red:     #D14D41;
   --syn-orange:  #DA702C;
@@ -119,10 +121,19 @@ header {
   flex-wrap: wrap;
 }
 header .site-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
   font-weight: 300;
   text-decoration: none;
   color: var(--tx);
   font-size: 1.15rem;
+}
+.brand-mark {
+  width: 0.85em;
+  height: 0.85em;
+  flex-shrink: 0;
+  fill: var(--stone);
 }
 header nav { display: flex; gap: 1rem; align-items: center; }
 header nav a { color: var(--tx-2); text-decoration: none; }
@@ -183,6 +194,16 @@ footer {
   font-size: var(--font-small);
   color: var(--tx-3);
 }
+.footer-mark {
+  width: 13px;
+  height: 13px;
+  vertical-align: -1px;
+  fill: currentColor;
+  opacity: 0.55;
+  cursor: help;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.footer-mark:hover { opacity: 1; transform: translateY(-1px); }
 
 /* Post meta */
 .meta {
@@ -265,6 +286,18 @@ footer {
 
 /* 404 */
 .not-found { text-align: center; margin: 4rem 0; }
+.not-found-mark {
+  width: 168px;
+  height: 168px;
+  margin: 0 auto 2rem;
+  border-radius: 50%;
+  background: var(--bg-2);
+  border: 1px solid var(--ui);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.not-found-mark svg { width: 92px; height: 92px; fill: var(--stone); }
 .not-found h1 { font-size: 4rem; margin: 0 0 1rem; }
 
 /* Math */
@@ -319,12 +352,23 @@ img { max-width: 100%; height: auto; }
 
 /* Table of Contents */
 .toc {
+  position: relative;
   margin: 1.5rem 0;
-  padding: 0.9rem 1.1rem;
+  padding: 0.9rem 1.1rem 1.7rem;
   background: var(--bg-2);
   border: 1px solid var(--ui);
   border-radius: 10px;
   font-size: 0.9em;
+}
+.toc-mark {
+  position: absolute;
+  right: 0.85rem;
+  bottom: 0.65rem;
+  width: 17px;
+  height: 17px;
+  fill: var(--stone);
+  opacity: 0.3;
+  pointer-events: none;
 }
 .toc details summary {
   cursor: pointer;
