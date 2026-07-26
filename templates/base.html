@@ -15,8 +15,6 @@
   if(t==='dark'){document.documentElement.style.background='#100F0F';document.documentElement.style.color='#CECDC3';}
 })();
 </script>
-<link rel="preconnect" href="https://platform.twitter.com">
-<link rel="preconnect" href="https://cdn.syndication.twimg.com" crossorigin>
 <link rel="preconnect" href="https://pbs.twimg.com" crossorigin>
 <style>{{ inline_css | safe }}</style>
 <link rel="alternate" type="application/atom+xml" href="/feed.xml" title="{{ site.title }}">
@@ -62,71 +60,6 @@
       toggleTheme();
     }
   });
-})();
-</script>
-<script>
-(function(){
-  // Theme any embedded tweets to match the site's light/dark toggle. Only
-  // does anything on pages that actually embed a tweet — a no-op elsewhere.
-  //
-  // widgets.js doesn't just hide the original <blockquote> once it renders
-  // an iframe for it — it removes it from the DOM outright. So re-theming
-  // on toggle can't just tweak `data-theme` and re-scan; there's nothing
-  // left to scan. Instead each tweet gets a stable wrapper slot holding a
-  // saved copy of the original markup, which gets replayed fresh into the
-  // slot (wiping out whatever iframe was there) before every render.
-  function currentTheme(){
-    return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
-  }
-
-  // The slot is seeded with the themed fallback markup immediately (rather
-  // than left empty until widgets.js is ready) so the swap into the DOM
-  // never drops through a blank gap — visitors see the quoted text right
-  // away and it's upgraded in place to the Twitter card once it loads.
-  var slots = Array.prototype.map.call(
-    document.querySelectorAll('blockquote.twitter-tweet'),
-    function(bq){
-      var slot = document.createElement('div');
-      slot.className = 'tweet-embed';
-      var html = bq.outerHTML;
-      slot.innerHTML = html;
-      slot.firstElementChild.setAttribute('data-theme', currentTheme());
-      bq.parentNode.replaceChild(slot, bq);
-      return { el: slot, html: html };
-    }
-  );
-  if(!slots.length) return;
-
-  function renderTweets(){
-    slots.forEach(function(slot){
-      slot.el.innerHTML = slot.html;
-      slot.el.firstElementChild.setAttribute('data-theme', currentTheme());
-    });
-    if(window.twttr && window.twttr.widgets){
-      window.twttr.widgets.load();
-    }
-  }
-
-  // Twitter's official async-loader snippet.
-  window.twttr = (function(d, s, id){
-    var js, fjs = d.getElementsByTagName(s)[0], t = window.twttr || {};
-    if(d.getElementById(id)) return t;
-    js = d.createElement(s); js.id = id;
-    js.src = "https://platform.twitter.com/widgets.js";
-    fjs.parentNode.insertBefore(js, fjs);
-    t._e = []; t.ready = function(f){ t._e.push(f); };
-    return t;
-  }(document, "script", "twitter-wjs"));
-
-  window.twttr.ready(renderTweets);
-
-  var b2 = document.getElementById('theme-toggle');
-  if(b2){
-    b2.addEventListener('click', function(){
-      // Run AFTER the toggle handler above flips data-theme.
-      setTimeout(renderTweets, 0);
-    });
-  }
 })();
 </script>
 </body>

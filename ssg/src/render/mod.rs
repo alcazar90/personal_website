@@ -18,6 +18,7 @@ pub mod bibliography;
 pub mod code;
 pub mod figure;
 pub mod math;
+pub mod tweet;
 
 use crate::content::Source;
 use anyhow::Result;
@@ -66,6 +67,11 @@ pub fn render(source: &Source) -> Result<RenderedPost> {
     // Preprocess math: normalize legacy MathJax delimiters (\(...\), \[...\])
     // into $/$$ form, and strip unsupported LaTeX envs (equation, label).
     let preprocessed = math::preprocess_source(&body_with_cites);
+
+    // --- tweets: replace <blockquote class="twitter-tweet"> with a static,
+    // pre-themed card (see render::tweet) so tweets never depend on a
+    // client-side widget script to render correctly.
+    let preprocessed = tweet::render_tweets(&preprocessed);
 
     // Re-derive the label -> number map from the preprocessed source (the
     // `\label{…}` markers survive preprocessing untouched) so `transform_events`

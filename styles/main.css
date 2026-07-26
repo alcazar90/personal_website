@@ -368,16 +368,63 @@ sup a.cite {
 }
 sup a.cite:hover { text-decoration: underline; }
 
-/* Twitter/X embedded card.
- * Scoped to our own `.tweet-embed` wrapper (see templates/post.html) rather
- * than the iframe's own class — Twitter only adds `twitter-tweet-rendered`
- * to the iframe on some init paths, not when we re-render it ourselves for
- * theme switching, so it can't be relied on as a selector.
- * border-radius on the <iframe> clips its content at the corners — the
- * only way to fix corner bleed across a cross-origin frame. max-width
- * caps the default 550 px and makes it responsive on narrow viewports. */
-.tweet-embed { display: flex; justify-content: center; margin: 1rem 0; }
-.tweet-embed iframe {
-  border-radius: 12px !important;
-  max-width: min(500px, 100%) !important;
+/* Tweet/X card — pre-rendered at build time from a snapshot of the tweet
+ * (see ssg/src/render/tweet.rs) rather than loaded live via X's embed
+ * widget, so it's themed via the same custom properties as the rest of the
+ * page: no client-side script, no flash while a third-party widget loads. */
+.tweet-card {
+  display: block;
+  max-width: 500px;
+  margin: 1rem auto;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--ui);
+  border-radius: 12px;
+  background: var(--bg-2);
 }
+.tweet-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  color: inherit;
+}
+.tweet-card-avatar { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; }
+.tweet-card-who { display: flex; flex-direction: column; line-height: 1.25; min-width: 0; }
+.tweet-card-name {
+  font-weight: 600;
+  color: var(--tx);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.tweet-card-badge { width: 16px; height: 16px; color: var(--accent); flex-shrink: 0; }
+.tweet-card-handle { color: var(--tx-2); font-size: var(--font-small); }
+.tweet-card-brand { width: 18px; height: 18px; margin-left: auto; color: var(--tx-2); flex-shrink: 0; }
+.tweet-card-text {
+  margin: 0.75rem 0 0;
+  color: var(--tx);
+  font-size: 0.95em;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+.tweet-card-text a { color: var(--accent); text-decoration: none; }
+.tweet-card-text a:hover { text-decoration: underline; }
+.tweet-card-foot {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--ui);
+  color: var(--tx-2);
+  font-size: var(--font-smaller);
+}
+.tweet-card-stats { display: flex; gap: 0.75rem; }
+.tweet-card-view {
+  display: inline-block;
+  margin-top: 0.75rem;
+  color: var(--accent);
+  font-size: var(--font-small);
+  text-decoration: none;
+}
+.tweet-card-view:hover { text-decoration: underline; }
