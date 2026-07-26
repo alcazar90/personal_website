@@ -39,7 +39,7 @@
   </nav>
 </header>
 <main>{% block content %}{% endblock %}</main>
-<footer>&copy; {{ year }} {{ site.author }}{% if site.footnote %} — {{ site.footnote }}{% endif %}</footer>
+<footer>&copy; {{ year }} <a href="/">{{ site.author }}</a>{% if site.footnote %} — {{ site.footnote }}{% endif %}</footer>
 <script>
 (function(){
   var b=document.getElementById('theme-toggle');
