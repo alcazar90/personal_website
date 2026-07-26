@@ -364,7 +364,7 @@ fn render_and_write_page(
 /// Format a YYYY-MM-DD date as "Mon DD, YYYY". Falls back to the raw input
 /// if parsing fails — frontmatter dates in the legacy posts are not always
 /// strict ISO 8601, and we'd rather show *something* than crash.
-fn format_date(raw: &str) -> String {
+pub(crate) fn format_date(raw: &str) -> String {
     if raw.is_empty() {
         return String::new();
     }
