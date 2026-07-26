@@ -27,7 +27,7 @@ The project, in a nutshell, consists of the following:
 
 ## What is Ukiyo-e style?
 
-Pictures-of-the-floating-world..., that's what means the Japanese word Ukiyo-e. It's a term to refer to an entire art gender, so don't be confused that it is an artist's name or a pseudonym. Its roots are popular, even vulgar, and accessible, so it was easy to find Ukiyo-e prints in Japanese houses. It was a genre that took influence from the west and china, but at some point, it influenced Europe and the western world. If you want to know more about this Japanese art genre, I highly recommend this interactive piece from the New York Times titled <i><a href="https://www.nytimes.com/interactive/2020/08/07/arts/design/hokusai-fuji.html" target="_blank">A Picture of Change for a World in Constant Motion" (Farago 2020)</a></i>. It's a journey from this popular genre's history and distinctive elements.
+Pictures-of-the-floating-world..., that's what means the Japanese word Ukiyo-e. It's a term to refer to an entire art gender, so don't be confused that it is an artist's name or a pseudonym. Its roots are popular, even vulgar, and accessible, so it was easy to find Ukiyo-e prints in Japanese houses. It was a genre that took influence from the west and china, but at some point, it influenced Europe and the western world. If you want to know more about this Japanese art genre, I highly recommend this interactive piece from the New York Times titled <i><a href="https://www.nytimes.com/interactive/2020/08/07/arts/design/hokusai-fuji.html" target="_blank">A Picture of Change for a World in Constant Motion" (Farago 2020)</a></i> \cite{farago2020picture}. It's a journey from this popular genre's history and distinctive elements.
 
 The dataset <a href="https://huggingface.co/datasets/huggan/ukiyoe2photo" target="_blank">ukiyoe2photo</a> contains pictures of the floating world, which I used in this project to learn a model to generate new images with ukiyo-e stylish. The below figure shows some of the ukiyo-e images in the dataset.
 
@@ -45,7 +45,7 @@ The dataset <a href="https://huggingface.co/datasets/huggan/ukiyoe2photo" target
 > _Unconditional image generation is the task of generating images with no condition in any context (like a prompt text or another image). Once trained, the model will create images that resemble its training data distribution._
 
 My goal here is to highlight the main elements involved in a
-<a href="https://arxiv.org/pdf/2006.11239.pdf" target="_blank">Denoising Diffusion Probabilistic Model (Ho 2020)</a>, or DDPM for short, and its training dynamic. I will write a more detailed and technical post about this model in the future.
+<a href="https://arxiv.org/pdf/2006.11239.pdf" target="_blank">Denoising Diffusion Probabilistic Model (Ho 2020)</a> \cite{ho2020ddpm}, or DDPM for short, and its training dynamic. I will write a more detailed and technical post about this model in the future.
 
 Let's start with the training dynamic; a diffusion model consists of two chain processes of the same number of steps, $T$.
 
@@ -55,7 +55,7 @@ Let's start with the training dynamic; a diffusion model consists of two chain p
 <center>
 <figure>
   <img src="/img/ukiyo-e-postalcard-app/calvin-luo-2022-figure-5.png">
-  <figcaption> Source: <a href="https://arxiv.org/abs/2208.11970" target="_blank">Understanding Diffusion Models: A Unified Perspective (Luo 2022)</a></figcaption>
+  <figcaption> Source: <a href="https://arxiv.org/abs/2208.11970" target="_blank">Understanding Diffusion Models: A Unified Perspective (Luo 2022)</a> \cite{luo2022understanding}</figcaption>
 </figure>
 </center>
 
@@ -158,7 +158,7 @@ What is the guidance technique? We can take this unconditional image generation 
 * Colour guidance: samples images that have a (guess) desired colour
 * Text prompt guidance: sample images according to a text description
 
-So, before we look that generating a new image, or sampling, means taking a pure gaussian noise and passing through this denoising process. But we do it in many little steps; you take the noise and denoising slowly, passing through an entire stochastic Markovian process of saying T=1000 steps (<a href="https://arxiv.org/pdf/2006.11239.pdf" target="_blank">Ho 2020</a>,). When we use guidance, we append a gradient graph to the sample tensor and calculate the loss for the sample in each state w.r.t our objective attribute (e.g. colour or text prompt). Then we compute the gradient and update the tensor in the direction that minimizes the loss, guiding the following sample image to be more appealing to the attribute that measures the loss. The process is called classifier guidance, and it was introduced in the paper <a href="https://arxiv.org/pdf/2105.05233.pdf" target="_blank">Diffusion Models Beat GANs on Image Synthesis (Dhariwal 2021)</a>.
+So, before we look that generating a new image, or sampling, means taking a pure gaussian noise and passing through this denoising process. But we do it in many little steps; you take the noise and denoising slowly, passing through an entire stochastic Markovian process of saying T=1000 steps (<a href="https://arxiv.org/pdf/2006.11239.pdf" target="_blank">Ho 2020</a>,). When we use guidance, we append a gradient graph to the sample tensor and calculate the loss for the sample in each state w.r.t our objective attribute (e.g. colour or text prompt). Then we compute the gradient and update the tensor in the direction that minimizes the loss, guiding the following sample image to be more appealing to the attribute that measures the loss. The process is called classifier guidance, and it was introduced in the paper <a href="https://arxiv.org/pdf/2105.05233.pdf" target="_blank">Diffusion Models Beat GANs on Image Synthesis (Dhariwal 2021)</a> \cite{dhariwal2021beatgans}.
 
 Now a beautiful image of a sakura tree...
 
@@ -205,4 +205,3 @@ App code, also a screenshoot of how does it look the <a href="https://huggingfac
 As you can see, it is easier to pick the colour you want and enter a text prompt to guide the sampling; control the scale factors for experimenting with different guidance intensity levels. Using a seed is convenient for reproducing the gaussian noise, which the denoising process use as a starting point for generating the images, so you can edit iteratively the image generated by playing with the scale factors.
 
 PD: Unfortunately, this kind of model involves a lot of computation, and the gradio App is running using huggingface space with CPU, so that means the whole inference pipeline takes a lot of time. But, the good news is if you don't have patience, you can run the Gradio App using the google colab notebook pointing out at the start of this post with the GPU setting.
-
