@@ -15,7 +15,11 @@
   if(t==='dark'){document.documentElement.style.background='#100F0F';document.documentElement.style.color='#CECDC3';}
 })();
 </script>
+{#- Only pages with an embedded tweet load avatars from this host; the rest
+    would pay a DNS + TLS handshake for a connection they never use. -#}
+{%- if needs_twimg %}
 <link rel="preconnect" href="https://pbs.twimg.com" crossorigin>
+{%- endif %}
 <style>{{ inline_css | safe }}</style>
 <link rel="alternate" type="application/atom+xml" href="/feed.xml" title="{{ site.title }}">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">

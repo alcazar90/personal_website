@@ -91,6 +91,14 @@ pub struct Templates {
     env: Environment<'static>,
 }
 
+/// Tweet cards are the only thing on the site that loads from `pbs.twimg.com`
+/// (avatars and inline media), and only two pages have one. Derived from the
+/// rendered body rather than tracked as a field, so it can't drift out of
+/// sync with what the page actually contains.
+fn needs_twimg(html: &str) -> bool {
+    html.contains("tweet-card")
+}
+
 impl Templates {
     /// Build a new template environment with all four templates loaded.
     pub fn new() -> Result<Self> {
@@ -120,6 +128,7 @@ impl Templates {
             page_title => format!("{} — {}", ctx.post.title, ctx.env.site.title),
             description => ctx.post.description,
             lang => ctx.post.lang,
+            needs_twimg => needs_twimg(&ctx.post.html),
             post => ctx.post,
         })
         .context("rendering post.html")
@@ -137,6 +146,7 @@ impl Templates {
             page_title => format!("{} — {}", ctx.page.title, ctx.env.site.title),
             description => ctx.page.description,
             lang => ctx.page.lang,
+            needs_twimg => needs_twimg(&ctx.page.html),
             page => ctx.page,
         })
         .context("rendering page.html")
@@ -250,6 +260,60 @@ mod tests {
         assert!(
             html.contains(":root { --x: 0; }"),
             "missing inlined CSS in: {html}"
+        );
+    }
+
+    const TWIMG_PRECONNECT: &str = r#"<link rel="preconnect" href="https://pbs.twimg.com""#;
+
+    fn render_with_body(body: &str) -> String {
+        let templates = Templates::new().unwrap();
+        let cfg = fixture_config();
+        let mut post = fixture_post();
+        post.html = body.to_string();
+        templates
+            .render_post(&PostContext {
+                env: RenderEnv {
+                    site: &cfg,
+                    inline_css: "",
+                    year: 2026,
+                },
+                post,
+            })
+            .unwrap()
+    }
+
+    #[test]
+    fn twimg_preconnect_only_on_pages_that_embed_a_tweet() {
+        let with = render_with_body(r#"<p>See:</p><div class="tweet-card">…</div>"#);
+        assert!(
+            with.contains(TWIMG_PRECONNECT),
+            "tweet page should preconnect to the avatar host: {with}"
+        );
+
+        let without = render_with_body("<p>No tweets here.</p>");
+        assert!(
+            !without.contains(TWIMG_PRECONNECT),
+            "page without a tweet should not pay for a twimg handshake: {without}"
+        );
+    }
+
+    #[test]
+    fn index_never_preconnects_to_twimg() {
+        let templates = Templates::new().unwrap();
+        let cfg = fixture_config();
+        let html = templates
+            .render_index(&IndexContext {
+                env: RenderEnv {
+                    site: &cfg,
+                    inline_css: "",
+                    year: 2026,
+                },
+                posts: &[],
+            })
+            .unwrap();
+        assert!(
+            !html.contains(TWIMG_PRECONNECT),
+            "the listing page has no tweet cards: {html}"
         );
     }
 
