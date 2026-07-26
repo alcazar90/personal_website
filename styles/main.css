@@ -295,7 +295,20 @@ blockquote {
   color: var(--tx-2);
 }
 hr { border: 0; border-top: 1px solid var(--ui); margin: 2rem 0; }
+/* `height: auto` is what lets the build-time intrinsic width/height
+ * attributes (see ssg/src/assets.rs) reserve the right aspect ratio without
+ * pinning images to their full pixel size. */
 img { max-width: 100%; height: auto; }
+
+/* Wrapper the image pipeline adds around optimized images, linking through
+ * to the full-resolution original. Purely a passthrough: it must not add
+ * link underlines or inline-layout gaps around the image. */
+a.img-original {
+  display: inline-block;
+  line-height: 0;
+  text-decoration: none;
+  border: 0;
+}
 
 /* Comments (giscus) — only rendered on post pages when [giscus] is set. */
 .comments { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--ui); }

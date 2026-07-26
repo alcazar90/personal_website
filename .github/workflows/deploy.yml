@@ -29,6 +29,20 @@ jobs:
       - name: Cache Cargo build
         uses: Swatinem/rust-cache@v2
 
+      # The image pipeline (ssg/src/assets.rs) shells out to libwebp. It
+      # degrades gracefully when these are missing, which is right for local
+      # builds but wrong here: a silent degradation would ship the site's
+      # images unoptimized. Install them, then fail loudly if they're absent.
+      - name: Install image tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y webp
+
+      - name: Verify image tools are available
+        run: |
+          command -v cwebp >/dev/null || { echo "::error::cwebp missing — images would ship unoptimized"; exit 1; }
+          command -v gif2webp >/dev/null || { echo "::error::gif2webp missing — GIFs would ship unoptimized"; exit 1; }
+
       - name: Build site
         run: |
           cargo run --release -p ssg -- build

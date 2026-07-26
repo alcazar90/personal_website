@@ -25,3 +25,4 @@ minijinja.workspace = true
 time.workspace = true
 ureq.workspace = true
 serde_json.workspace = true
+imagesize.workspace = true

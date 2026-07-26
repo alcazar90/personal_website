@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 <section class="profile">
-  <img class="avatar" src="/img/alcazar-cristobal-about-cover.JPG" alt="{{ site.author }}">
+  {# Dimensions match .avatar in main.css — the home page's LCP element, so
+     it stays eager and reserves its box to avoid layout shift. #}
+  <img class="avatar" src="/img/alcazar-cristobal-about-cover.JPG" alt="{{ site.author }}" width="128" height="128" decoding="async">
   <div class="social-links">
     {% if site.social.cv %}<a href="{{ site.social.cv }}" target="_blank" aria-label="CV" title="CV">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/><path d="M8 13h8v2H8zm0 3h8v2H8zm0-6h3v2H8z"/></svg>

@@ -13,6 +13,7 @@ use std::path::Path;
 use std::process::ExitCode;
 use time::OffsetDateTime;
 
+mod assets;
 mod config;
 mod content;
 mod feed;
@@ -92,6 +93,25 @@ fn cmd_build() -> Result<()> {
         .with_context(|| format!("walking content at {}", content_root.display()))?;
     eprintln!("found {} source(s)", sources.len());
 
+    // Downscale + re-encode static images to WebP before rendering, so the
+    // renderer can point each `<img>` at its derivative. Degrades to a no-op
+    // (originals ship untouched) when the libwebp tools aren't installed.
+    let static_src = content_root.join("static");
+    let cache_root = Path::new(assets::CACHE_DIR);
+    let (images, img_report) = assets::optimize(&static_src, cache_root);
+    if img_report.optimized + img_report.reused > 0 {
+        eprintln!(
+            "images: {} encoded, {} cached, {} skipped, {} pruned; {:.1} MB → {:.1} MB ({:.0}% smaller)",
+            img_report.optimized,
+            img_report.reused,
+            img_report.skipped,
+            img_report.pruned,
+            img_report.original_bytes as f64 / 1_048_576.0,
+            img_report.optimized_bytes as f64 / 1_048_576.0,
+            100.0 - (img_report.optimized_bytes as f64 / img_report.original_bytes.max(1) as f64) * 100.0,
+        );
+    }
+
     let templates = Templates::new().context("initializing minijinja environment")?;
     let year = current_year();
     let env = RenderEnv {
@@ -121,7 +141,7 @@ fn cmd_build() -> Result<()> {
         let kind = classify(source);
         match kind {
             SourceKind::Post => {
-                let outcome = render_and_write_post(&templates, &env, source, out_root)
+                let outcome = render_and_write_post(&templates, &env, source, out_root, &images)
                     .with_context(|| format!("emitting post {}", source.slug))?;
                 post_count += 1;
                 total_bytes += outcome.bytes;
@@ -143,7 +163,7 @@ fn cmd_build() -> Result<()> {
                 });
             }
             SourceKind::Page => {
-                let bytes = render_and_write_page(&templates, &env, source, out_root)
+                let bytes = render_and_write_page(&templates, &env, source, out_root, &images)
                     .with_context(|| format!("emitting page {}", source.slug))?;
                 page_count += 1;
                 total_bytes += bytes;
@@ -206,11 +226,18 @@ fn cmd_build() -> Result<()> {
         .with_context(|| format!("writing {}", not_found_path.display()))?;
     total_bytes += not_found_html.len();
 
-    // Copy static assets verbatim, if any.
-    let static_src = content_root.join("static");
+    // Copy static assets verbatim, if any. Originals ship alongside their
+    // derivatives so the "open full-resolution image" links resolve, and so
+    // any URL that was ever published keeps working.
     if static_src.exists() {
         copy_dir_recursive(&static_src, out_root)
             .with_context(|| format!("copying {} to {}", static_src.display(), out_root.display()))?;
+    }
+
+    // Then the optimized derivatives, which mirror the same tree.
+    if cache_root.exists() {
+        copy_dir_recursive(cache_root, out_root)
+            .with_context(|| format!("copying {} to {}", cache_root.display(), out_root.display()))?;
     }
 
     eprintln!(
@@ -256,8 +283,9 @@ fn render_and_write_post(
     env: &RenderEnv<'_>,
     source: &Source,
     out_root: &Path,
+    images: &assets::ImageManifest,
 ) -> Result<PostOutcome> {
-    let rendered = render::render(source)?;
+    let rendered = render::render(source, images, &env.site.url)?;
     let title = source
         .frontmatter
         .title
@@ -321,8 +349,9 @@ fn render_and_write_page(
     env: &RenderEnv<'_>,
     source: &Source,
     out_root: &Path,
+    images: &assets::ImageManifest,
 ) -> Result<usize> {
-    let rendered = render::render(source)?;
+    let rendered = render::render(source, images, &env.site.url)?;
     let title = source
         .frontmatter
         .title
