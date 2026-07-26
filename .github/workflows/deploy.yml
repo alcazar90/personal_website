@@ -29,6 +29,22 @@ jobs:
       - name: Cache Cargo build
         uses: Swatinem/rust-cache@v2
 
+      # Release profile so the test binaries share compiled dependencies with
+      # the deploy build below, instead of compiling the whole graph a second
+      # time in debug.
+      - name: Test
+        run: cargo test --release --workspace
+
+      # Derivatives are gitignored, so without this every deploy re-encodes
+      # all ~54 images from scratch. Keyed on the image sources: touch one and
+      # the whole cache is rebuilt, which the build's own mtime check and
+      # stale-derivative pruning would handle anyway.
+      - name: Cache optimized images
+        uses: actions/cache@v4
+        with:
+          path: .image-cache
+          key: images-${{ hashFiles('content/static/**/*.png', 'content/static/**/*.jpg', 'content/static/**/*.jpeg', 'content/static/**/*.gif', 'content/static/**/*.JPG') }}
+
       # The image pipeline (ssg/src/assets.rs) shells out to libwebp. It
       # degrades gracefully when these are missing, which is right for local
       # builds but wrong here: a silent degradation would ship the site's

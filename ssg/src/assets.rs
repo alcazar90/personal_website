@@ -14,10 +14,11 @@
 //! would mean `libwebp-sys` and a C toolchain in the build, for work that
 //! only happens when the author adds an image.
 //!
-//! Derivatives are cached in `.image-cache/` (gitignored, mirroring the
-//! `content/static/` tree) and regenerated when the source is newer. A clean
-//! checkout re-encodes everything on the first build; nothing derived is
-//! tracked in git.
+//! Derivatives are cached in `.image-cache/files/` (gitignored, mirroring
+//! the `content/static/` tree) and keyed on a content fingerprint of the
+//! source, recorded in `.image-cache/sources.json`. A clean checkout
+//! re-encodes everything on the first build; nothing derived is tracked in
+//! git.
 //!
 //! Following the same posture as `render::tweet`, every failure degrades
 //! instead of aborting: missing tools, a failed encode, or a derivative that
@@ -26,10 +27,10 @@
 
 use once_cell::sync::Lazy;
 use regex::Regex;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use std::time::SystemTime;
 
 /// Where derivatives are written. Mirrors the `content/static/` tree so the
 /// whole directory can be copied into `public/` alongside the originals.
@@ -118,7 +119,10 @@ pub fn optimize(static_root: &Path, cache_root: &Path) -> (ImageManifest, Optimi
         return (manifest, report);
     }
 
-    report.pruned = prune_stale(static_root, cache_root);
+    let derivatives = derivatives_dir(cache_root);
+    report.pruned = prune_stale(static_root, &derivatives);
+    let previous = load_stamps(cache_root);
+    let mut current_stamps = StampDb::new();
 
     for src in walk_images(static_root) {
         let Ok(rel) = src.strip_prefix(static_root) else {
@@ -130,10 +134,14 @@ pub fn optimize(static_root: &Path, cache_root: &Path) -> (ImageManifest, Optimi
             continue;
         }
 
-        let out = cache_root.join(rel).with_extension("webp");
+        let out = derivatives.join(rel).with_extension("webp");
         let src_bytes = file_len(&src);
+        let key = rel.to_string_lossy().replace(std::path::MAIN_SEPARATOR, "/");
+        let stamp = stamp_of(&src);
 
-        let fresh = is_fresh(&src, &out);
+        // Reuse only when the derivative exists *and* was built from exactly
+        // these bytes.
+        let fresh = out.exists() && stamp.is_some() && previous.get(&key) == stamp.as_ref();
         if !fresh {
             if let Some(parent) = out.parent() {
                 if let Err(e) = std::fs::create_dir_all(parent) {
@@ -148,6 +156,13 @@ pub fn optimize(static_root: &Path, cache_root: &Path) -> (ImageManifest, Optimi
                 report.skipped += 1;
                 continue;
             }
+        }
+
+        // Record the fingerprint before the size guard below: derivatives we
+        // decline to *use* still exist on disk, and re-encoding them on every
+        // build to reach the same verdict would be pure waste.
+        if let Some(stamp) = stamp {
+            current_stamps.insert(key, stamp);
         }
 
         let out_bytes = file_len(&out);
@@ -185,7 +200,17 @@ pub fn optimize(static_root: &Path, cache_root: &Path) -> (ImageManifest, Optimi
         report.optimized_bytes += out_bytes;
     }
 
+    // Rebuilt from scratch each run, so fingerprints for deleted sources drop
+    // out without a separate pruning pass.
+    save_stamps(cache_root, &current_stamps);
+
     (manifest, report)
+}
+
+/// Derivatives live in a subdirectory so the whole thing can be copied into
+/// `public/` without dragging the fingerprint sidecar along with it.
+pub fn derivatives_dir(cache_root: &Path) -> PathBuf {
+    cache_root.join("files")
 }
 
 /// Run the encoder. `cwebp` handles stills (and downscales); `gif2webp`
@@ -283,16 +308,59 @@ fn prune_stale(static_root: &Path, cache_root: &Path) -> usize {
     pruned
 }
 
-/// A derivative is fresh when it exists and is no older than its source.
-fn is_fresh(src: &Path, out: &Path) -> bool {
-    let (Ok(s), Ok(o)) = (mtime(src), mtime(out)) else {
-        return false;
-    };
-    o >= s
+/// Fingerprint of a source image, used to decide whether its derivative is
+/// still valid.
+///
+/// Deliberately *not* mtime-based. `actions/cache` restores derivatives via
+/// tar with their original timestamps, while `git checkout` stamps every
+/// source file with the current time — so on CI a restored derivative is
+/// always "older" than its source and an mtime check would re-encode
+/// everything, every build. Content hashing is also what makes the cache
+/// portable between machines at all.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct SourceStamp {
+    hash: u64,
+    len: u64,
 }
 
-fn mtime(p: &Path) -> Result<SystemTime, ()> {
-    std::fs::metadata(p).and_then(|m| m.modified()).map_err(|_| ())
+type StampDb = HashMap<String, SourceStamp>;
+
+/// Sidecar recording what each cached derivative was built from. Lives
+/// beside the derivatives rather than inside them, so it never gets copied
+/// into `public/`.
+const STAMP_FILE: &str = "sources.json";
+
+/// FNV-1a. Inlined rather than pulling in a hashing crate: this guards a
+/// local build cache, not anything security-sensitive.
+fn fnv1a(bytes: &[u8]) -> u64 {
+    let mut h: u64 = 0xcbf2_9ce4_8422_2325;
+    for b in bytes {
+        h ^= *b as u64;
+        h = h.wrapping_mul(0x1000_0000_01b3);
+    }
+    h
+}
+
+fn stamp_of(path: &Path) -> Option<SourceStamp> {
+    let bytes = std::fs::read(path).ok()?;
+    Some(SourceStamp {
+        hash: fnv1a(&bytes),
+        len: bytes.len() as u64,
+    })
+}
+
+fn load_stamps(cache_root: &Path) -> StampDb {
+    std::fs::read_to_string(cache_root.join(STAMP_FILE))
+        .ok()
+        .and_then(|s| serde_json::from_str(&s).ok())
+        .unwrap_or_default()
+}
+
+fn save_stamps(cache_root: &Path, db: &StampDb) {
+    if let Ok(json) = serde_json::to_string_pretty(db) {
+        let _ = std::fs::create_dir_all(cache_root);
+        let _ = std::fs::write(cache_root.join(STAMP_FILE), json);
+    }
 }
 
 fn file_len(p: &Path) -> u64 {
@@ -587,5 +655,49 @@ mod tests {
     #[test]
     fn to_url_is_root_relative() {
         assert_eq!(to_url(Path::new("img/a/b.png")), "/img/a/b.png");
+    }
+
+    #[test]
+    fn derivatives_live_below_the_cache_root() {
+        // The fingerprint sidecar sits at the cache root, so derivatives must
+        // be in a subdirectory or it would be copied into `public/`.
+        let root = Path::new(".image-cache");
+        assert!(derivatives_dir(root).starts_with(root));
+        assert_ne!(derivatives_dir(root), root);
+    }
+
+    /// Freshness must track content, not timestamps: CI checks out sources
+    /// with fresh mtimes and restores derivatives with stale ones, so an
+    /// mtime-based check would re-encode everything on every run.
+    #[test]
+    fn stamp_follows_content_not_mtime() {
+        let dir = std::env::temp_dir().join(format!(
+            "ssg-stamp-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&dir).unwrap();
+        let f = dir.join("a.png");
+
+        std::fs::write(&f, b"original bytes").unwrap();
+        let before = stamp_of(&f).expect("stamp should read");
+
+        // Rewriting identical bytes moves mtime but must not change the stamp.
+        std::fs::write(&f, b"original bytes").unwrap();
+        assert_eq!(stamp_of(&f).unwrap(), before, "rewrite must stay fresh");
+
+        // Different bytes must invalidate.
+        std::fs::write(&f, b"different bytes!").unwrap();
+        assert_ne!(stamp_of(&f).unwrap(), before, "edit must invalidate");
+
+        // Same length, different content — length alone is not enough.
+        std::fs::write(&f, b"originql bytes").unwrap();
+        assert_ne!(stamp_of(&f).unwrap(), before, "same-length edit must invalidate");
+
+        assert_eq!(stamp_of(&dir.join("missing.png")), None);
+        let _ = std::fs::remove_dir_all(&dir);
     }
 }

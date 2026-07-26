@@ -235,9 +235,10 @@ fn cmd_build() -> Result<()> {
     }
 
     // Then the optimized derivatives, which mirror the same tree.
-    if cache_root.exists() {
-        copy_dir_recursive(cache_root, out_root)
-            .with_context(|| format!("copying {} to {}", cache_root.display(), out_root.display()))?;
+    let derivatives = assets::derivatives_dir(cache_root);
+    if derivatives.exists() {
+        copy_dir_recursive(&derivatives, out_root)
+            .with_context(|| format!("copying {} to {}", derivatives.display(), out_root.display()))?;
     }
 
     eprintln!(
