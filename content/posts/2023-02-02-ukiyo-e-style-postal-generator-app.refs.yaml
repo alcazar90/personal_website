@@ -17,3 +17,10 @@ dhariwal2021beatgans:
   year: 2021
   url: "https://arxiv.org/abs/2105.05233"
   booktitle: "Advances in Neural Information Processing Systems 34 (NeurIPS 2021)"
+
+farago2020picture:
+  author: "Farago, J."
+  title: "A Picture of Change for a World in Constant Motion"
+  year: 2020
+  url: "https://www.nytimes.com/interactive/2020/08/07/arts/design/hokusai-fuji.html"
+  journal: "The New York Times"
