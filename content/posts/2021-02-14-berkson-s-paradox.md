@@ -52,7 +52,7 @@ can see the correlation coefficient ($\rho$).
 
 
 <center>
-<img src="img/berksonParadox.gif"/>
+<img src="/img/berksonParadox.gif"/>
 </center>
 
 It's likely and honest to think that, on average, one restricts the potential
@@ -209,4 +209,8 @@ ggsave("/Users/YourUser/Desktop/bp1.png", p1, width = 7.5, height = 7.5, dpi = "
 ggsave("/Users/YourUser/Desktop/bp2.png", p2, width = 7.5, height = 7.5, dpi = "retina")
 ```
 
+The animation above is a Python reproduction of this same idea (independent
+Niceness/Attractiveness, the same two diagonal cutoffs at $x+y=85$ and
+$x+y=115$), rendered as a single continuous animation instead of three PNGs
+stitched together: [`berkson_paradox.py`](https://gist.github.com/alcazar90/47e8d1f30990e1c73a787b974a046ab5).
 
