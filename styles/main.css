@@ -320,10 +320,10 @@ img { max-width: 100%; height: auto; }
 /* Table of Contents */
 .toc {
   margin: 1.5rem 0;
-  padding: 0.75rem 1rem;
+  padding: 0.9rem 1.1rem;
   background: var(--bg-2);
   border: 1px solid var(--ui);
-  border-radius: 4px;
+  border-radius: 10px;
   font-size: 0.9em;
 }
 .toc details summary {
@@ -331,17 +331,22 @@ img { max-width: 100%; height: auto; }
   font-weight: 600;
   color: var(--tx-2);
   user-select: none;
+  transition: color 0.15s ease;
 }
 .toc details summary:hover { color: var(--tx); }
 .toc ul {
-  margin: 0.5rem 0 0 0;
-  padding-left: 1.25rem;
+  margin: 0.6rem 0 0 0;
+  padding-left: 1.1rem;
   list-style: none;
 }
-.toc ul ul { padding-left: 1rem; }
-.toc li { margin: 0.2rem 0; }
-.toc a { color: var(--tx-2); text-decoration: none; }
-.toc a:hover { color: var(--accent); text-decoration: underline; }
+.toc ul ul { padding-left: 1rem; margin-top: 0.3rem; }
+.toc li { margin: 0.35rem 0; line-height: 1.4; }
+.toc a {
+  color: var(--tx-2);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.toc a:hover { color: var(--accent); }
 
 /* Bibliography */
 .references {
