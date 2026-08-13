@@ -135,6 +135,7 @@ header .site-title {
   flex-shrink: 0;
   fill: var(--stone);
 }
+.site-section { color: var(--tx-2); font-weight: 400; }
 header nav { display: flex; gap: 1rem; align-items: center; }
 header nav a { color: var(--tx-2); text-decoration: none; }
 header nav a:hover { color: var(--accent); }
