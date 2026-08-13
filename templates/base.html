@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ page_title }}</title>
 <meta name="description" content="{{ description }}">
-<script>
+<script data-cfasync="false">
 (function(){
   var s=localStorage.getItem('theme');
   var p=matchMedia('(prefers-color-scheme: dark)').matches;
@@ -44,7 +44,7 @@
 </header>
 <main>{% block content %}{% endblock %}</main>
 <footer>&copy; {{ year }} <a href="/">{{ site.author }}</a>{% if site.footnote %} — {{ site.footnote }}{% endif %} <svg class="footer-mark" viewBox="0 0 100 100" aria-hidden="true"><title>two stones, since {{ year }}</title><path d="M40,42 L78,34 C88,33 93,42 92,52 C91,64 86,76 76,84 C68,90 55,91 46,88 C36,85 32,76 33,66 C34,56 36,48 40,42 Z"/><path d="M14,80 L24,77 C28,78 30,82 28,86 C26,90 20,91 15,90 C10,89 9,84 14,80 Z"/></svg></footer>
-<script>
+<script data-cfasync="false">
 (function(){
   var b=document.getElementById('theme-toggle');
   if(!b)return;
