@@ -129,6 +129,7 @@ impl Templates {
             description => ctx.post.description,
             lang => ctx.post.lang,
             needs_twimg => needs_twimg(&ctx.post.html),
+            section => "Writing",
             post => ctx.post,
         })
         .context("rendering post.html")
