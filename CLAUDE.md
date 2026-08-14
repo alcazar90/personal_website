@@ -12,6 +12,9 @@ Source for [alkzar.cl](https://alkzar.cl), a personal blog. It's a **custom Rust
 # Build the site: content/ -> public/
 cargo run --release -p ssg -- build
 
+# Build including draft: true posts, for local preview only (deploy never passes this flag)
+cargo run --release -p ssg -- build --drafts
+
 # Scaffold a new post at content/posts/YYYY-MM-DD-<slug>.md
 cargo run --release -p ssg -- new-post "My Post Title"
 
@@ -58,7 +61,7 @@ Every build fully deletes and recreates `public/` — there's no incremental bui
 ## Content conventions
 
 - Post files: `content/posts/YYYY-MM-DD-<slug>.md`. The slug is derived from the filename (date prefix stripped) unless overridden by a `slug:` frontmatter field.
-- Frontmatter (YAML `---` or TOML `+++`) supports: `title`, `date`, `slug`, `tags`, `description`, `draft`, `lang`. `draft: true` posts are skipped entirely.
+- Frontmatter (YAML `---` or TOML `+++`) supports: `title`, `date`, `slug`, `tags`, `description`, `draft`, `lang`. `draft: true` posts are skipped by a plain `build`; pass `--drafts` to render them locally (with a "Draft" badge on the post page and index listing) while still excluding them from `feed.xml`/`sitemap.xml`. The deploy workflow never passes `--drafts`, so drafts can't reach production regardless of local build flags.
 - Bibliography sidecar: `content/posts/<post-stem>.refs.yaml`, keyed by citation key, each entry has `author`, `title`, `year` required, `url`/`journal`/`booktitle`/`note` optional. **Never hand-type a `## References` section in a post's Markdown** — `bibliography::strip_references_section` unconditionally deletes a `## References` heading and everything after it from *every* post body at build time (sidecar or not), so hand-written content there is silently discarded. To add references: create the `.refs.yaml` sidecar and mark citation points inline with `\cite{key}`/`\citep{key}`; the build generates the numbered `<section class="references">` itself.
 - Tweet cache: `content/tweet-cache.json`, keyed by tweet id — committed to the repo (see `render/tweet.rs`). Delete an entry to force a re-fetch on the next build.
 - Images: drop full-resolution exports into `content/static/img/` and reference them normally — sizing is the build's job, not the author's. Derivatives are cached in `.image-cache/files/` (gitignored, mirrors the `content/static/` tree), keyed on a content fingerprint of each source recorded in `.image-cache/sources.json`, and pruned when a source is deleted. WebP does not always win — already-quantized GIFs, flat PNGs and small icons encode *larger* than their source — so a derivative that isn't smaller is deleted and the page keeps the original. Because `public/` is a verbatim copy of the derivatives tree, keeping a rejected file around would ship it as dead weight; the verdict is recorded as `useful: false` in `sources.json` so the next build doesn't re-encode it just to reach the same answer. Freshness is deliberately content-based, not mtime-based: `git checkout` rewrites source mtimes and `actions/cache` restores derivatives with their original ones, so an mtime check would re-encode everything on every CI run. A clean checkout re-encodes everything on the first build (~35s); warm builds are ~1s. Requires `cwebp`/`gif2webp` on PATH (`brew install webp`, `apt-get install -y webp`); without them the build still succeeds but ships images unoptimized, so CI verifies they're present.

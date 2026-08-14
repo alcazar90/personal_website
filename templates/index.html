@@ -31,7 +31,7 @@
   {% for post in posts %}
   <li>
     <time datetime="{{ post.date }}">{{ post.date_display }}</time>
-    <a href="/posts/{{ post.slug }}/">{{ post.title }}</a>
+    <a href="/posts/{{ post.slug }}/">{{ post.title }}</a>{% if post.draft %} <span class="draft-badge">Draft</span>{% endif %}
   </li>
   {% endfor %}
 </ul>

@@ -213,6 +213,20 @@ footer {
   margin-bottom: 2rem;
 }
 
+/* Draft preview badge — only ever emitted by `ssg build --drafts`. */
+.draft-badge {
+  display: inline-block;
+  font-size: var(--font-smaller);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--syn-orange);
+  border: 1px solid var(--syn-orange);
+  border-radius: 3px;
+  padding: 0.05em 0.4em;
+  vertical-align: middle;
+}
+
 /* Profile avatar + social links */
 .profile {
   position: relative;

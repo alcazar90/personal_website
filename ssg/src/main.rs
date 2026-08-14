@@ -35,7 +35,10 @@ const MAIN_CSS: &str = include_str!("../../styles/main.css");
 fn main() -> ExitCode {
     let cmd = std::env::args().nth(1);
     let result = match cmd.as_deref() {
-        Some("build") => cmd_build(),
+        Some("build") => {
+            let include_drafts = std::env::args().skip(2).any(|a| a == "--drafts");
+            cmd_build(include_drafts)
+        }
         Some("new-post") => {
             let title = std::env::args().nth(2);
             match title {
@@ -69,13 +72,15 @@ fn main() -> ExitCode {
 
 fn usage() {
     eprintln!("ssg v{}", env!("CARGO_PKG_VERSION"));
-    eprintln!("usage: ssg <build | new-post \"<title>\">");
+    eprintln!("usage: ssg <build [--drafts] | new-post \"<title>\">");
     eprintln!();
     eprintln!("  build              Render content/ to public/.");
+    eprintln!("    --drafts         Also render draft: true posts, for local preview.");
+    eprintln!("                     Never used by the deploy workflow — drafts never ship.");
     eprintln!("  new-post \"<title>\"  Scaffold a new post at content/posts/YYYY-MM-DD-<slug>.md.");
 }
 
-fn cmd_build() -> Result<()> {
+fn cmd_build(include_drafts: bool) -> Result<()> {
     let content_root = Path::new("content");
     let out_root = Path::new("public");
 
@@ -89,9 +94,12 @@ fn cmd_build() -> Result<()> {
 
     eprintln!("loaded config for site: {}", config.title);
 
-    let sources = content::walk(content_root)
+    let sources = content::walk(content_root, include_drafts)
         .with_context(|| format!("walking content at {}", content_root.display()))?;
     eprintln!("found {} source(s)", sources.len());
+    if include_drafts {
+        eprintln!("draft preview mode: draft posts are included in this build");
+    }
 
     // Downscale + re-encode static images to WebP before rendering, so the
     // renderer can point each `<img>` at its derivative. Degrades to a no-op
@@ -141,6 +149,7 @@ fn cmd_build() -> Result<()> {
         let kind = classify(source);
         match kind {
             SourceKind::Post => {
+                let is_draft = source.frontmatter.draft.unwrap_or(false);
                 let outcome = render_and_write_post(&templates, &env, source, out_root, &images)
                     .with_context(|| format!("emitting post {}", source.slug))?;
                 post_count += 1;
@@ -150,17 +159,22 @@ fn cmd_build() -> Result<()> {
                     slug: source.slug.clone(),
                     date: outcome.date.clone(),
                     date_display: outcome.date_display.clone(),
+                    draft: is_draft,
                 });
-                feed_entries.push(FeedEntry {
-                    title: outcome.title,
-                    slug: source.slug.clone(),
-                    date: outcome.date.clone(),
-                    html: outcome.body_html,
-                });
-                sitemap_entries.push(SitemapEntry {
-                    path: format!("/posts/{}/", source.slug),
-                    lastmod: (!outcome.date.is_empty()).then_some(outcome.date),
-                });
+                // Drafts are rendered for local preview but never enter the
+                // Atom feed or sitemap — those represent what's published.
+                if !is_draft {
+                    feed_entries.push(FeedEntry {
+                        title: outcome.title,
+                        slug: source.slug.clone(),
+                        date: outcome.date.clone(),
+                        html: outcome.body_html,
+                    });
+                    sitemap_entries.push(SitemapEntry {
+                        path: format!("/posts/{}/", source.slug),
+                        lastmod: (!outcome.date.is_empty()).then_some(outcome.date),
+                    });
+                }
             }
             SourceKind::Page => {
                 let bytes = render_and_write_page(&templates, &env, source, out_root, &images)
@@ -323,6 +337,7 @@ fn render_and_write_post(
         description,
         lang,
         toc_html: rendered.toc_html,
+        draft: source.frontmatter.draft.unwrap_or(false),
     };
     let ctx = PostContext {
         env: env.clone_borrowed(),
