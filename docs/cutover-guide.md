@@ -257,21 +257,18 @@ The preview URL is `https://alkzar.pages.dev`. Run through this checklist:
 - [ ] **404 page**: visit `https://alkzar.pages.dev/this-does-not-exist` —
       shows the styled 404 page, not a Cloudflare error page
 
-### 5b. Math rendering (10 min) — run the MathML spike
+### 5b. Math rendering (10 min)
 
-Open `docs/mathml-spike.md` (in this repo or on GitHub) and follow the
-verification checklist there:
+Open the RL post (or another math-heavy post) on **macOS Chrome**, **macOS
+Firefox**, **macOS Safari**, and if possible **iOS Safari** (on your phone),
+and visually inspect the math rendering (fractions, integrals, matrices,
+etc.). Chrome and Firefox should render perfectly; Safari (especially older
+versions) may have minor spacing quirks on fractions or matrices but should
+still be readable.
 
-1. Open the RL post on **macOS Chrome**, **macOS Firefox**, **macOS Safari**,
-   and if possible **iOS Safari** (on your phone)
-2. Visually inspect the 5 sample math constructs (fractions, integrals,
-   matrices, etc.)
-3. Fill in the per-browser checklist
-
-**Most likely outcome**: Chrome and Firefox render perfectly. Safari (especially
-older versions) may have minor spacing quirks on fractions or matrices but is
-generally readable. If Safari is **unreadable** on any sample, the spike doc
-has a decision tree pointing to a follow-up KaTeX-fallback issue.
+This checklist was already run once during the MathML cross-browser
+verification spike ([issue #18](https://github.com/alcazar90/personal_website/issues/18),
+closed) — rerun it if the math rendering pipeline changes.
 
 ### 5c. Image paths (5 min)
 

@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["ssg", "migrate"]
+members = ["ssg"]
 
 [workspace.package]
 edition = "2021"

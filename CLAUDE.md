@@ -6,8 +6,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Source for [alkzar.cl](https://alkzar.cl), a personal blog. It's a **custom Rust static site generator** (Cargo workspace, not Node) that reads Markdown content and renders it to static HTML for deployment on Cloudflare Pages.
 
-The repo also contains a one-shot `migrate` binary used to convert legacy Hugo/Rmd content into the clean Markdown this SSG consumes.
-
 ## Commands
 
 ```sh
@@ -17,15 +15,12 @@ cargo run --release -p ssg -- build
 # Scaffold a new post at content/posts/YYYY-MM-DD-<slug>.md
 cargo run --release -p ssg -- new-post "My Post Title"
 
-# Run all tests (both crates)
+# Run all tests
 cargo test --workspace
 
-# Run tests for one crate/module
+# Run tests for one module
 cargo test -p ssg
 cargo test -p ssg render::   # filter by path prefix, e.g. render:: or templates::
-
-# One-shot content migration (Hugo -> this SSG's content format)
-cargo run --release -p migrate
 ```
 
 There is no lint/format CI step defined in this repo beyond `cargo test`; use `cargo fmt`/`cargo clippy` as normal Rust hygiene if touching code.
@@ -33,12 +28,10 @@ There is no lint/format CI step defined in this repo beyond `cargo test`; use `c
 ## Workspace layout
 
 - `ssg/` — the site generator binary (`cargo run -p ssg -- build`). All production logic lives here.
-- `migrate/` — standalone one-shot binary for converting legacy Hugo content; not part of the build pipeline.
 - `content/` — the actual source of truth for the site: `content/config.toml` (site config), `content/posts/*.md`, `content/pages/*.md`, `content/static/` (copied verbatim to `public/`).
 - `templates/*.html` — minijinja templates, baked into the `ssg` binary via `include_str!` (not read from disk at runtime).
 - `styles/main.css` — single stylesheet, inlined into every page's `<head>` at build time via `include_str!` (no external CSS request, no separate CSS file ships in `public/`).
 - `public/` — build output (gitignored). Deleted and regenerated on every `build`.
-- `posts/` — legacy/scratch content from the migration, intentionally still tracked (see `.gitignore` comment); not what the SSG reads (it reads `content/posts/`).
 - `docs/cutover-guide.md` — runbook for the Hugo→Rust/Netlify→Cloudflare Pages DNS cutover.
 
 ## Build pipeline (`ssg/src/`)
@@ -75,7 +68,7 @@ Every build fully deletes and recreates `public/` — there's no incremental bui
 
 - **Never crash the build on content-level problems.** Bad math, unknown syntax-highlighting languages, malformed frontmatter shapes, unfetchable tweets, and missing image encoders all degrade gracefully (fallback rendering, warning to stderr, or skipping the file) rather than aborting `cargo run -p ssg -- build`. Note the one place this needs a counterweight: a silently-skipped image optimization is invisible in the output, so CI checks for the encoders explicitly rather than trusting the graceful path.
 - **Templates and CSS are compiled into the binary** (`include_str!`), not read from disk at runtime — there's no template hot-reload story here.
-- Frontmatter parsing is deliberately lenient (see `de_string_lenient`/`de_string_list_lenient` in `content.rs`, duplicated verbatim in `migrate/src/main.rs`) because legacy Hugo content has inconsistent field shapes. Keep both copies in sync if you change this logic.
+- Frontmatter parsing is deliberately lenient (see `de_string_lenient`/`de_string_list_lenient` in `content.rs`) because legacy Hugo content had inconsistent field shapes.
 
 ## Deployment
 
