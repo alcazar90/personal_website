@@ -18,9 +18,6 @@ Thumbs.db
 /target/
 **/*.rs.bk
 
-# Migration scratch output (committed intentionally in PR 2, not by accident)
-/posts/
-
 # Editor
 *.swp
 .idea/

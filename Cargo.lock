@@ -346,18 +346,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "38d1115007560874e373613744c6fba374c17688327a71c1476d1a5954cc857b"
 
 [[package]]
-name = "migrate"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "regex",
- "serde",
- "serde_yaml",
- "toml",
- "walkdir",
-]
-
-[[package]]
 name = "minijinja"
 version = "2.20.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
