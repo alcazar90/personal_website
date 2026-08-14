@@ -2,7 +2,8 @@
 //!
 //! Walks `content/posts/` and `content/pages/`, parses both `---` YAML and
 //! `+++` TOML frontmatter, and returns a flat list of `Source` records
-//! sorted by date descending. Drafts are skipped.
+//! sorted by date descending. Drafts are skipped unless the caller opts in
+//! via `walk`'s `include_drafts` flag.
 //!
 //! The frontmatter deserializers are intentionally lenient — legacy Hugo
 //! posts sometimes have `slug: []` or `tags: "single"`, and we'd rather
@@ -89,8 +90,11 @@ pub enum FmKind {
 /// returning a list of sources sorted by date (newest first).
 ///
 /// Files without frontmatter are skipped with a warning rather than failing
-/// the whole build — same with parse errors. Drafts are silently dropped.
-pub fn walk(root: &Path) -> Result<Vec<Source>> {
+/// the whole build — same with parse errors. Drafts are dropped unless
+/// `include_drafts` is set, in which case they're kept (with
+/// `frontmatter.draft` still `Some(true)`) so callers can render them for
+/// local preview while excluding them from feed/sitemap output.
+pub fn walk(root: &Path, include_drafts: bool) -> Result<Vec<Source>> {
     let mut sources = Vec::new();
     for sub in ["posts", "pages"] {
         let dir = root.join(sub);
@@ -110,7 +114,7 @@ pub fn walk(root: &Path) -> Result<Vec<Source>> {
                 continue;
             }
 
-            match parse_file(path) {
+            match parse_file(path, include_drafts) {
                 Ok(Some(source)) => sources.push(source),
                 Ok(None) => {} // draft, skip silently
                 Err(e) => {
@@ -130,7 +134,7 @@ pub fn walk(root: &Path) -> Result<Vec<Source>> {
     Ok(sources)
 }
 
-fn parse_file(path: &Path) -> Result<Option<Source>> {
+fn parse_file(path: &Path, include_drafts: bool) -> Result<Option<Source>> {
     let raw = fs::read_to_string(path)
         .with_context(|| format!("reading {}", path.display()))?;
     let (front_raw, body, kind) = split_frontmatter(&raw)
@@ -138,7 +142,7 @@ fn parse_file(path: &Path) -> Result<Option<Source>> {
     let frontmatter = parse_frontmatter(front_raw, kind)
         .with_context(|| format!("parsing frontmatter in {}", path.display()))?;
 
-    if frontmatter.draft.unwrap_or(false) {
+    if frontmatter.draft.unwrap_or(false) && !include_drafts {
         return Ok(None);
     }
 
@@ -259,7 +263,7 @@ Body text.
 "#,
         );
 
-        let sources = walk(&dir.0).unwrap();
+        let sources = walk(&dir.0, false).unwrap();
         assert_eq!(sources.len(), 1);
         let s = &sources[0];
         assert_eq!(s.frontmatter.title.as_deref(), Some("Hello World"));
@@ -287,7 +291,7 @@ Content here.
 "#,
         );
 
-        let sources = walk(&dir.0).unwrap();
+        let sources = walk(&dir.0, false).unwrap();
         assert_eq!(sources.len(), 1);
         let s = &sources[0];
         assert_eq!(s.frontmatter.title.as_deref(), Some("TOML Post"));
@@ -314,7 +318,7 @@ Body.
 "#,
         );
 
-        let sources = walk(&dir.0).unwrap();
+        let sources = walk(&dir.0, false).unwrap();
         assert_eq!(sources.len(), 1);
         let s = &sources[0];
         // slug: [] is treated as no slug — fall back to filename-derived slug.
@@ -337,9 +341,29 @@ Body.
             "2024-04-02-draft.md",
             "---\ntitle: Draft\ndate: 2024-04-02\ndraft: true\n---\n\nWIP.\n",
         );
-        let sources = walk(&dir.0).unwrap();
+        let sources = walk(&dir.0, false).unwrap();
         assert_eq!(sources.len(), 1);
         assert_eq!(sources[0].frontmatter.title.as_deref(), Some("Real"));
+    }
+
+    #[test]
+    fn drafts_are_included_with_include_drafts() {
+        let dir = TempDir::new("drafts-included");
+        dir.write_post(
+            "2024-04-01-real.md",
+            "---\ntitle: Real\ndate: 2024-04-01\n---\n\nReal.\n",
+        );
+        dir.write_post(
+            "2024-04-02-draft.md",
+            "---\ntitle: Draft\ndate: 2024-04-02\ndraft: true\n---\n\nWIP.\n",
+        );
+        let sources = walk(&dir.0, true).unwrap();
+        assert_eq!(sources.len(), 2);
+        let draft = sources
+            .iter()
+            .find(|s| s.frontmatter.title.as_deref() == Some("Draft"))
+            .expect("draft should be present");
+        assert_eq!(draft.frontmatter.draft, Some(true));
     }
 
     #[test]
@@ -353,7 +377,7 @@ Body.
             "2024-12-01-new.md",
             "---\ntitle: New\ndate: 2024-12-01\n---\n\nnew.\n",
         );
-        let sources = walk(&dir.0).unwrap();
+        let sources = walk(&dir.0, false).unwrap();
         assert_eq!(sources.len(), 2);
         assert_eq!(sources[0].frontmatter.title.as_deref(), Some("New"));
         assert_eq!(sources[1].frontmatter.title.as_deref(), Some("Old"));

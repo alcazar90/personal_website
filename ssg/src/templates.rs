@@ -28,6 +28,9 @@ pub struct PostView {
     pub lang: String,
     /// Pre-rendered `<nav class="toc">` block, or empty string when absent.
     pub toc_html: String,
+    /// True when `frontmatter.draft` is set — only reachable via `ssg build
+    /// --drafts`. Drives the "Draft" badge shown on the page.
+    pub draft: bool,
 }
 
 /// Per-page view-model passed into `page.html`.
@@ -48,6 +51,7 @@ pub struct PostListEntry {
     pub slug: String,
     pub date: String,
     pub date_display: String,
+    pub draft: bool,
 }
 
 /// Render-time inputs that aren't owned by the markdown content itself.
@@ -230,6 +234,7 @@ mod tests {
             description: "An intro.".to_string(),
             lang: "en".to_string(),
             toc_html: String::new(),
+            draft: false,
         }
     }
 
@@ -465,12 +470,14 @@ mod tests {
                 slug: "rl".to_string(),
                 date: "2024-10-02".to_string(),
                 date_display: "Oct 2, 2024".to_string(),
+                draft: false,
             },
             PostListEntry {
                 title: "Older Thoughts".to_string(),
                 slug: "older".to_string(),
                 date: "2022-01-01".to_string(),
                 date_display: "Jan 1, 2022".to_string(),
+                draft: false,
             },
         ];
         let ctx = IndexContext {
