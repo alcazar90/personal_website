@@ -15,6 +15,9 @@ cargo run --release -p ssg -- build
 # Build including draft: true posts, for local preview only (deploy never passes this flag)
 cargo run --release -p ssg -- build --drafts
 
+# Build (optionally --drafts), then serve public/ at http://127.0.0.1:8000/ (--port <n> to override)
+cargo run --release -p ssg -- serve --drafts
+
 # Scaffold a new post at content/posts/YYYY-MM-DD-<slug>.md
 cargo run --release -p ssg -- new-post "My Post Title"
 

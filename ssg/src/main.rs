@@ -1,11 +1,11 @@
 //! `ssg` — Rust static site generator for personal_website.
 //!
-//! `ssg build` is the only subcommand. It loads `content/config.toml`, walks
-//! `content/posts/` and `content/pages/`, renders each markdown source
-//! through the pulldown-cmark → syntect/pulldown-latex pipeline, wraps the
-//! result in minijinja templates with Flexoki-themed CSS inlined, and writes
-//! the final HTML to `public/`. `content/static/` is copied verbatim into
-//! `public/`.
+//! `ssg build` is the core subcommand (`serve` and `new-post` build on top
+//! of it). It loads `content/config.toml`, walks `content/posts/` and
+//! `content/pages/`, renders each markdown source through the
+//! pulldown-cmark → syntect/pulldown-latex pipeline, wraps the result in
+//! minijinja templates with Flexoki-themed CSS inlined, and writes the final
+//! HTML to `public/`. `content/static/` is copied verbatim into `public/`.
 
 use anyhow::{anyhow, Context, Result};
 use std::fs;
@@ -18,6 +18,7 @@ mod config;
 mod content;
 mod feed;
 mod render;
+mod serve;
 mod templates;
 
 use crate::config::Config;
@@ -38,6 +39,17 @@ fn main() -> ExitCode {
         Some("build") => {
             let include_drafts = std::env::args().skip(2).any(|a| a == "--drafts");
             cmd_build(include_drafts)
+        }
+        Some("serve") => {
+            let rest: Vec<String> = std::env::args().skip(2).collect();
+            let include_drafts = rest.iter().any(|a| a == "--drafts");
+            match parse_port(&rest) {
+                Ok(port) => cmd_serve(include_drafts, port),
+                Err(e) => {
+                    eprintln!("ssg: {e}");
+                    return ExitCode::from(2);
+                }
+            }
         }
         Some("new-post") => {
             let title = std::env::args().nth(2);
@@ -72,12 +84,37 @@ fn main() -> ExitCode {
 
 fn usage() {
     eprintln!("ssg v{}", env!("CARGO_PKG_VERSION"));
-    eprintln!("usage: ssg <build [--drafts] | new-post \"<title>\">");
+    eprintln!("usage: ssg <build [--drafts] | serve [--drafts] [--port <n>] | new-post \"<title>\">");
     eprintln!();
     eprintln!("  build              Render content/ to public/.");
     eprintln!("    --drafts         Also render draft: true posts, for local preview.");
     eprintln!("                     Never used by the deploy workflow — drafts never ship.");
+    eprintln!("  serve              Build, then serve public/ at http://127.0.0.1:<port>/.");
+    eprintln!("    --drafts         Same as build --drafts.");
+    eprintln!("    --port <n>       Port to listen on (default 8000).");
     eprintln!("  new-post \"<title>\"  Scaffold a new post at content/posts/YYYY-MM-DD-<slug>.md.");
+}
+
+/// Parses `--port <n>` out of the args following the subcommand. Returns the
+/// default port when the flag is absent.
+fn parse_port(args: &[String]) -> Result<u16> {
+    const DEFAULT_PORT: u16 = 8000;
+    for (i, arg) in args.iter().enumerate() {
+        if arg == "--port" {
+            let value = args
+                .get(i + 1)
+                .ok_or_else(|| anyhow!("--port requires a value"))?;
+            return value
+                .parse::<u16>()
+                .with_context(|| format!("invalid --port value '{value}'"));
+        }
+    }
+    Ok(DEFAULT_PORT)
+}
+
+fn cmd_serve(include_drafts: bool, port: u16) -> Result<()> {
+    cmd_build(include_drafts)?;
+    serve::run(Path::new("public"), port)
 }
 
 fn cmd_build(include_drafts: bool) -> Result<()> {
