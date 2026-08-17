@@ -1,11 +1,22 @@
 # alkzar.cl
 
-Source for [alkzar.cl](https://alkzar.cl). Custom Rust static site generator; see `CLAUDE.md` for design.
+Source for [alkzar.cl](https://alkzar.cl). Content and config for the site;
+rendered to static HTML by [rustoky](https://github.com/alcazar90/rustoky), a
+Rust static site generator developed as a separate project. See `CLAUDE.md`
+for design.
+
+## Setup
+
+Install the generator once (or after a `rustoky` update):
+
+```
+cargo install --git https://github.com/alcazar90/rustoky --locked
+```
 
 ## Build
 
 ```
-cargo run --release -p ssg -- build
+rustoky build
 ```
 
 Produces a static site in `public/`.
@@ -13,7 +24,7 @@ Produces a static site in `public/`.
 ## Writing
 
 ```
-cargo run --release -p ssg -- new-post "Title"
+rustoky new-post "Title"
 ```
 
 Scaffolds `content/posts/YYYY-MM-DD-<slug>.md` as a draft. Drop `draft: true` to publish.
@@ -21,7 +32,7 @@ Scaffolds `content/posts/YYYY-MM-DD-<slug>.md` as a draft. Drop `draft: true` to
 To preview a draft locally without publishing it, build with `--drafts`:
 
 ```
-cargo run --release -p ssg -- build --drafts
+rustoky build --drafts
 ```
 
 Draft posts render into `public/` with a "Draft" badge (on the post page and the home listing) but are still excluded from `feed.xml` and `sitemap.xml`. The deploy workflow never passes this flag, so drafts can't reach production regardless of what you build locally.
@@ -29,7 +40,7 @@ Draft posts render into `public/` with a "Draft" badge (on the post page and the
 To build and preview in the browser in one step:
 
 ```
-cargo run --release -p ssg -- serve --drafts
+rustoky serve --drafts
 ```
 
 Serves `public/` at `http://127.0.0.1:8000/` (`--port <n>` to change it). It's a one-shot build, not a watcher — re-run the command to pick up new edits.
