@@ -1,27 +1,27 @@
 # alkzar.cl
 
 Source for [alkzar.cl](https://alkzar.cl). Content and config for the site;
-rendered to static HTML by [rustoky](https://github.com/alcazar90/rustoky), a
+rendered to static HTML by [rustoki](https://github.com/alcazar90/rustoki), a
 Rust static site generator developed as a separate project. See `CLAUDE.md`
 for design.
 
 ## Setup
 
 Install the generator, pinned to the same release the deploy workflow uses
-(see `RUSTOKY_VERSION` in `.github/workflows/deploy.yml`):
+(see `RUSTOKI_VERSION` in `.github/workflows/deploy.yml`):
 
 ```
-cargo install --git https://github.com/alcazar90/rustoky --tag v0.1.0 --locked
+cargo install --git https://github.com/alcazar90/rustoki --tag v0.1.0 --locked
 ```
 
-To ship a rustoky change to this site: cut a new tag in rustoky, then bump
-`RUSTOKY_VERSION` in `deploy.yml` to match. See rustoky's README ("Releasing")
+To ship a rustoki change to this site: cut a new tag in rustoki, then bump
+`RUSTOKI_VERSION` in `deploy.yml` to match. See rustoki's README ("Releasing")
 for the tagging process.
 
 ## Build
 
 ```
-rustoky build
+rustoki build
 ```
 
 Produces a static site in `public/`.
@@ -29,7 +29,7 @@ Produces a static site in `public/`.
 ## Writing
 
 ```
-rustoky new-post "Title"
+rustoki new-post "Title"
 ```
 
 Scaffolds `content/posts/YYYY-MM-DD-<slug>.md` as a draft. Drop `draft: true` to publish.
@@ -37,7 +37,7 @@ Scaffolds `content/posts/YYYY-MM-DD-<slug>.md` as a draft. Drop `draft: true` to
 To preview a draft locally without publishing it, build with `--drafts`:
 
 ```
-rustoky build --drafts
+rustoki build --drafts
 ```
 
 Draft posts render into `public/` with a "Draft" badge (on the post page and the home listing) but are still excluded from `feed.xml` and `sitemap.xml`. The deploy workflow never passes this flag, so drafts can't reach production regardless of what you build locally.
@@ -45,7 +45,7 @@ Draft posts render into `public/` with a "Draft" badge (on the post page and the
 To build and preview in the browser in one step:
 
 ```
-rustoky serve --drafts
+rustoki serve --drafts
 ```
 
 Serves `public/` at `http://127.0.0.1:8000/` (`--port <n>` to change it). It's a one-shot build, not a watcher — re-run the command to pick up new edits.

@@ -13,9 +13,9 @@ permissions:
 
 env:
   CARGO_TERM_COLOR: always
-  # Pinned rustoky release (https://github.com/alcazar90/rustoky/tags).
+  # Pinned rustoki release (https://github.com/alcazar90/rustoki/tags).
   # Bump deliberately when you want to ship a new generator version.
-  RUSTOKY_VERSION: v0.1.0
+  RUSTOKI_VERSION: v0.1.0
 
 jobs:
   build-and-deploy:
@@ -32,8 +32,8 @@ jobs:
       - name: Cache Cargo build
         uses: Swatinem/rust-cache@v2
 
-      - name: Install rustoky
-        run: cargo install --git https://github.com/alcazar90/rustoky --tag "$RUSTOKY_VERSION" --locked
+      - name: Install rustoki
+        run: cargo install --git https://github.com/alcazar90/rustoki --tag "$RUSTOKI_VERSION" --locked
 
       # Derivatives are gitignored, so without this every deploy re-encodes
       # all ~54 images from scratch. Keyed on the image sources: touch one and
@@ -45,7 +45,7 @@ jobs:
           path: .image-cache
           key: images-${{ hashFiles('content/static/**/*.png', 'content/static/**/*.jpg', 'content/static/**/*.jpeg', 'content/static/**/*.gif', 'content/static/**/*.JPG') }}
 
-      # rustoky's image pipeline shells out to libwebp. It degrades
+      # rustoki's image pipeline shells out to libwebp. It degrades
       # gracefully when these are missing, which is right for local builds
       # but wrong here: a silent degradation would ship the site's images
       # unoptimized. Install them, then fail loudly if they're absent.
@@ -60,7 +60,7 @@ jobs:
           command -v gif2webp >/dev/null || { echo "::error::gif2webp missing — GIFs would ship unoptimized"; exit 1; }
 
       - name: Build site
-        run: rustoky build
+        run: rustoki build
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v4
