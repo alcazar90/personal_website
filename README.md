@@ -1,11 +1,27 @@
 # alkzar.cl
 
-Source for [alkzar.cl](https://alkzar.cl). Custom Rust static site generator; see `CLAUDE.md` for design.
+Source for [alkzar.cl](https://alkzar.cl). Content and config for the site;
+rendered to static HTML by [rustoki](https://github.com/alcazar90/rustoki), a
+Rust static site generator developed as a separate project. See `CLAUDE.md`
+for design.
+
+## Setup
+
+Install the generator, pinned to the same release the deploy workflow uses
+(see `RUSTOKI_VERSION` in `.github/workflows/deploy.yml`):
+
+```
+cargo install --git https://github.com/alcazar90/rustoki --tag v0.1.0 --locked
+```
+
+To ship a rustoki change to this site: cut a new tag in rustoki, then bump
+`RUSTOKI_VERSION` in `deploy.yml` to match. See rustoki's README ("Releasing")
+for the tagging process.
 
 ## Build
 
 ```
-cargo run --release -p ssg -- build
+rustoki build
 ```
 
 Produces a static site in `public/`.
@@ -13,7 +29,7 @@ Produces a static site in `public/`.
 ## Writing
 
 ```
-cargo run --release -p ssg -- new-post "Title"
+rustoki new-post "Title"
 ```
 
 Scaffolds `content/posts/YYYY-MM-DD-<slug>.md` as a draft. Drop `draft: true` to publish.
@@ -21,10 +37,18 @@ Scaffolds `content/posts/YYYY-MM-DD-<slug>.md` as a draft. Drop `draft: true` to
 To preview a draft locally without publishing it, build with `--drafts`:
 
 ```
-cargo run --release -p ssg -- build --drafts
+rustoki build --drafts
 ```
 
 Draft posts render into `public/` with a "Draft" badge (on the post page and the home listing) but are still excluded from `feed.xml` and `sitemap.xml`. The deploy workflow never passes this flag, so drafts can't reach production regardless of what you build locally.
+
+To build and preview in the browser in one step:
+
+```
+rustoki serve --drafts
+```
+
+Serves `public/` at `http://127.0.0.1:8000/` (`--port <n>` to change it). It's a one-shot build, not a watcher — re-run the command to pick up new edits.
 
 ## Images
 

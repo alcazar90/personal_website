@@ -13,6 +13,9 @@ permissions:
 
 env:
   CARGO_TERM_COLOR: always
+  # Pinned rustoki release (https://github.com/alcazar90/rustoki/tags).
+  # Bump deliberately when you want to ship a new generator version.
+  RUSTOKI_VERSION: v0.1.0
 
 jobs:
   build-and-deploy:
@@ -29,11 +32,8 @@ jobs:
       - name: Cache Cargo build
         uses: Swatinem/rust-cache@v2
 
-      # Release profile so the test binaries share compiled dependencies with
-      # the deploy build below, instead of compiling the whole graph a second
-      # time in debug.
-      - name: Test
-        run: cargo test --release --workspace
+      - name: Install rustoki
+        run: cargo install --git https://github.com/alcazar90/rustoki --tag "$RUSTOKI_VERSION" --locked
 
       # Derivatives are gitignored, so without this every deploy re-encodes
       # all ~54 images from scratch. Keyed on the image sources: touch one and
@@ -45,10 +45,10 @@ jobs:
           path: .image-cache
           key: images-${{ hashFiles('content/static/**/*.png', 'content/static/**/*.jpg', 'content/static/**/*.jpeg', 'content/static/**/*.gif', 'content/static/**/*.JPG') }}
 
-      # The image pipeline (ssg/src/assets.rs) shells out to libwebp. It
-      # degrades gracefully when these are missing, which is right for local
-      # builds but wrong here: a silent degradation would ship the site's
-      # images unoptimized. Install them, then fail loudly if they're absent.
+      # rustoki's image pipeline shells out to libwebp. It degrades
+      # gracefully when these are missing, which is right for local builds
+      # but wrong here: a silent degradation would ship the site's images
+      # unoptimized. Install them, then fail loudly if they're absent.
       - name: Install image tools
         run: |
           sudo apt-get update
@@ -60,12 +60,7 @@ jobs:
           command -v gif2webp >/dev/null || { echo "::error::gif2webp missing — GIFs would ship unoptimized"; exit 1; }
 
       - name: Build site
-        run: |
-          cargo run --release -p ssg -- build
-          # Fallback while the SSG is still a stub: ensure `public/` exists
-          # so the deploy step has something to upload. Once the real build
-          # populates `public/`, this is a no-op.
-          mkdir -p public && [ -d public ] && touch public/.placeholder
+        run: rustoki build
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v4
