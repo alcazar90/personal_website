@@ -3,6 +3,7 @@ url = "https://alkzar.cl"
 author = "Cristóbal Alcázar"
 description = "Notes on machine learning, diffusion models, and reinforcement learning."
 footnote = "Theme inspired by Steph Ango"
+avatar = "/img/alcazar-cristobal-about-cover.JPG"
 
 [social]
 cv        = "/cv.pdf"
