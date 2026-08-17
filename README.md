@@ -7,11 +7,16 @@ for design.
 
 ## Setup
 
-Install the generator once (or after a `rustoky` update):
+Install the generator, pinned to the same release the deploy workflow uses
+(see `RUSTOKY_VERSION` in `.github/workflows/deploy.yml`):
 
 ```
-cargo install --git https://github.com/alcazar90/rustoky --locked
+cargo install --git https://github.com/alcazar90/rustoky --tag v0.1.0 --locked
 ```
+
+To ship a rustoky change to this site: cut a new tag in rustoky, then bump
+`RUSTOKY_VERSION` in `deploy.yml` to match. See rustoky's README ("Releasing")
+for the tagging process.
 
 ## Build
 

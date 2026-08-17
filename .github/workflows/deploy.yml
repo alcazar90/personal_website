@@ -13,6 +13,9 @@ permissions:
 
 env:
   CARGO_TERM_COLOR: always
+  # Pinned rustoky release (https://github.com/alcazar90/rustoky/tags).
+  # Bump deliberately when you want to ship a new generator version.
+  RUSTOKY_VERSION: v0.1.0
 
 jobs:
   build-and-deploy:
@@ -30,7 +33,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Install rustoky
-        run: cargo install --git https://github.com/alcazar90/rustoky --locked
+        run: cargo install --git https://github.com/alcazar90/rustoky --tag "$RUSTOKY_VERSION" --locked
 
       # Derivatives are gitignored, so without this every deploy re-encodes
       # all ~54 images from scratch. Keyed on the image sources: touch one and

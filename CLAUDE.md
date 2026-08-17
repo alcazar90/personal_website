@@ -17,8 +17,8 @@ rustoky's own `CLAUDE.md` — none of that logic lives in this repo anymore.
 ## Commands
 
 ```sh
-# Install the generator (once, or after a rustoky update)
-cargo install --git https://github.com/alcazar90/rustoky --locked
+# Install the generator, pinned to the release deploy.yml uses
+cargo install --git https://github.com/alcazar90/rustoky --tag v0.1.0 --locked
 
 # Build the site: content/ -> public/
 rustoky build
@@ -50,4 +50,4 @@ rustoky new-post "My Post Title"
 
 ## Deployment
 
-`.github/workflows/deploy.yml` installs `rustoky` from its GitHub repo, runs `rustoky build`, and deploys `public/` to Cloudflare Pages (project name `alkzar`) via `wrangler-action`. Currently triggers on push to `master` and `rust-ssg`. `docs/cutover-guide.md` has the full runbook for the one-time Hugo/Netlify → Rust/Cloudflare Pages migration (DNS, API tokens, etc.) if that context is ever needed.
+`.github/workflows/deploy.yml` installs `rustoky` pinned to `env.RUSTOKY_VERSION` (a git tag), runs `rustoky build`, and deploys `public/` to Cloudflare Pages (project name `alkzar`) via `wrangler-action`. Currently triggers on push to `master` and `rust-ssg`. To ship a rustoky change, cut a tag in rustoky and bump `RUSTOKY_VERSION` here — see rustoky's README ("Releasing"). `docs/cutover-guide.md` has the full runbook for the one-time Hugo/Netlify → Rust/Cloudflare Pages migration (DNS, API tokens, etc.) if that context is ever needed.
