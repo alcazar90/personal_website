@@ -1,5 +1,5 @@
 ---
-title: Get N colours from a continuous colourmap in matplotlib 🎨
+title: Get N colours from a continuous colourmap in matplotlib 
 date: 2022-05-25
 tags:
 - data-viz
