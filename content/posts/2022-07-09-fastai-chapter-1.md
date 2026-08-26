@@ -11,7 +11,7 @@ tags:
 
 Primer _post_ de una serie de públicaciones sobre la lectura y
 resolución del libro [_Deep Learning for Coders with fasti & PyTorch_](https://course.fast.ai) de 
-Jeremy Howard & Sylvain Gugger. Resumen y notas sobre el capítulo 📝, pero
+Jeremy Howard & Sylvain Gugger. Resumen y notas sobre el capítulo, pero
 también referencias a material adicional que complementan su lectura.
 Además se encuentran mis respuestas al cuestionario y preguntas de
 investigación propuestas al final del capítulo.

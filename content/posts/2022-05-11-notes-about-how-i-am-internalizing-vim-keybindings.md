@@ -1,5 +1,5 @@
 ---
-title: Notes about how I am internalizing VIM key bindings ☕
+title: Notes about how I am internalizing VIM key bindings
 date: 2022-05-11
 tags:
 - VIM

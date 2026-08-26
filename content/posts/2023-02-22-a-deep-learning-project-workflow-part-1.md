@@ -43,7 +43,7 @@ In this post, I'll discuss how these tools allow you to transition from a projec
 ### Example Project: Fine-Tuning an Image Segmentation Model
 
 
-Our project today involves fine-tuning an image segmentation model (<a href="https://arxiv.org/abs/2105.15203" target="_blank">SegFormer</a>) with cellular images from a high-throughput microscope 🔬. 
+Our project today involves fine-tuning an image segmentation model (<a href="https://arxiv.org/abs/2105.15203" target="_blank">SegFormer</a>) with cellular images from a high-throughput microscope. 
 
 The idea is to train a model using cellular photography with mask labels that denote the living cells. A good model can connect directly to the microscope and help scientists detect cells quickly affected by a given treatment.
 
@@ -60,9 +60,9 @@ Figure 1: One observation from the dataset. At the left is the input image, and 
 
 We are talking about reproducibility and collaboration so that you can follow the <a href="https://colab.research.google.com/drive/1tCN__7HxJ61WFUm14kr6ziloNaOH9Def?usp=sharing" target="_blank">Google Collab Notebook</a> (it's the same at the banner at the start of the post). The notebook has three sections:
 
-1. **Image Segmentation Walkthrough with SegFormer 📸:** Model usage on this specific domain task and how the dataset interacts with them.
-1. **Training + Weights & Biases experiment tracking 🪄 + 🐝:** training, hyperparameter optimization, and experiment tracking using Weights & Biases (W&B).
-1. **Training script via command line 🚀:** A section to experiment with different model configurations using a training script.
+1. **Image Segmentation Walkthrough with SegFormer:** Model usage on this specific domain task and how the dataset interacts with them.
+1. **Training + Weights & Biases experiment tracking:** training, hyperparameter optimization, and experiment tracking using Weights & Biases (W&B).
+1. **Training script via command line:** A section to experiment with different model configurations using a training script.
 
 These three sections broadly follow the development of the project. 
 First, we'll understand how to use the model and the dataset manipulation to feed it. Next, we'll start working on training, namely what we want to track and record, and the hyperparameters configurations (such as the learning rate and batch size). 
@@ -184,7 +184,7 @@ alt="wandb.ai/alcazar90/cell-segmentation W&B project runs.summary picture">
 </figure>
 <br>
 ```python
-# 🐝 Create a wandb Table to log images, labels and predictions to
+# Create a wandb Table to log images, labels and predictions to
 table = wandb.Table(columns=["image", "mask", "pred_mask", "probs", "iou"])
 for img, mask, pred, prob, iou_metric in zip(images.to("cpu"), masks.to("cpu"), predicted.to("cpu"), probs.to("cpu"), iou_by_example.to("cpu")):
     plt.imshow(prob.detach().cpu());
@@ -215,7 +215,7 @@ _**Note 1:** Whenever you initialize a run (`wandb.init`), W&B will ask you to p
 _**Note 2:** There is a short course of W&B called ["Effective MLOps: Model Development"](https://www.wandb.courses/courses/effective-mlops-model-development) to learn the fundamentals._
 
 
-### Training Script Via Command Line 🚀
+### Training Script Via Command Line
 
 In the last section, we saw how to integrate W&B to log information about our model training. Still, fine-tuning a model or training from scratch requires a lot of experimentation. The idea is to iterate and try many configurations. 
 
@@ -260,7 +260,7 @@ When is it actually necessary to create a code repository for the project? It de
 Side actions to do with your repo: upload a Jupyter notebook version of the Colab and write a nice readme to provide context.
 
 
-### Next Steps 🦶🏼
+### Next Steps 
 
 If you (or I) wanted to continue the project, some next steps to consider:
 
