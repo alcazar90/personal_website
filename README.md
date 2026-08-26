@@ -11,7 +11,7 @@ Install the generator, pinned to the same release the deploy workflow uses
 (see `RUSTOKI_VERSION` in `.github/workflows/deploy.yml`):
 
 ```
-cargo install --git https://github.com/alcazar90/rustoki --tag v0.2.1 --locked
+cargo install --git https://github.com/alcazar90/rustoki --tag v0.2.2 --locked
 ```
 
 To ship a rustoki change to this site: cut a new tag in rustoki, then bump
