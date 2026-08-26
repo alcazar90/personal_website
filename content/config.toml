@@ -19,3 +19,7 @@ url = "/about/"
 [[menu]]
 name = "Food for Thought"
 url = "/food-for-thought/"
+
+[margin]
+first_delay = 90
+interval = [240, 420]
