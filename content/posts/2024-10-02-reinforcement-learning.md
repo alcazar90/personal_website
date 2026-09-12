@@ -210,21 +210,21 @@ The distribution of initial states and the transition probabilities are disregar
 The core concept is to collect a set of trajectories \\(\mathcal{D}^{\pi_{\theta}}\\) under the policy \\(\pi_{\theta}\\) and update the policy parameters \\(\theta\\) to increase the likelihood of high-reward trajectories while decreasing the likelihood of low-reward ones, as illustrated in \figref{fig:anatomy-rl-trajectories}. This trial-and-error learning approach, described in [Algorithm 1](#alg:reinforce), repeats this process over multiple iterations, reinforcing successful trajectories and discouraging unsuccessful ones, thus encoding the agent's behavior in its parameters. 
 
 <!-- % algoritmo naive REINFORCE -->
-<div id="alg:reinforce">
-    <big><b>Algorithm 1: Vanilla Policy Gradient, aka REINFORCE</b></big>
-    <ol>
-        <li>Initialize policy \( \pi_{\theta} \), set learning rate \( \alpha \)</li>
-        <!-- The commented out line can be included or excluded as needed -->
-        <!-- <li>Generate \( \tau=(s_0, a_0, ..., s_{T-1}, a_{T-1}, s_{T}) \) by sampling from current \( \pi_{\theta} \)</li> -->
-        <li>For \( \text{iteration}=0, 1, 2, \dots, N \):
-            <ol>
-                <li>Collect a set of trajectories \( \mathcal{D}^{\pi_{\theta}}=\{\tau^{(i)}\} \) by sampling from the current policy \( \pi_{\theta} \)</li>
-                <li>Calculate the returns \( R(\tau) \) for each trajectory \( \tau\in\mathcal{D}^{\pi_{\theta}} \)</li>
-                <li>Update the policy: \( \theta \leftarrow \theta + \alpha \left(\frac{1}{|\mathcal{D}^{\pi_{\theta}}|}\sum_{\tau\in\mathcal{D}^{\pi_{\theta}}}\left[\sum_{t=0}^{T-1}\nabla_{\theta}\log\pi_{\theta}(a_{t}| s_{t})R(\tau)\right]\right) \)</li>
-            </ol>
-        </li>
-    </ol>
-</div>
+```algorithm
+title: Vanilla Policy Gradient, aka REINFORCE
+label: alg:reinforce
+---
+Input: learning rate $\alpha$, number of iterations $N$
+Output: the trained policy $\pi_{\theta}$
+Initialize policy parameters $\theta$
+for $\text{iteration} = 0, 1, 2, \dots, N$ do
+    Collect a set of trajectories $\mathcal{D}^{\pi_{\theta}} = \{\tau^{(i)}\}$ by sampling from the current policy $\pi_{\theta}$
+    Calculate the return $R(\tau)$ for each trajectory $\tau \in \mathcal{D}^{\pi_{\theta}}$
+    $\hat{g} \leftarrow \frac{1}{|\mathcal{D}^{\pi_{\theta}}|} \sum_{\tau \in \mathcal{D}^{\pi_{\theta}}} \sum_{t=0}^{T-1} \nabla_{\theta} \log \pi_{\theta}(a_{t} \mid s_{t}) \, R(\tau)$ // policy gradient estimate
+    $\theta \leftarrow \theta + \alpha \hat{g}$ // gradient ascent step
+end for
+return $\pi_{\theta}$
+```
 
  **Reducing the variance of the estimator**. Using two techniques,
  <a href="https://spinningup.openai.com/en/latest/spinningup/rl_intro3.html#don-t-let-the-past-distract-you" target="_blank">reward-to-go</a> and _baseline_, we can improve the quality of the gradient estimator in Equation~(\ref{eqn:reinforce-gradient-estimator}). 
@@ -322,32 +322,21 @@ The objective is to minimize the mean squared error (MSE) between the estimated 
 
 [Algorithm 2](#alg:reinforcemet-with-critic) describes the steps for a REINFORCE variant with advantage , which combines the actor-critic approach with the traditioinoal REINFORCE algorithm. More components were introduced and can influence in the performance when the algorithm is implemented. For instance, the policy and value networks can share parameters or not. A useful study that make abalations and suggestions to pay attention when these algorithms are implemented is <i>What Matters In On-Policy Reinforcement Learning? A Large-Scale Empirical Study (Andrychowicz, 2020 \cite{andrychowicz2020mattersonpolicyreinforcementlearning})</i>.
 
-
-<div id="alg:reinforce-with-critic">
-    <big><b>Algorithm 2: REINFORCE with advantage</b></big>
-    <ol>
-        <li>Initialize policy \( \pi_{\theta} \)</li>
-        <li>Initialize value \( V_{\phi} \)</li>
-        <li>Set learning rates \( \alpha_{a} \) and \( \alpha_{c} \)</li>
-        <li>For \( \text{iteration}=0, 1, 2, \dots, N \):
-            <ol>
-                <li>Collect a set of trajectories \( \mathcal{D}^{\pi_{\theta}}=\{\tau^{(i)}\} \) by sampling from the current policy \( \pi_{\theta} \)</li>
-                <li>Calculate the returns \( R(\tau) \) for each trajectory \( \tau\in\mathcal{D}^{\pi_{\theta}} \)</li>
-                <li>Update the policy:
-                    <ul>
-                        <li>\( \theta \leftarrow \theta + \alpha_{a} \left(\frac{1}{|\mathcal{D}^{\pi_{\theta}}|}\sum_{\tau\in\mathcal{D}^{\pi_{\theta}}}\left[\sum_{t=0}^{T-1}\nabla_{\theta}\log\pi_{\theta}(a_{t}| s_{t})\left(\sum_{t'=t}^{T-1} R(a_{t'}, s_{t'}) - V_{\phi}^{\pi_{\theta}}(s_{t})\right)\right]\right) \)</li>
-                    </ul>
-                </li>
-                <li>Update the value:
-                    <ul>
-                        <li>\( \phi \leftarrow \phi + \alpha_{c} \left(\frac{1}{|\mathcal{D}^{\pi_{\theta}}|}\sum_{\tau\in\mathcal{D}^{\pi_{\theta}}}\left[\sum_{t=0}^{T-1}\left(\sum_{t'=t}^{T-1} R(a_{t'}, s_{t'}) - V_{\phi}^{\pi_{\theta}}(s_{t})\right)\nabla_{\phi}V_{\phi}^{\pi_{\theta}}(s_{t})\right]\right) \)</li>
-                    </ul>
-                </li>
-            </ol>
-        </li>
-    </ol>
-</div>
-
+```algorithm
+title: REINFORCE with advantage
+label: alg:reinforce-with-critic
+---
+Input: actor and critic learning rates $\alpha_{a}$, $\alpha_{c}$, number of iterations $N$
+Output: the trained policy $\pi_{\theta}$ and value function $V_{\phi}$
+Initialize policy parameters $\theta$ and value parameters $\phi$
+for $\text{iteration} = 0, 1, 2, \dots, N$ do
+    Collect a set of trajectories $\mathcal{D}^{\pi_{\theta}} = \{\tau^{(i)}\}$ by sampling from the current policy $\pi_{\theta}$
+    Compute the advantages $\hat{A}_{t} \leftarrow \sum_{t'=t}^{T-1} R(a_{t'}, s_{t'}) - V_{\phi}^{\pi_{\theta}}(s_{t})$ for every $\tau \in \mathcal{D}^{\pi_{\theta}}$ and $t = 0, \dots, T-1$ // reward-to-go minus the baseline
+    $\theta \leftarrow \theta + \alpha_{a} \frac{1}{|\mathcal{D}^{\pi_{\theta}}|} \sum_{\tau \in \mathcal{D}^{\pi_{\theta}}} \sum_{t=0}^{T-1} \nabla_{\theta} \log \pi_{\theta}(a_{t} \mid s_{t}) \, \hat{A}_{t}$ // actor update
+    $\phi \leftarrow \phi + \alpha_{c} \frac{1}{|\mathcal{D}^{\pi_{\theta}}|} \sum_{\tau \in \mathcal{D}^{\pi_{\theta}}} \sum_{t=0}^{T-1} \hat{A}_{t} \, \nabla_{\phi} V_{\phi}^{\pi_{\theta}}(s_{t})$ // critic update
+end for
+return $\pi_{\theta}$, $V_{\phi}$
+```
 
 ## References
 
