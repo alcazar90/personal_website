@@ -2,6 +2,7 @@
 title: Crear entornos virtuales en python y asociarlos a un kernel de jupyter notebook
 date: 2020-12-09
 slug: crear-entornos-virtuales-en-python-y-asociarlo-a-un-kernel-de-jupyter-notebook
+toc: false
 ---
 
 En este post se detalla el *workflow* para crear entornos virtuales con python, instalar paquetes y

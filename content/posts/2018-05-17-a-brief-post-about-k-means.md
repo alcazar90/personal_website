@@ -5,6 +5,7 @@ tags:
 - ML
 - python
 - clustering
+toc: false
 ---
 
 A few weeks ago I read chapter 4 of the book ["Introduction to Applied Linear
