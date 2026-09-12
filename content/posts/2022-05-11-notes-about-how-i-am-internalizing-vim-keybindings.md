@@ -5,6 +5,7 @@ tags:
 - VIM
 - WORKFLOW
 - CLI
+toc: false
 ---
 
 ![https://xkcd.com/378/](https://imgs.xkcd.com/comics/real_programmers.png)

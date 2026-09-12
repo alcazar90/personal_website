@@ -7,6 +7,7 @@ tags:
 - book-notes
 - español
 - fastai-book
+toc: false
 ---
 
 ## Data Augmentation

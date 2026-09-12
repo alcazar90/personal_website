@@ -5,6 +5,7 @@ tags:
 - critical-thinking
 - stat
 - viz
+toc: false
 ---
 
 It is not difficult to find a relationship between two variables when there is not.
